@@ -1,0 +1,5 @@
+/.venv
+/__pychache__
+/infrasructure/__pychache__
+/application/__pychache__
+/models/__pychache__
