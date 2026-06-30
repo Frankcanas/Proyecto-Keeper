@@ -1,23 +1,26 @@
 import { get_location, localtionDefault } from "../models/locationModel";
 import { renderMap, pointer } from "../views/mapView";
 
+let currentMap = null;
+let currentCoords = null;
+
 export async function initMap() {
-    const coords = await get_location();
     try {
-        renderMap([coords.lon, coords.lat]);
+        const coords = await get_location();
+        currentCoords = [coords.lon, coords.lat];
+        currentMap = renderMap(currentCoords);
     } catch (error) {
         console.error(error);
-        renderMap(localtionDefault);
+        currentCoords = localtionDefault
+        currentMap = renderMap(currentCoords);
     }
 }
 
 export async function initPointer() {
-    try {
-        const coords = await get_location();
-        const map = renderMap([coords.lon, coords.lat]);
-        pointer(map, [coords.lon, coords.lat]);
-    } catch (error) {
-        console.error(error);
-        throw error;
+    const coords = currentCoords || localtionDefault;
+    if (currentMap) {
+        pointer(currentMap, coords);
+    } else {
+        console.error("[Controller Error] No puedes inicializar el puntero si el mapa no ha sido creado primero.");
     }
 }
