@@ -1,9 +1,12 @@
 import { initMap, initPointer } from "./assets/js/controllers/mapManager.controller";
 import { callFastAPI } from "./assets/js/models/fastapiModel";
 
-document.addEventListener("DOMContentLoaded", async()=>{
-    const init = await initMap();
-    const pointer = await initPointer();
-    const fastapi = await callFastAPI()
-    console.log(fastapi)
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        await initMap();
+        initPointer();
+        
+    } catch (error) {
+        console.error("Error crítico durante la inicialización de la app:", error);
+    }
 });
