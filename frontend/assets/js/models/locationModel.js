@@ -4,8 +4,7 @@ export const localtionDefault = [-74.781, 10.968];
 
 export async function get_location() {
     try {
-        const location = currentLocation();
-        const response = await location.get();
+        const response = await ip_location.get("/");
         return response.data;
     } catch (error) {
         console.error(error);
@@ -13,16 +12,8 @@ export async function get_location() {
     }
 }
 
-const currentLocation = () => {
-    try {
-        const ip_location = axios.create({
-            baseURL: "http://ip-api.com/json/",
-            timeout: 5000,
-            headers: { "Content-Type": "application/json" },
-        });
-        return ip_location;
-    } catch (error) {
-        console.error("error found: " + error);
-        return localtionDefault;
-    }
-};
+const ip_location = axios.create({
+    baseURL: "http://ip-api.com/json/",
+    timeout: 5000,
+    headers: { "Content-Type": "application/json" },
+});
