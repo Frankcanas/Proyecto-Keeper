@@ -2,21 +2,27 @@ import axios from "axios";
 
 export const localtionDefault = [-74.781, 10.968];
 
-export async function get_location() {
-    try {
-        const response = await ip_location.get("/");
-        return {
-            lon: response.data.longitude,
-            lat: response.data.latitude
-        }
-    } catch (error) {
-        console.error(error.message);
-        throw error;
-    }
-}
-
 const ip_location = axios.create({
-    baseURL: "http://ipapi.co/json/",
+    baseURL: "https://ipapi.co/json/",
     timeout: 5000,
     headers: { "Content-Type": "application/json" },
 });
+
+export function get_location() {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error("La geolocalización no está soportada por este navegador."));
+        }
+        
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                resolve({
+                    lon: position.coords.longitude,
+                    lat: position.coords.latitude
+                });
+            },
+            (error) => reject(error),
+            { enableHighAccuracy: true, timeout: 8000 }
+        );
+    });
+}
