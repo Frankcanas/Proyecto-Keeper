@@ -127,5 +127,10 @@ export function renderFeed() {
         </div>
       </div>
     </section>
+
+    <button id="btn-sos" type="button" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-full bg-red-600 px-5 py-3 text-white shadow-lg shadow-red-600/30 font-extrabold hover:bg-red-700 transition active:scale-95">
+      <span class="text-xl">🆘</span>
+      <span>SOS</span>
+    </button>
   `;
 }

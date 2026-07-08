@@ -29,7 +29,7 @@ export function initLoginModal(buttonId, onSuccess) {
       confirmButtonText: 'Entrar a mi cuenta',
       cancelButtonText: 'Cancelar',
       focusConfirm: false,
-      buttonsStyling: false, // Desactivamos estilos nativos para usar Tailwind
+      buttonsStyling: false, 
       customClass: {
         popup: 'rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 bg-white max-w-md w-full',
         title: 'p-0 mb-2',
@@ -52,7 +52,6 @@ export function initLoginModal(buttonId, onSuccess) {
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        // Alerta o Toast de bienvenida al iniciar sesión
         Swal.fire({
           icon: 'success',
           title: '<span class="text-xl font-bold text-slate-900">¡Sesión Iniciada!</span>',

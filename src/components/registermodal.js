@@ -32,7 +32,12 @@ export function initRegisterModal(buttonId) {
 
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-1">Teléfono</label>
-            <input id="reg-telefono" type="tel" inputmode="tel" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Ej. +52 1 55 1234 5678">
+            <input id="reg-telefono" type="tel" inputmode="tel" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Ej. +57 320 530 22 45">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Fecha de nacimiento</label>
+            <input id="reg-fecha-nacimiento" type="date" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -100,10 +105,11 @@ export function initRegisterModal(buttonId) {
             const cedula = document.getElementById('reg-cedula')?.value?.trim();
             const email = document.getElementById('reg-email')?.value?.trim();
             const telefono = document.getElementById('reg-telefono')?.value?.trim();
+            const fechaNacimiento = document.getElementById('reg-fecha-nacimiento')?.value?.trim();
             const password = document.getElementById('reg-password')?.value || '';
             const passwordConfirm = document.getElementById('reg-password-confirm')?.value || '';
 
-            if (!nombre || !apellido || !cedula || !email || !telefono || !password || !passwordConfirm) {
+            if (!nombre || !apellido || !cedula || !email || !telefono || !fechaNacimiento || !password || !passwordConfirm) {
               if (errEl) errEl.textContent = 'Por favor completa todos los campos.';
               return;
             }

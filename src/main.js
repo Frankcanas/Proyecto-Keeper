@@ -5,6 +5,7 @@ import './style.css';
 import { initRegisterModal } from './components/registermodal.js';
 import { initLoginModal } from './components/loginmodal.js';
 import { renderFeed } from './components/feed.js';
+import { initSOSModal } from './components/sos.js';
 
 function renderLandingPage() {
   const app = document.querySelector('#app');
@@ -60,7 +61,7 @@ function renderLandingPage() {
       <!-- Imagen Mockup Celular -->
       <div class="relative flex justify-center lg:justify-end hero-image">
         <div class="absolute inset-0 bg-linear-to-tr from-orange-400/10 to-transparent rounded-full filter blur-3xl -z-10 max-w-lg mx-auto"></div>
-        <img src="/src/assets/hero.png" alt="keepeR App" class="w-full max-w-md lg:max-w-lg drop-shadow-2xl">
+        <img src="/src/assets/hero.png" alt="keepeR App" class="w-[500%] max-w-none drop-shadow-2xl">
       </div>
     </main>
 
@@ -185,6 +186,7 @@ function renderLandingPage() {
 function renderFeedPage() {
   const app = document.querySelector('#app');
   app.innerHTML = renderFeed();
+  initSOSModal('btn-sos');
 }
 
 // Inicializamos la aplicación y conectamos los eventos
