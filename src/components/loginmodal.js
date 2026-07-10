@@ -6,22 +6,22 @@ export function initLoginModal(buttonId, onSuccess) {
 
   btn.addEventListener('click', () => {
     Swal.fire({
-      title: '<span class="text-2xl font-extrabold text-slate-900 tracking-tight">Iniciar Sesión</span>',
+      title: '<h3 class="text-base font-semibold text-zinc-900 tracking-tight text-left">Iniciar Sesión</h3>',
       html: `
-        <p class="text-sm text-slate-500 mb-6 leading-relaxed">
-          Ingresa a tu cuenta de <strong class="text-slate-800">keepeR</strong> para ver alertas y reportes en tiempo real.
+        <p class="text-xs text-zinc-500 mb-4 leading-relaxed text-left">
+          Ingresa a tu cuenta de <strong class="text-zinc-800 font-semibold">keepeR</strong> para ver alertas y reportes en tiempo real.
         </p>
-        <div class="space-y-4 text-left">
+        <div class="space-y-4 text-left font-sans">
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Correo Electrónico</label>
-            <input id="swal-login-email" type="email" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm transition text-slate-800 placeholder-slate-400" placeholder="tucorreo@ejemplo.com" autocomplete="email">
+            <label class="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">Correo Electrónico</label>
+            <input id="swal-login-email" type="email" class="w-full px-3 py-2 rounded border border-zinc-200 focus:outline-none focus:border-zinc-400 text-xs transition-colors text-zinc-800 placeholder-zinc-400 bg-white" placeholder="tucorreo@ejemplo.com" autocomplete="email">
           </div>
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Contraseña</label>
-              <a href="#" class="text-xs text-orange-600 hover:text-orange-700 font-semibold transition">¿Olvidaste tu contraseña?</a>
+              <label class="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Contraseña</label>
+              <a href="#" class="text-[10px] text-[#ea580c] hover:underline font-medium">¿Olvidaste tu contraseña?</a>
             </div>
-            <input id="swal-login-password" type="password" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm transition text-slate-800 placeholder-slate-400" placeholder="••••••••" autocomplete="current-password">
+            <input id="swal-login-password" type="password" class="w-full px-3 py-2 rounded border border-zinc-200 focus:outline-none focus:border-zinc-400 text-xs transition-colors text-zinc-800 placeholder-zinc-400 bg-white" placeholder="••••••••" autocomplete="current-password">
           </div>
         </div>
       `,
@@ -31,12 +31,25 @@ export function initLoginModal(buttonId, onSuccess) {
       focusConfirm: false,
       buttonsStyling: false, 
       customClass: {
-        popup: 'rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 bg-white max-w-md w-full',
+        popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-md w-full font-sans',
         title: 'p-0 mb-2',
         htmlContainer: 'm-0 p-0',
-        actions: 'mt-8 flex justify-end space-x-3 w-full',
-        confirmButton: 'bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition transform active:scale-95 text-sm',
-        cancelButton: 'bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold px-6 py-3 rounded-xl transition text-sm'
+        actions: 'mt-6 flex justify-end space-x-2 w-full',
+        confirmButton: 'bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold px-4 py-2 rounded transition-colors',
+        cancelButton: 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold px-4 py-2 rounded transition-colors'
+      },
+      didOpen: () => {
+        const emailInput = document.getElementById('swal-login-email');
+        const passInput = document.getElementById('swal-login-password');
+        
+        const handleEnter = (e) => {
+          if (e.key === 'Enter') {
+            Swal.clickConfirm();
+          }
+        };
+        
+        emailInput?.addEventListener('keypress', handleEnter);
+        passInput?.addEventListener('keypress', handleEnter);
       },
       preConfirm: () => {
         const email = document.getElementById('swal-login-email').value;
@@ -54,14 +67,13 @@ export function initLoginModal(buttonId, onSuccess) {
       if (result.isConfirmed) {
         Swal.fire({
           icon: 'success',
-          title: '<span class="text-xl font-bold text-slate-900">¡Sesión Iniciada!</span>',
-          html: `<p class="text-sm text-slate-600">Bienvenido de nuevo. Conectando con el servidor de seguridad...</p>`,
-          timer: 2000,
-          timerProgressBar: true,
+          title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Sesión Iniciada</h3>',
+          html: `<p class="text-xs text-zinc-500 text-left">Bienvenido de nuevo. Accediendo al panel...</p>`,
+          timer: 1500,
           showConfirmButton: false,
           buttonsStyling: false,
           customClass: {
-            popup: 'rounded-3xl p-6 shadow-2xl border border-slate-100 bg-white max-w-sm w-full'
+            popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full font-sans'
           }
         }).then(() => {
           if (typeof onSuccess === 'function') {
@@ -71,4 +83,4 @@ export function initLoginModal(buttonId, onSuccess) {
       }
     });
   });
-}
+}

@@ -4,33 +4,60 @@ import './style.css';
 // Importamos los componentes modales
 import { initRegisterModal } from './components/registermodal.js';
 import { initLoginModal } from './components/loginmodal.js';
-import { renderFeed } from './components/feed.js';
+import { renderFeed, initFeed, addFeedReport } from './components/feed.js';
 import { initSOSModal } from './components/sos.js';
+import { renderHomepage, initHomepage, addHomepageReport } from './components/homepage.js';
+import { initReportModal } from './components/reports.js';
 
 function renderLandingPage() {
   const app = document.querySelector('#app');
   
   app.innerHTML = `
+    <button id="btn-preview-homepage" type="button" class="fixed bottom-6 right-6 z-[60] rounded-full bg-orange-600 px-5 py-3 text-sm font-black text-white shadow-xl shadow-orange-600/30 hover:bg-orange-700 transition">
+      Ver homepage
+    </button>
+
     <!-- Navbar con Botón de Logueo -->
     <header class="w-full bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40">
-      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="/src/assets/logo.png" alt="keepeR Logo" class="h-12 md:h-14 object-contain">
-          <span class="text-lg md:text-2xl font-extrabold text-slate-900">keepeR</span>
+          <img src="/src/assets/logo.png" alt="keepeR Logo" class="h-10 object-contain">
+          <span class="text-lg font-bold text-slate-900">keepeR</span>
         </div>
         
-        <!-- Enlaces de navegación -->
-        <nav class="hidden md:flex space-x-8 font-medium text-gray-600 items-center">
-          <a href="#" class="hover:text-orange-600 transition">Inicio</a>
-          <a href="#caracteristicas" class="hover:text-orange-600 transition">Características</a>
-          <a href="#comunidad" class="hover:text-orange-600 transition">Comunidad</a>
+        <!-- Enlaces de navegación - Desktop -->
+        <nav class="hidden md:flex space-x-8 font-medium text-gray-650 items-center text-sm">
+          <a href="#" class="hover:text-orange-600 transition-colors">Inicio</a>
+          <a href="#caracteristicas" class="hover:text-orange-600 transition-colors">Características</a>
+          <a href="#comunidad" class="hover:text-orange-600 transition-colors">Comunidad</a>
         </nav>
 
-        <!-- Acciones del Navbar (Login) -->
-        <div class="flex items-center space-x-3">
-          <button id="btn-login" class="text-sm font-bold text-slate-700 hover:text-orange-600 px-4 py-2.5 rounded-xl border border-slate-200 hover:border-orange-200 bg-slate-50 hover:bg-orange-50/50 transition active:scale-95">
+        <!-- Acciones del Navbar (Login) - Desktop -->
+        <div class="hidden md:flex items-center">
+          <button id="btn-login" class="text-xs font-bold text-slate-700 hover:text-orange-600 px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-orange-50/50 transition-colors">
             Iniciar Sesión
           </button>
+        </div>
+
+        <!-- Boton Hamburguesa - Mobile -->
+        <button id="btn-menu-toggle" type="button" class="md:hidden p-2 text-slate-600 hover:text-orange-600 focus:outline-none" aria-label="Toggle menu">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Menu Desplegable Mobile -->
+      <div id="mobile-menu" class="hidden md:hidden border-b border-gray-200 bg-white/95 backdrop-blur-md absolute top-16 left-0 w-full z-30 shadow-md">
+        <div class="px-6 py-4 flex flex-col space-y-3">
+          <a href="#" class="mobile-menu-link text-sm font-medium text-gray-700 hover:text-orange-600 py-1 transition-colors">Inicio</a>
+          <a href="#caracteristicas" class="mobile-menu-link text-sm font-medium text-gray-700 hover:text-orange-600 py-1 transition-colors">Características</a>
+          <a href="#comunidad" class="mobile-menu-link text-sm font-medium text-gray-700 hover:text-orange-600 py-1 transition-colors">Comunidad</a>
+          <div class="border-t border-gray-100 pt-3">
+            <button id="btn-login-mobile" class="w-full text-center text-xs font-bold text-white bg-orange-600 hover:bg-orange-700 px-4 py-2.5 rounded-lg transition-colors shadow-sm">
+              Iniciar Sesión
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -50,12 +77,14 @@ function renderLandingPage() {
           Únete a la red colaborativa de seguridad ciudadana que está transformando comunidades. Tecnología de vanguardia para tu tranquilidad y la de los tuyos.
         </p>
         
-        <button id="btn-unirme" class="inline-flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-orange-600/20 transform hover:-translate-y-0.5 transition active:translate-y-0 text-lg">
-          <span>Unirme Ahora</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </button>
+        <div class="flex flex-wrap gap-3">
+          <button id="btn-unirme" class="inline-flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-orange-600/20 transform hover:-translate-y-0.5 transition active:translate-y-0 text-lg">
+            <span>Unirme Ahora</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <!-- Imagen Mockup Celular -->
@@ -186,14 +215,65 @@ function renderLandingPage() {
 function renderFeedPage() {
   const app = document.querySelector('#app');
   app.innerHTML = renderFeed();
+  initFeed();
   initSOSModal('btn-sos');
+
+  // Conectar botón Salir del panel
+  document.getElementById('feed-btn-logout')?.addEventListener('click', () => {
+    renderLandingPagePage();
+  });
 }
 
-// Inicializamos la aplicación y conectamos los eventos
-document.addEventListener('DOMContentLoaded', () => {
+function renderHomepagePage() {
+  const app = document.querySelector('#app');
+  app.innerHTML = renderHomepage();
+  initHomepage();
+  initReportModal('homepage-report-btn', (report) => {
+    addHomepageReport(report);
+    addFeedReport(report);
+  });
+  initSOSModal('homepage-sos-btn', (report) => {
+    addHomepageReport(report);
+    addFeedReport(report);
+  });
+
+  // Conectar botón Salir del panel
+  document.getElementById('homepage-btn-logout')?.addEventListener('click', () => {
+    renderLandingPagePage();
+  });
+}
+
+function renderLandingPagePage() {
   renderLandingPage();
 
   // Conectamos los botones de la interfaz con sus respectivos modales
   initRegisterModal('btn-unirme');
   initLoginModal('btn-login', renderFeedPage);
+  initLoginModal('btn-login-mobile', () => {
+    document.getElementById('mobile-menu')?.classList.add('hidden');
+    renderFeedPage();
+  });
+
+  // Hamburguer menu toggle logic
+  const toggleBtn = document.getElementById('btn-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (toggleBtn && mobileMenu) {
+    toggleBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Close menu when clicking on any link
+    mobileMenu.querySelectorAll('.mobile-menu-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+      });
+    });
+  }
+
+  document.getElementById('btn-preview-homepage')?.addEventListener('click', renderHomepagePage);
+}
+
+// Inicializamos la aplicación y conectamos los eventos
+document.addEventListener('DOMContentLoaded', () => {
+  renderLandingPagePage();
 });
