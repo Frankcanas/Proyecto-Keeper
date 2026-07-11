@@ -141,4 +141,3 @@ export function renderFeedSidebar() {
   `;
 }
 
-export default renderSidebar;;

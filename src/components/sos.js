@@ -309,4 +309,3 @@ export function initSOSModal(buttonId, onSOSCallback) {
   });
 }
 
-export default initSOSModal;

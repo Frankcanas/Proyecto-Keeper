@@ -2,12 +2,12 @@
 import './style.css';
 
 // Importamos los componentes modales
-import { initRegisterModal } from './components/registermodal.js';
-import { initLoginModal } from './components/loginmodal.js';
-import { renderFeed, initFeed, addFeedReport } from './components/feed.js';
-import { initSOSModal } from './components/sos.js';
-import { renderHomepage, initHomepage, addHomepageReport } from './components/homepage.js';
-import { initReportModal } from './components/reports.js';
+import { initRegisterModal } from './src/components/registermodal.js';
+import { initLoginModal } from './src/components/loginmodal.js';
+import { renderFeed, initFeed, addFeedReport } from './src/views/feed.js';
+import { initSOSModal } from './src/components/sos.js';
+import { renderHomepage, initHomepage, addHomepageReport } from './src/views/homepage.js';
+import { initReportModal } from './src/components/reports.js';
 
 function renderLandingPage() {
   const app = document.querySelector('#app');

@@ -1,5 +1,5 @@
 import { renderSidebar } from "./sidebar.js";
-import { openLugarFormModal } from "./lugaresmodal.js";
+import  {openLugarFormModal} from "../components/lugaresmodal.js";
 import Swal from "sweetalert2";
 
 let listContactos = [
@@ -855,4 +855,3 @@ export function initHomepage() {
     );
 }
 
-export default renderHomepage;

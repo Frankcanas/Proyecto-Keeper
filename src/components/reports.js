@@ -170,5 +170,4 @@ export function initReportModal(buttonId, onSubmitCallback) {
   });
 }
 
-export default initReportModal;
 
