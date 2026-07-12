@@ -1,9 +1,9 @@
 import {
     get_location,
-    localtionDefault,
+    locationDefault,
     geolocator,
-} from '../services/locationModel';
-import { renderMap, pointer, updateMapPosition } from "../components/mapDiv";
+} from '../services/locationService.js';
+import { renderMap, pointer, updateMapPosition, destroyMapInstance } from "../components/mapDiv";
 
 let currentMap = null;
 let currentMarker = null;
@@ -14,9 +14,9 @@ export async function initMap() {
     try {
         const coords = await get_location();
         initialCoords = [coords.lon, coords.lat];
-    } catch (Error) {
-        console.error(Error);
-        initialCoords = localtionDefault;
+    } catch (error) {
+        console.error(error);
+        initialCoords = locationDefault;
     }
     currentMap = renderMap(initialCoords);
     currentMarker = pointer(currentMap, initialCoords);
@@ -47,8 +47,19 @@ export function startRealTimeTracking() {
         },
         {
             enableHighAccuracy: true,
-            maximumAge: 0,
+            maximumAge: 5000,
             timeout: 10000,
         },
     );
+}
+
+export function cleanupMap() {
+    if (watchId !== null && geolocator) {
+        geolocator.clearWatch(watchId);
+        watchId = null;
+    }
+    destroyMapInstance(currentMap, currentMarker);
+    currentMap = null;
+    currentMarker = null;
+    console.log("Sistema de mapas y GPS apagado y limpiado completamente.");
 }

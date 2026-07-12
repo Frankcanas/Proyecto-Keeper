@@ -387,7 +387,7 @@ export function renderFeed() {
               <div class="relative w-full h-[600px] rounded-lg border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
                 
                 <!-- ID para la inserción del mapa real -->
-                <div id="feed-map-container" class="absolute inset-0 z-0">
+                <div id="map" class="absolute inset-0 z-0">
                   <!-- Imagen SVG elegante de calles como placeholder de fondo de mapa -->
                   <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_#27272a_1px,_transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
                   
@@ -407,7 +407,7 @@ export function renderFeed() {
                   <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div class="bg-zinc-900/90 border border-zinc-800 rounded p-4 text-center max-w-sm">
                       <p class="text-xs font-bold text-white uppercase tracking-wider mb-1">Área para Mapa Interactivo</p>
-                      <p class="text-[10px] text-zinc-400">Contenedor listo con ID <code class="text-orange-400">#feed-map-container</code>. Puedes montar Leaflet, Google Maps o Mapbox aquí.</p>
+                      <p class="text-[10px] text-zinc-400">Contenedor listo con ID <code class="text-orange-400">#map</code>. Puedes montar Leaflet, Google Maps o Mapbox aquí.</p>
                     </div>
                   </div>
                 </div>

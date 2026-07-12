@@ -71,7 +71,7 @@ export function renderHomepage() {
                 <div class="relative flex-1 rounded-md border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
                   
                   <!-- ID para la inserción del mapa real en el homepage -->
-                  <div id="map" class="absolute inset-0 z-0">
+                  <div id="map" class="absolute inset-0 z-0 h-full">
                     <!-- Imagen SVG de calles como placeholder de fondo del mapa -->
                     <div class="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,_#27272a_1px,_transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
                     <svg viewBox="0 0 700 480" class="w-full h-full stroke-orange-500/10 fill-none pointer-events-none" stroke-width="1.5">

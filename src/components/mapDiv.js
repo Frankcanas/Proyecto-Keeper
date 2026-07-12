@@ -1,18 +1,18 @@
 import { Map, Marker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-export const renderMap = (location) => {
+export const renderMap = (location, containerId = "map") => {
     const map = new Map({
         style: "https://tiles.openfreemap.org/styles/liberty",
         center: location,
-        zoom: 12,
-        container: "map",
+        zoom: 16,
+        container: containerId,
     });
     return map;
 };
 
 export const pointer = (map, location) => {
-    new Marker()
+    return new Marker()
     .setLngLat(location)
     .addTo(map);
 };
@@ -20,4 +20,9 @@ export const pointer = (map, location) => {
 export const updateMapPosition = (map, marker, location) => {
     marker.setLngLat(location);
     map.flyTo({ center: location, speed: 1.2 });
+};
+
+export const destroyMapInstance = (map, marker) => {
+    if (marker) marker.remove(); 
+    if (map) map.remove();       
 };
