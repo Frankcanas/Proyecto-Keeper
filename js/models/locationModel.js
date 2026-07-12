@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export const localtionDefault = [-74.781, 10.968];
 
 export const geolocator = navigator.geolocation

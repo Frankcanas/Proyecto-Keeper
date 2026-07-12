@@ -1,9 +1,9 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "main.js",
   "scripts": {
-    "dev": "vite --port 5400"
+    "dev": "vite"
   },
   "keywords": [],
   "author": "",
