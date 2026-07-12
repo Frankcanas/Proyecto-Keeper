@@ -2,14 +2,21 @@ import {
     get_location,
     locationDefault,
     geolocator,
-} from '../services/locationService.js';
-import { renderMap, pointer, updateMapPosition, destroyMapInstance, pointerTarget } from "../components/mapDiv";
+} from "../models/locationModel.js";
+import {
+    renderMap,
+    pointer,
+    updateMapPosition,
+    destroyMapInstance,
+    pointerTarget,
+} from "../components/mapDiv";
 
 let currentMap = null;
 let currentMarker = null;
 let watchId = null;
 let targetMarker = null;
 
+//Inicializa el mapa con la ubicación actual del usuario o una ubicación predeterminada
 export async function initMap() {
     let initialCoords;
     try {
@@ -21,8 +28,17 @@ export async function initMap() {
     }
     currentMap = renderMap(initialCoords);
     currentMarker = pointer(currentMap, initialCoords);
+    currentMap.doubleClickZoom.disable();
+
+    currentMap.on("dblclick", (e) => {
+        const lon = e.lngLat.lng;
+        const lat = e.lngLat.lat;
+        //Reutilizamos la función moveToSearchedLocation para mover el mapa y colocar un marcador rojo.
+        moveToSearchedLocation(lon, lat);
+    });
 }
 
+// Actualiza la posición del marcador y centra el mapa en la nueva ubicación
 export function startRealTimeTracking() {
     if (!geolocator) return;
 
@@ -53,6 +69,7 @@ export function startRealTimeTracking() {
     );
 }
 
+// Detiene el seguimiento en tiempo real y limpia los recursos del mapa
 export function cleanupMap() {
     if (watchId !== null && geolocator) {
         geolocator.clearWatch(watchId);
@@ -64,6 +81,7 @@ export function cleanupMap() {
     console.log("Sistema de mapas y GPS apagado y limpiado completamente.");
 }
 
+// Mueve el mapa a la ubicación buscada y coloca un marcador rojo en esa posición
 export function moveToSearchedLocation(lon, lat) {
     if (!currentMap) {
         console.warn("El mapa aún no está listo para moverse.");

@@ -6,7 +6,7 @@ const apiClient = createApiClient("https://nominatim.openstreetmap.org");
 const nominatimService = createCrudService(apiClient);
 
 export function findAddress(htmlObject) {
-    htmlObject?.addEventListener("keypress", async(e) => {
+    htmlObject?.addEventListener("keypress", async (e) => {
         if (e.key === "Enter") {
             const query = e.target.value.trim();
             if (!query) return;

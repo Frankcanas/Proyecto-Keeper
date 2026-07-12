@@ -385,10 +385,9 @@ export function renderFeed() {
               </div>
 
               <!-- Map Container -->
-              <div class="relative w-full h-[600px] rounded-lg border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
+              <div id="map" class="relative w-full h-[600px] rounded-lg border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
                 
-                <!-- ID para la inserción del mapa real -->
-                <div id="map" class="absolute inset-0 z-0">
+                <div class="absolute inset-0 z-0" h-full>
                   <!-- Imagen SVG elegante de calles como placeholder de fondo de mapa -->
                   <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_#27272a_1px,_transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
                   
