@@ -2,8 +2,8 @@ import {
     get_location,
     localtionDefault,
     geolocator,
-} from "../models/locationModel";
-import { renderMap, pointer, updateMapPosition } from "../views/mapView";
+} from '../services/locationModel';
+import { renderMap, pointer, updateMapPosition } from "../components/mapDiv";
 
 let currentMap = null;
 let currentMarker = null;
