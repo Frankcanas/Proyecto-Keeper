@@ -1,4 +1,5 @@
 import { renderFeedSidebar } from './sidebar.js';
+import {findAddress} from '../services/findAddress.js';
 import Swal from 'sweetalert2';
 
 // Lista local de usuarios (reactiva en memoria)
@@ -1069,66 +1070,7 @@ export function initFeed() {
 
   // Buscador de direcciones en el mapa (Nominatim / Leaflet Integration)
   const mapSearchInput = document.getElementById('map-search-input');
-  mapSearchInput?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      const query = e.target.value.trim();
-      if (!query) return;
-
-      // Usar Nominatim para buscar la dirección
-      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.length > 0) {
-            const lat = parseFloat(data[0].lat);
-            const lon = parseFloat(data[0].lon);
-
-            // Alerta sutil / Toast indicando localización
-            Swal.fire({
-              toast: true,
-              position: 'top-end',
-              icon: 'success',
-              title: `Ubicación: ${data[0].display_name.split(',')[0]}`,
-              showConfirmButton: false,
-              timer: 3000,
-              timerProgressBar: true,
-              customClass: { popup: 'rounded border border-zinc-200 bg-white font-sans text-xs' }
-            });
-
-            // Si hay un mapa real instanciado de Leaflet o Google Maps
-            if (window.map && typeof window.map.flyTo === 'function') {
-              window.map.flyTo([lat, lon], 16);
-              
-              if (window.L && typeof window.L.marker === 'function') {
-                if (window.currentSearchMarker) {
-                  window.currentSearchMarker.remove();
-                }
-                window.currentSearchMarker = window.L.marker([lat, lon]).addTo(window.map)
-                  .bindPopup(`<b>${query}</b><br>${data[0].display_name}`)
-                  .openPopup();
-              }
-            } else if (window.googleMap && typeof window.googleMap.setCenter === 'function') {
-              window.googleMap.setCenter({ lat, lng: lon });
-              window.googleMap.setZoom(17);
-            } else {
-              console.log(`[Mapa Simulado] Volando a: Lat ${lat}, Lon ${lon} (${data[0].display_name})`);
-            }
-          } else {
-            Swal.fire({
-              toast: true,
-              position: 'top-end',
-              icon: 'error',
-              title: 'No se encontró la dirección',
-              showConfirmButton: false,
-              timer: 2000,
-              customClass: { popup: 'rounded border border-zinc-200 bg-white font-sans text-xs' }
-            });
-          }
-        })
-        .catch(err => {
-          console.error('Error buscando dirección:', err);
-        });
-    }
-  });
+  findAddress(mapSearchInput);
 }
 
 function exportReportToPDF() {

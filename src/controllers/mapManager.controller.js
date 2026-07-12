@@ -33,7 +33,6 @@ export function startRealTimeTracking() {
                 position.coords.longitude,
                 position.coords.latitude,
             ];
-            console.log("Ubicación actual:", newCoords);
 
             if (currentMap && currentMarker) {
                 updateMapPosition(currentMap, currentMarker, newCoords);
@@ -62,4 +61,14 @@ export function cleanupMap() {
     currentMap = null;
     currentMarker = null;
     console.log("Sistema de mapas y GPS apagado y limpiado completamente.");
+}
+
+export function moveToSearchedLocation(lon, lat) {
+    if (currentMap && currentMarker) {
+        // Usamos tus funciones existentes de MapLibre
+        const newCoords = [lon, lat];
+        updateMapPosition(currentMap, currentMarker, newCoords);
+    } else {
+        console.warn("El mapa aún no está listo para moverse.");
+    }
 }
