@@ -1068,7 +1068,7 @@ export function initFeed() {
   if (btnEstadisticas) btnEstadisticas.addEventListener('click', () => switchTab(btnEstadisticas, tabEstadisticas));
   if (btnMapa) btnMapa.addEventListener('click', () => switchTab(btnMapa, tabMapa));
 
-  // Buscador de direcciones en el mapa (Nominatim / Leaflet Integration)
+  // Buscador de direcciones en el mapa (Nominatim)
   const mapSearchInput = document.getElementById('map-search-input');
   findAddress(mapSearchInput);
 }

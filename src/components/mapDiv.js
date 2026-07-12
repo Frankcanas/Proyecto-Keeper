@@ -17,6 +17,12 @@ export const pointer = (map, location) => {
     .addTo(map);
 };
 
+export const pointerTarget = (map, location) => {
+    return new Marker({ color: "#ef4444" }) 
+    .setLngLat(location)
+    .addTo(map);
+};
+
 export const updateMapPosition = (map, marker, location) => {
     marker.setLngLat(location);
     map.flyTo({ center: location, speed: 1.2 });

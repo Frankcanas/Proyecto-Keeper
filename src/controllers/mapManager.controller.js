@@ -3,11 +3,12 @@ import {
     locationDefault,
     geolocator,
 } from '../services/locationService.js';
-import { renderMap, pointer, updateMapPosition, destroyMapInstance } from "../components/mapDiv";
+import { renderMap, pointer, updateMapPosition, destroyMapInstance, pointerTarget } from "../components/mapDiv";
 
 let currentMap = null;
 let currentMarker = null;
 let watchId = null;
+let targetMarker = null;
 
 export async function initMap() {
     let initialCoords;
@@ -64,11 +65,15 @@ export function cleanupMap() {
 }
 
 export function moveToSearchedLocation(lon, lat) {
-    if (currentMap && currentMarker) {
-        // Usamos tus funciones existentes de MapLibre
-        const newCoords = [lon, lat];
-        updateMapPosition(currentMap, currentMarker, newCoords);
-    } else {
+    if (!currentMap) {
         console.warn("El mapa aún no está listo para moverse.");
+        return;
+    }
+    const newCoords = [lon, lat];
+    if (targetMarker) {
+        updateMapPosition(currentMap, targetMarker, newCoords);
+    } else {
+        targetMarker = pointerTarget(currentMap, newCoords);
+        currentMap.flyTo({ center: newCoords, speed: 1.2 });
     }
 }
