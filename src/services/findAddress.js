@@ -11,7 +11,7 @@ export function findAddress(htmlObject) {
             const query = e.target.value.trim();
             if (!query) return;
             try {
-                // 2. Usamos tu método getAll de Axios pasándole los params
+                // LLamamos al servicio de Nominatim para buscar la dirección
                 const data = await nominatimService.getAll("/search", {
                     format: "json",
                     q: query,
@@ -22,7 +22,7 @@ export function findAddress(htmlObject) {
                     const lon = parseFloat(data[0].lon);
                     const shortName = data[0].display_name.split(",")[0];
 
-                    // 3. Alerta de éxito con SweetAlert2
+                    // Alerta de éxito con SweetAlert2
                     Swal.fire({
                         toast: true,
                         position: "top-end",
@@ -36,7 +36,7 @@ export function findAddress(htmlObject) {
                         },
                     });
 
-                    // 4. Volamos a las coordenadas con tu controlador de MapLibre
+                    // Volamos a las coordenadas con tu controlador de MapLibre
                     moveToSearchedLocation(lon, lat);
                 } else {
                     // No se encontró la dirección

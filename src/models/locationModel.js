@@ -1,21 +1,33 @@
 export const locationDefault = [-74.781, 10.968];
 
-export const geolocator = navigator.geolocation
+export const geolocator =
+    typeof navigator !== "undefined"
+        ? navigator.geolocation
+        : null;
+
+const GEO_OPTIONS = {
+    enableHighAccuracy: true,
+    timeout: 10000,
+    maximumAge: 60000,
+};
 
 export function get_location() {
+    if (!geolocator) {
+        return Promise.reject(
+            new Error("La geolocalización no está soportada por este navegador.")
+        );
+    }
+
     return new Promise((resolve, reject) => {
-        if (!geolocator) {
-            reject(new Error("La geolocalización no está soportada por este navegador."));
-        }
         geolocator.getCurrentPosition(
-            (position) => {
+            ({ coords }) => {
                 resolve({
-                    lon: position.coords.longitude,
-                    lat: position.coords.latitude
+                    lon: coords.longitude,
+                    lat: coords.latitude,
                 });
             },
-            (error) => reject(error),
-            { enableHighAccuracy: true, timeout: 8000 }
+            reject,
+            GEO_OPTIONS
         );
     });
 }
