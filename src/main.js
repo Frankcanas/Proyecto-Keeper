@@ -2,17 +2,15 @@ import { inicializarDashboard as initPolicia } from './components/perfilpolicia.
 import { inicializarDashboard as initBomberos } from './components/perfilbomberos.js';
 import { inicializarDashboard as initAmbulancia } from './components/perfilambulancia.js';
 
-// Cargar hoja de estilos general
+
 import './style.css';
 
-/**
- * Renderiza la pantalla de selección de roles (Login Moderno)
- */
+
 function renderizarSeleccionRoles() {
   const app = document.getElementById('app');
   if (!app) return;
 
-  // Modificar fondo del body para el login y selección
+  
   document.body.className = "bg-zinc-950 text-zinc-100 min-h-screen flex items-center justify-center p-4 selection:bg-[#3b82f6] selection:text-white";
 
   app.innerHTML = `
@@ -122,7 +120,7 @@ function renderizarSeleccionRoles() {
     </div>
   `;
 
-  // Enlazar clics de las tarjetas
+  
   const cardPolicia = document.getElementById('card-rol-policia');
   if (cardPolicia) {
     cardPolicia.addEventListener('click', () => {
@@ -145,9 +143,7 @@ function renderizarSeleccionRoles() {
   }
 }
 
-/**
- * Carga el dashboard de Policía
- */
+
 function cargarDashboardPolicia() {
   document.body.className = "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#ff5d00] selection:text-white";
   const app = document.getElementById('app');
@@ -157,9 +153,7 @@ function cargarDashboardPolicia() {
   sobreescribirBotonSalir();
 }
 
-/**
- * Carga el dashboard de Bomberos
- */
+
 function cargarDashboardBomberos() {
   document.body.className = "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#dc2626] selection:text-white";
   const app = document.getElementById('app');
@@ -169,9 +163,7 @@ function cargarDashboardBomberos() {
   sobreescribirBotonSalir();
 }
 
-/**
- * Carga el dashboard de Ambulancia
- */
+
 function cargarDashboardAmbulancia() {
   document.body.className = "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#3b82f6] selection:text-white";
   const app = document.getElementById('app');
@@ -181,47 +173,45 @@ function cargarDashboardAmbulancia() {
   sobreescribirBotonSalir();
 }
 
-/**
- * Intercepta el botón de salida del panel para regresar al selector de roles en lugar de recargar de forma manual
- */
+
 function sobreescribirBotonSalir() {
-  // Configurar gancho global para cuando se confirma la salida
+  
   window.salirAlLogin = () => {
-    // Recarga limpia de la aplicación para liberar mapas y reiniciar estado al selector de roles
+    
     window.location.reload();
   };
 
-  // Como salvaguarda adicional, escuchamos clics en el botón de salida para asegurar la redirección
+  
   const btnSalir = document.getElementById('btn-salir');
   if (btnSalir) {
-    // Añadimos un listener secundario que detecta cuando el usuario aprueba salir en SweetAlert
+    
     btnSalir.addEventListener('click', () => {
-      // Monitoreamos la desaparición del SweetAlert de confirmación exitosa para retornar al login
+      
       const interval = setInterval(() => {
         const swalPopup = document.querySelector('.swal2-popup');
         if (swalPopup && swalPopup.textContent.includes('Sesión Finalizada')) {
           clearInterval(interval);
-          // Cuando se hace clic en el botón de "Aceptar" del SweetAlert de cierre
+          
           const okButton = swalPopup.querySelector('.swal2-confirm');
           if (okButton) {
             okButton.addEventListener('click', () => {
               window.salirAlLogin();
             });
           }
-          // En caso de que se cierre solo o por fuera
+          
           setTimeout(() => {
             window.salirAlLogin();
           }, 3000);
         }
       }, 200);
 
-      // Limpiar intervalo tras 15 segundos en caso de cancelación
+      
       setTimeout(() => clearInterval(interval), 15000);
     });
   }
 }
 
-// Inicialización de la aplicación
+
 document.addEventListener('DOMContentLoaded', () => {
   renderizarSeleccionRoles();
 });

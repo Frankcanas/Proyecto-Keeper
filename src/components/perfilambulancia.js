@@ -1,13 +1,8 @@
 import Swal from 'sweetalert2';
 
-/**
- * ==========================================
- * ESTADO DE DATOS Y CONFIGURACIÓN DEL SISTEMA - AMBULANCIA
- * ==========================================
- * Almacenamiento en memoria para simular una base de datos local de emergencias médicas.
- */
 
-// Información del paramédico logueado (Diseño azul oscuro sólido, sin degradados)
+
+
 const PARAMEDICO_LOGUEADO = {
   nombre: "Javier A. Ortega Ruiz",
   rango: "Paramédico de Emergencias",
@@ -16,10 +11,10 @@ const PARAMEDICO_LOGUEADO = {
   division: "Atención Prehospitalaria y Trauma",
   tipoSangre: "O+",
   estado: "Online",
-  fotoUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=256&h=256" // Foto tipo credencial médica
+  fotoUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=256&h=256" 
 };
 
-// Datos Mock Locales (Se usarán por defecto o en caso de que falle la API)
+
 const REPORTES_MOCK = [
   {
     id: 1,
@@ -32,12 +27,12 @@ const REPORTES_MOCK = [
     zona: 'Zona Centro',
     lat: 4.6540,
     lng: -74.0950,
-    fecha: new Date(Date.now() - 3 * 60 * 1000), // Hace 3 minutos
+    fecha: new Date(Date.now() - 3 * 60 * 1000), 
     gravedad: 'Alta',
     estadoCaso: 'Caso cerrado',
-    accionPolicia: 'Carlos Restrepo', // Paramédico que ejecutó la última acción
+    accionPolicia: 'Carlos Restrepo', 
     evidencia: true,
-    fotoEvidencia: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&q=80&w=600', // Foto de la escena del accidente
+    fotoEvidencia: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&q=80&w=600', 
     ciudadano: {
       id: 'CC 1.018.472.938',
       nombre: 'Diana Patricia Cruz Medina',
@@ -56,12 +51,12 @@ const REPORTES_MOCK = [
     zona: 'Zona Centro',
     lat: 4.5980,
     lng: -74.0930,
-    fecha: new Date(Date.now() - 17 * 60 * 1000), // Hace 17 minutos
+    fecha: new Date(Date.now() - 17 * 60 * 1000), 
     gravedad: 'Alta',
     estadoCaso: 'En revisión',
     accionPolicia: '—',
     evidencia: true,
-    fotoEvidencia: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&q=80&w=600', // Foto de monitor de signos vitales
+    fotoEvidencia: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&q=80&w=600', 
     ciudadano: {
       id: 'CC 79.847.291',
       nombre: 'Luis Alberto Morales Gómez',
@@ -80,7 +75,7 @@ const REPORTES_MOCK = [
     zona: 'Zona Norte',
     lat: 4.6860,
     lng: -74.0480,
-    fecha: new Date(Date.now() - 48 * 60 * 1000), // Hace 48 minutos
+    fecha: new Date(Date.now() - 48 * 60 * 1000), 
     gravedad: 'Alta',
     estadoCaso: 'Caso cerrado',
     accionPolicia: '—',
@@ -104,12 +99,12 @@ const REPORTES_MOCK = [
     zona: 'Zona Centro',
     lat: 4.6010,
     lng: -74.0720,
-    fecha: new Date(Date.now() - 150 * 60 * 1000), // Hace 2.5 horas
+    fecha: new Date(Date.now() - 150 * 60 * 1000), 
     gravedad: 'Alta',
     estadoCaso: 'En revisión',
     accionPolicia: '—',
     evidencia: true,
-    fotoEvidencia: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80&w=600', // Foto de la cerradura rota
+    fotoEvidencia: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80&w=600', 
     ciudadano: {
       id: 'CC 52.987.342',
       nombre: 'Sandra Milena Rojas Soto',
@@ -128,12 +123,12 @@ const REPORTES_MOCK = [
     zona: 'Zona Norte',
     lat: 4.6670,
     lng: -74.0550,
-    fecha: new Date(Date.now() - 12 * 24 * 3600 * 1000), // Hace 12 días
+    fecha: new Date(Date.now() - 12 * 24 * 3600 * 1000), 
     gravedad: 'Media',
     estadoCaso: 'visto',
     accionPolicia: '—',
     evidencia: true,
-    fotoEvidencia: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&q=80&w=600', // Foto del andamio
+    fotoEvidencia: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&q=80&w=600', 
     ciudadano: {
       id: 'CC 80.124.957',
       nombre: 'Andrés Felipe Restrepo Prada',
@@ -152,7 +147,7 @@ const REPORTES_MOCK = [
     zona: 'Zona Norte',
     lat: 4.7010,
     lng: -74.0750,
-    fecha: new Date(Date.now() - 25 * 24 * 3600 * 1000), // Hace 25 días
+    fecha: new Date(Date.now() - 25 * 24 * 3600 * 1000), 
     gravedad: 'Media',
     estadoCaso: 'Pendiente',
     accionPolicia: '—',
@@ -176,12 +171,12 @@ const REPORTES_MOCK = [
     zona: 'Zona Norte',
     lat: 4.6650,
     lng: -74.0580,
-    fecha: new Date(Date.now() - 28 * 24 * 3600 * 1000), // Hace 28 días
+    fecha: new Date(Date.now() - 28 * 24 * 3600 * 1000), 
     gravedad: 'Media',
     estadoCaso: 'En revisión',
     accionPolicia: '—',
     evidencia: true,
-    fotoEvidencia: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=600', // Foto de insumos de primeros auxilios
+    fotoEvidencia: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=600', 
     ciudadano: {
       id: 'CC 1.020.448.917',
       nombre: 'Juan Camilo Herrera Rojas',
@@ -191,60 +186,41 @@ const REPORTES_MOCK = [
   }
 ];
 
-// Variable global donde se almacenan los reportes activos
+
 let reportes = [];
 
-// Función para cargar los reportes (Desde API o fallback local)
-async function cargarReportesDesdeAPI() {
-  // --- CONFIGURACIÓN DE API EXTERNA ---
-  // Para consumir una API real en el futuro, descomenta las siguientes líneas y ajusta la URL:
-  /*
-  try {
-    const respuesta = await fetch('https://api.tu-servidor.com/v1/ambulancias/reportes');
-    if (!respuesta.ok) throw new Error('Error al consultar la API de reportes');
-    const datos = await respuesta.json();
-    
-    // Mapear fechas a objetos Date reales si vienen como strings ISO
-    reportes = datos.map(r => ({
-      ...r,
-      fecha: new Date(r.fecha)
-    }));
-    return;
-  } catch (error) {
-    console.error("Error consumiendo la API de Ambulancias, cargando datos locales (Mock):", error);
-  }
-  */
 
-  // Por defecto consumimos los datos locales (Mock)
+async function cargarReportesDesdeAPI() {
+  
+  
+  
+
+  
   reportes = REPORTES_MOCK.map(r => ({
     ...r,
     fecha: r.fecha instanceof Date ? r.fecha : new Date(r.fecha)
   }));
 }
 
-// Instancia global del mapa interactivo
+
 let mapInstance = null;
 let mapMarkers = [];
 
-// Vista/Categoría activa de navegación ('Estadisticas', 'Historial', 'Mapa')
-let tabActivo = 'Estadisticas'; // 'Estadisticas' por defecto
 
-// Filtros para la pantalla detallada de Historial
+let tabActivo = 'Estadisticas'; 
+
+
 let filtroHistorialTiempo = 'todo';
 let filtroHistorialCategoria = 'todos';
 let ordenHistorialGravedad = 'fecha-desc';
 
-// Filtro de tiempo para la pantalla de Estadísticas
+
 let filtroEstadisticasTiempo = '3dias';
 
-// Caso que se está editando en el modal completo
+
 let casoModalId = null;
 
-/**
- * ==========================================
- * VISTA PRINCIPAL (LAYOUT CON SOLAMENTE ESTADÍSTICAS E HISTORIAL)
- * ==========================================
- */
+
 export async function inicializarDashboard() {
   const app = document.getElementById('app');
   if (!app) return;
@@ -693,7 +669,7 @@ export async function inicializarDashboard() {
     </div>
   `;
 
-  // Inicializar sub-módulos lógicos
+  
   inicializarMapaVea();
   actualizarEstadisticasVisuales();
   renderizarTablaHistorial();
@@ -702,11 +678,7 @@ export async function inicializarDashboard() {
   enlazarEventosAcciones();
 }
 
-/**
- * ==========================================
- * SISTEMA MAPA INTERACTIVO (LEAFLET)
- * ==========================================
- */
+
 function inicializarMapaVea() {
   if (typeof L === 'undefined') {
     document.getElementById('map').innerHTML = `
@@ -721,7 +693,7 @@ function inicializarMapaVea() {
     return;
   }
 
-  // Eliminar cualquier instancia activa de mapa para evitar conflictos de Leaflet en el contenedor
+  
   if (window.currentMapInstance) {
     try {
       window.currentMapInstance.remove();
@@ -746,43 +718,20 @@ function inicializarMapaVea() {
     position: 'bottomleft'
   }).addTo(mapInstance);
 
-  // === CONSUMO DE API DE MAPA DESACTIVADO ===
-  // Para consumir un mapa base externo (como CARTO, Mapbox o Google Maps),
-  // descomente una de las siguientes opciones según la API que seleccione:
   
-  /*
-  // Opción A: API de Mapas CARTO / OpenStreetMap (Gratuito, sin clave de API)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    subdomains: 'abcd',
-    maxZoom: 20
-  }).addTo(mapInstance);
-  */
+  
+  
+  
+  
 
-  /*
-  // Opción B: API de Mapbox (Requiere Token de Acceso de Mapbox)
-  L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: '&copy; Mapbox',
-    maxZoom: 18,
-    id: 'mapbox/dark-v11',
-    accessToken: 'TU_MAPBOX_ACCESS_TOKEN_AQUÍ'
-  }).addTo(mapInstance);
-  */
   
-  /*
-  // Opción C: Google Maps Tiles API (Vía Leaflet)
-  L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-    attribution: '&copy; Google Maps',
-    maxZoom: 20
-  }).addTo(mapInstance);
-  */
+  
+  
 
   actualizarMarcadoresEnMapa();
 }
 
-/**
- * Pinta los marcadores de incidentes en el mapa
- */
+
 function actualizarMarcadoresEnMapa() {
   if (!mapInstance) return;
 
@@ -830,11 +779,7 @@ function actualizarMarcadoresEnMapa() {
   });
 }
 
-/**
- * ==========================================
- * CALCULADORA DINÁMICA DE ESTADÍSTICAS
- * ==========================================
- */
+
 function actualizarEstadisticasVisuales() {
   const activeValEl = document.getElementById('val-incidentes-activos');
   if (!activeValEl) return;
@@ -899,11 +844,7 @@ function actualizarEstadisticasVisuales() {
   }
 }
 
-/**
- * ==========================================
- * LISTAS Y ALERTAS RECIENTES (MAPA)
- * ==========================================
- */
+
 function renderizarAlertasRecientes() {
   const contenedorListado = document.getElementById('lista-alertas-recientes');
   const contadorAlertas = document.getElementById('contador-alertas');
@@ -972,13 +913,9 @@ function renderizarAlertasRecientes() {
   });
 }
 
-/**
- * ==========================================
- * RENDERS DE TABLAS
- * ==========================================
- */
 
-// 1. Render de la Cola de Moderación Rápida
+
+
 function renderizarTablaModeracion() {
   const tbody = document.getElementById('tabla-moderacion-cuerpo');
   if (!tbody) return;
@@ -1046,7 +983,7 @@ function renderizarTablaModeracion() {
   });
 }
 
-// 2. Render de la Tabla de Historial Completo
+
 function renderizarTablaHistorial() {
   const tbody = document.getElementById('tabla-reportes-cuerpo');
   const histContadorTotal = document.getElementById('hist-contador-total');
@@ -1070,7 +1007,7 @@ function renderizarTablaHistorial() {
   }
 
   tbody.innerHTML = filtrados.map(rep => {
-    // Definir los estilos de los tags sin emojis según el tipo de urgencia de ambulancias
+    
     let badgeTipoClase = 'bg-zinc-100 text-zinc-700 border-zinc-200';
     if (rep.tipo === 'Accidente de Tránsito') {
       badgeTipoClase = 'bg-blue-50 text-blue-700 border-blue-200';
@@ -1080,7 +1017,7 @@ function renderizarTablaHistorial() {
       badgeTipoClase = 'bg-amber-50 text-amber-700 border-amber-200';
     }
 
-    // Select HTML inline para la columna ESTADO
+    
     let colorSelectClass = 'bg-[#fffbeb] text-amber-800 border-amber-200';
     if (rep.estadoCaso === 'Caso cerrado' || rep.estadoCaso === 'Completado') {
       colorSelectClass = 'bg-[#f0fdf4] text-emerald-800 border-[#bbf7d0]';
@@ -1106,10 +1043,10 @@ function renderizarTablaHistorial() {
       </div>
     `;
 
-    // ACCIONES (Muestra el nombre del paramédico que modifique el estado)
+    
     const accionTexto = rep.accionPolicia || '—';
 
-    // EVIDENCIAS (Visualizar imagen obligatoria de reporte)
+    
     let evidenciaHtml = '<span class="text-zinc-300 font-mono">—</span>';
     if (rep.evidencia && rep.fotoEvidencia) {
       evidenciaHtml = `<button data-id="${rep.id}" class="btn-ver-evidencia text-[#3b82f6] hover:text-[#1d4ed8] font-bold text-xs cursor-pointer bg-transparent border-none p-0">Ver adjunto</button>`;
@@ -1127,7 +1064,7 @@ function renderizarTablaHistorial() {
       tiempoTexto = `Hace ${minutes} min`;
     }
 
-    // Estructura de fila: ID | TIPO | DESCRIPCIÓN | UBICACIÓN | FECHA | ESTADO (Select) | ACCIÓN | EVIDENCIA
+    
     return `
       <tr class="hover:bg-zinc-50/50 transition-colors">
         <td class="px-5 py-3.5 text-xs font-bold text-zinc-950 font-mono tracking-tight">${rep.kpId}</td>
@@ -1158,7 +1095,7 @@ function renderizarTablaHistorial() {
     `;
   }).join('');
 
-  // Vincular cambio dinámico de estado en los select de la tabla
+  
   document.querySelectorAll('.select-estado-inline-hist').forEach(select => {
     select.addEventListener('change', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
@@ -1167,7 +1104,7 @@ function renderizarTablaHistorial() {
     });
   });
 
-  // Vincular clic de "Ver adjunto" para el modal de evidencia
+  
   document.querySelectorAll('.btn-ver-evidencia').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.currentTarget.getAttribute('data-id'));
@@ -1176,9 +1113,7 @@ function renderizarTablaHistorial() {
   });
 }
 
-/**
- * LÓGICA DE FILTRADO PARA HISTORIAL
- */
+
 function obtenerReportesHistorialFiltrados() {
   const ahora = new Date();
 
@@ -1191,11 +1126,11 @@ function obtenerReportesHistorialFiltrados() {
     const diasTranscurridos = msDiferencia / (1000 * 60 * 60 * 24);
 
     if (filtroHistorialTiempo === 'dia') {
-      return diasTranscurridos <= 1; // Hoy
+      return diasTranscurridos <= 1; 
     } else if (filtroHistorialTiempo === 'semana') {
-      return diasTranscurridos <= 14; // 2 semanas
+      return diasTranscurridos <= 14; 
     } else if (filtroHistorialTiempo === 'mes') {
-      return diasTranscurridos <= 30; // 30 días
+      return diasTranscurridos <= 30; 
     }
 
     return true;
@@ -1215,9 +1150,7 @@ function obtenerReportesHistorialFiltrados() {
   });
 }
 
-/**
- * Actualiza el estado de un reporte en memoria y registra al paramédico responsable
- */
+
 function actualizarEstadoCasoDirecto(id, nuevoEstado) {
   const caso = reportes.find(r => r.id === id);
   if (!caso) return;
@@ -1225,7 +1158,7 @@ function actualizarEstadoCasoDirecto(id, nuevoEstado) {
   caso.estadoCaso = nuevoEstado;
   
   if (nuevoEstado !== 'Pendiente') {
-    caso.accionPolicia = PARAMEDICO_LOGUEADO.nombre; // Registra a Javier A. Ortega Ruiz
+    caso.accionPolicia = PARAMEDICO_LOGUEADO.nombre; 
   } else {
     caso.accionPolicia = '—';
   }
@@ -1250,9 +1183,7 @@ function actualizarEstadoCasoDirecto(id, nuevoEstado) {
   actualizarMarcadoresEnMapa();
 }
 
-/**
- * Abre el modal de visualización de evidencia (Solo imagen, sin botones de publicación)
- */
+
 function abrirModalEvidencia(id) {
   const caso = reportes.find(r => r.id === id);
   if (!caso) return;
@@ -1279,9 +1210,7 @@ function abrirModalEvidencia(id) {
   }
 }
 
-/**
- * Cierra el modal de evidencia
- */
+
 function cerrarModalEvidencia() {
   const modal = document.getElementById('modal-detalle-caso');
   if (modal) {
@@ -1292,14 +1221,10 @@ function cerrarModalEvidencia() {
   casoModalId = null;
 }
 
-/**
- * ==========================================
- * MANEJO DE EVENTOS, ACCIONES Y MODAL
- * ==========================================
- */
+
 function enlazarEventosAcciones() {
   
-  // NAVEGACIÓN EN SIDEBAR
+  
   const navItems = document.querySelectorAll('#sidebar-navigation .nav-item');
   navItems.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -1348,7 +1273,7 @@ function enlazarEventosAcciones() {
     });
   });
 
-  // Enlace desde la Cola de Moderación ("Ver todo el historial")
+  
   const linkVerHistorial = document.getElementById('btn-ver-todo-historial');
   if (linkVerHistorial) {
     linkVerHistorial.addEventListener('click', () => {
@@ -1359,7 +1284,7 @@ function enlazarEventosAcciones() {
     });
   }
 
-  // FILTROS EN LA PANTALLA DE ESTADÍSTICAS
+  
   const selectEstTiempo = document.getElementById('est-filtro-tiempo');
   if (selectEstTiempo) {
     selectEstTiempo.addEventListener('change', (e) => {
@@ -1368,7 +1293,7 @@ function enlazarEventosAcciones() {
     });
   }
 
-  // BOTÓN EXPORTAR REPORTE
+  
   const btnExportar = document.getElementById('btn-exportar');
   if (btnExportar) {
     btnExportar.addEventListener('click', () => {
@@ -1399,7 +1324,7 @@ function enlazarEventosAcciones() {
     });
   }
 
-  // FILTROS EN LA PANTALLA DE HISTORIAL (TABLA)
+  
   const selectHistCat = document.getElementById('hist-filtro-categoria');
   if (selectHistCat) {
     selectHistCat.addEventListener('change', (e) => {
@@ -1424,7 +1349,7 @@ function enlazarEventosAcciones() {
     });
   }
 
-  // CERRAR MODAL EDICIÓN COMPLETO
+  
   const btnCerrarModal = document.getElementById('btn-cerrar-modal');
   const btnCancelarModal = document.getElementById('btn-cerrar-modal-accion');
   if (btnCerrarModal) btnCerrarModal.addEventListener('click', cerrarModalEvidencia);
@@ -1439,7 +1364,7 @@ function enlazarEventosAcciones() {
     });
   }
 
-  // Botón Salir de Panel
+  
   const btnSalir = document.getElementById('btn-salir');
   if (btnSalir) {
     btnSalir.addEventListener('click', () => {
@@ -1476,11 +1401,7 @@ function enlazarEventosAcciones() {
   }
 }
 
-/**
- * ==========================================
- * MÉTODOS DE SOPORTE E HILOS DE TIEMPO
- * ==========================================
- */
+
 function formatearFechaHumana(fecha) {
   const coderAhora = new Date();
   const diffMs = coderAhora - fecha;
