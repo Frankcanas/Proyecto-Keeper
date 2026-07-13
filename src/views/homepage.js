@@ -71,7 +71,7 @@ export function renderHomepage() {
                 <div class="relative flex-1 rounded-md border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
                   
                   <!-- ID para la inserción del mapa real en el homepage -->
-                  <div id="homepage-map-container" class="absolute inset-0 z-0">
+                  <div id="map" class="absolute inset-0 z-0 h-full">
                     <!-- Imagen SVG de calles como placeholder de fondo del mapa -->
                     <div class="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,_#27272a_1px,_transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
                     <svg viewBox="0 0 700 480" class="w-full h-full stroke-orange-500/10 fill-none pointer-events-none" stroke-width="1.5">
@@ -87,7 +87,7 @@ export function renderHomepage() {
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div class="bg-zinc-900/90 border border-zinc-800 rounded p-4 text-center max-w-xs">
                         <p class="text-[10px] font-bold text-white uppercase tracking-wider mb-1">Mapa del Vecindario</p>
-                        <p class="text-[9px] text-zinc-400">Contenedor listo con ID <code class="text-orange-400">#homepage-map-container</code>.</p>
+                        <p class="text-[9px] text-zinc-400">Contenedor listo con ID <code class="text-orange-400">#map</code>.</p>
                       </div>
                     </div>
                   </div>
@@ -757,6 +757,7 @@ export function initHomepage() {
   const contentContactos = document.getElementById(
     "homepage-content-contactos",
   );
+  const map = document.getElementById("map");
 
   // Inicializar renderizado de tablas
   renderContactosTable();

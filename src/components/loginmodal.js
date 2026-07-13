@@ -77,7 +77,7 @@ export function initLoginModal(buttonId, onSuccess) {
           }
         }).then(() => {
           if (typeof onSuccess === 'function') {
-            onSuccess();
+            onSuccess(result.value);
           }
         });
       }
