@@ -77,7 +77,7 @@ export function initReportModal(buttonId, onSubmitCallback) {
                 cancelButton:
                     "w-full mt-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-755 text-xs font-semibold py-2 rounded transition-colors text-center",
             },
-            didOpen: () => {
+            didOpen: async() => {
                 const dropzone = document.getElementById("dropzone");
                 const fileInput = document.getElementById("report-files");
                 const filesList = document.getElementById("files-list");
