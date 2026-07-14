@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// 1. Tu creador de Axios
+// Tu creador de Axios
 export const createApiClient = (url) =>
     axios.create({
         baseURL: url,
@@ -8,7 +8,7 @@ export const createApiClient = (url) =>
         headers: { "Content-Type": "application/json" },
     });
 
-// 2. El generador del CRUD
+// El generador del CRUD
 export const createCrudService = (apiClient) => {
     return {
         /**
@@ -52,6 +52,12 @@ export const createCrudService = (apiClient) => {
             return response.data;
         },
 
+        /**
+         * Actualiza un registro completamente (PUT)
+         * @param {string} path - La ruta específica
+         * @param {string|number} id - El identificador del registro
+         * @param {object} data - Los datos a actualizar
+         */
         putData: async (path, id, data) => {
             const response = await apiClient.put(`${path}/${id}`, data);
             return response.data;
