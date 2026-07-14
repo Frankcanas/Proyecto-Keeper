@@ -269,7 +269,7 @@ export function renderFeed() {
               </div>
 
               <!-- Map Container -->
-              <div class="relative w-full h-[600px] rounded-lg border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
+              <div id="map" class="relative w-full h-[600px] rounded-lg border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
                 
                 <!-- ID para la inserción del mapa real -->
                 <div id="feed-map-container" class="absolute inset-0 z-0">

@@ -59,7 +59,7 @@ async function renderFeedPage() {
     // Conectar botón Salir del panel
     document
         .getElementById("feed-btn-logout")
-        ?.addEventListener("click", () => {
+        ?.addEventListener("click", async() => {
             Swal.fire({
                 title: '¿Confirmar Salida?',
                 text: '¿Estás seguro que deseas cerrar sesión?',
@@ -102,7 +102,7 @@ async function renderHomepagePage() {
     // Conectar botón Salir del panel
     document
         .getElementById("homepage-btn-logout")
-        ?.addEventListener("click", () => {
+        ?.addEventListener("click", async() => {
             Swal.fire({
                 title: '¿Confirmar Salida?',
                 text: '¿Estás seguro que deseas cerrar sesión?',
