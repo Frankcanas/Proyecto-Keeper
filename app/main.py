@@ -1,11 +1,28 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.config.db_config import get_db_connection
 
 app = FastAPI(
     title="KeepeR API",
     description="Backend para el sistema de reportes y alertas comunitarias",
     version="1.0.0"
 )
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        # Hacemos la prueba rápida al arrancar
+        conn = get_db_connection()
+        conn.close()  # cerramos de inmediato tras verificar que sirve
+        print("✅ Conexión verificada exitosamente al iniciar.")
+        yield  # Aquí corre la app
+    except Exception as e:
+        print(f"❌ Error al conectar a la base de datos: {e}")
+        raise e
+    
+    print("🛑 Servidor KeepeR apagado.")
 
 # Configuración de CORS para que el frontend pueda conectarse
 app.add_middleware(
