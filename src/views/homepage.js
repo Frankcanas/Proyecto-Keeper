@@ -1,6 +1,7 @@
 import { renderSidebar } from "./sidebar.js";
 import  {openLugarFormModal} from "../components/lugaresmodal.js";
 import Swal from "sweetalert2";
+import { findAddress } from "../services/findAddress.js";
 
 let listContactos = [
   {
@@ -58,10 +59,28 @@ export function renderHomepage() {
   return `
     <section class="min-h-screen bg-slate-100 text-slate-900 font-sans">
       <div class="flex min-h-screen flex-col lg:flex-row">
+        <!-- Backdrop para móvil -->
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity duration-300"></div>
+
         ${renderSidebar()}
         
-        <main class="flex-1 p-3 sm:p-4 lg:p-6">
-          <div class="mx-auto flex h-full max-w-7xl flex-col overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_30px_90px_-30px_rgba(15,23,42,0.45)]">
+        <!-- Contenedor del contenido principal + Header Móvil -->
+        <div class="flex-1 flex flex-col min-w-0">
+          <!-- Header Móvil -->
+          <header class="w-full bg-[#09090b] text-white px-6 py-4 flex items-center justify-between lg:hidden border-b border-zinc-850 shrink-0 select-none">
+            <div class="flex items-center gap-3">
+              <div class="bg-[#ea580c] text-white p-1 rounded font-bold w-8 h-8 flex items-center justify-center text-sm">K</div>
+              <span class="text-sm font-bold tracking-tight mt-0.5">keepeR</span>
+            </div>
+            <button id="btn-toggle-sidebar" class="p-1.5 hover:bg-zinc-900 rounded transition-colors text-zinc-400 hover:text-white focus:outline-none">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </header>
+
+          <main class="flex-1 p-3 sm:p-4 lg:p-6 overflow-y-auto">
+          <div class="w-full flex h-full flex-col overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_30px_90px_-30px_rgba(15,23,42,0.45)]">
             
             <!-- CONTENIDO TAB: INICIO (El mapa y alertas de la página de inicio) -->
             <div id="homepage-content-inicio" class="grid flex-1 lg:grid-cols-[1.45fr_0.75fr] bg-[#f9fafb]">
@@ -92,6 +111,16 @@ export function renderHomepage() {
                     </div>
                   </div>
 
+                  <!-- Buscador de Direcciones Nominatim (Estilo Luigi/Luis) -->
+                  <div class="absolute top-4 left-4 z-10 w-72 md:w-96">
+                    <div class="relative w-full shadow-md">
+                      <input id="map-search-input" type="text" placeholder="Buscar dirección o cuadrante..." class="w-full pl-9 pr-4 py-2 border border-zinc-200 bg-white text-zinc-800 rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent placeholder-zinc-400">
+                      <svg class="h-3.5 w-3.5 text-zinc-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                  </div>
+
                   <!-- HUD: Indicador de conexión live -->
                   <div class="absolute bottom-4 left-4 z-10 bg-zinc-950/90 border border-zinc-850 rounded px-2.5 py-1 flex items-center gap-2 text-white shadow-md backdrop-blur-sm">
                     <span class="relative flex h-1.5 w-1.5">
@@ -101,17 +130,7 @@ export function renderHomepage() {
                     <span class="text-[9px] font-bold tracking-wide uppercase text-zinc-400">GPS Live</span>
                   </div>
 
-                  <!-- HUD: Ruta segura e incidentes -->
-                  <div class="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-none">
-                    <div class="bg-zinc-950/95 border border-zinc-850 rounded p-3 text-white shadow-md backdrop-blur-sm w-44">
-                      <p class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold">Ruta Protegida</p>
-                      <p class="text-xs font-semibold text-zinc-100 mt-1">Parque Central</p>
-                    </div>
-                    <div class="bg-zinc-950/95 border border-zinc-850 rounded p-3 text-white shadow-md backdrop-blur-sm w-44">
-                      <p class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold">Estado del Sector</p>
-                      <p class="text-xs font-semibold text-orange-500 mt-1">2 Alertas Activas</p>
-                    </div>
-                  </div>
+
 
                   <!-- Botón SOS Flotante (Arriba Derecha) -->
                   <div class="absolute top-4 right-4 z-10">
@@ -281,6 +300,7 @@ export function renderHomepage() {
 
           </div>
         </main>
+        </div>
       </div>
     </section>
   `;
@@ -854,5 +874,11 @@ export function initHomepage() {
     btnContactos.addEventListener("click", () =>
       switchTab(btnContactos, contentContactos),
     );
+
+  // Buscador de direcciones Nominatim
+  const mapSearchInput = document.getElementById('map-search-input');
+  if (mapSearchInput) {
+    findAddress(mapSearchInput);
+  }
 }
 

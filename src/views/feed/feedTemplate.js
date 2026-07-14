@@ -4,10 +4,28 @@ export function renderFeed() {
   return `
     <section class="min-h-screen bg-[#f9fafb] text-zinc-900 font-sans">
       <div class="flex min-h-screen flex-col lg:flex-row">
+        <!-- Backdrop para móvil -->
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity duration-300"></div>
+
         ${renderFeedSidebar()}
 
-        <main class="flex-1 p-6 lg:p-8">
-          <div class="mx-auto max-w-7xl">
+        <!-- Contenedor del contenido principal + Header Móvil -->
+        <div class="flex-1 flex flex-col min-w-0">
+          <!-- Header Móvil -->
+          <header class="w-full bg-[#09090b] text-white px-6 py-4 flex items-center justify-between lg:hidden border-b border-zinc-850 shrink-0 select-none">
+            <div class="flex items-center gap-3">
+              <div class="bg-[#ea580c] text-white p-1 rounded font-bold w-8 h-8 flex items-center justify-center text-sm">K</div>
+              <span class="text-sm font-bold tracking-tight mt-0.5">keepeR</span>
+            </div>
+            <button id="btn-toggle-sidebar" class="p-1.5 hover:bg-zinc-900 rounded transition-colors text-zinc-400 hover:text-white focus:outline-none">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </header>
+
+          <main class="flex-1 p-6 lg:p-8 overflow-y-auto">
+          <div class="w-full">
             
             <!-- CONTENIDO TAB: ESTADÍSTICAS (El feed que tenemos actualmente) -->
             <div id="tab-content-estadisticas" class="hidden space-y-6">
@@ -338,6 +356,7 @@ export function renderFeed() {
 
           </div>
         </main>
+        </div>
       </div>
     </section>
   `;

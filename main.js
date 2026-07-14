@@ -1,5 +1,6 @@
 // Importamos los estilos globales de Tailwind
 import "./style.css";
+import Swal from "sweetalert2";
 
 // Importamos los componentes modales
 import { initRegisterModal } from "./src/components/registermodal.js";
@@ -41,8 +42,12 @@ function handleLoginSuccess(loginData) {
         cargarDashboardBomberos();
     } else if (email.includes('ambulancia')) {
         cargarDashboardAmbulancia();
-    } else {
+    } else if (email.includes('admin') || email.includes('administrador')) {
         renderFeedPage();
+    } else if (email.includes('usuario') || email.includes('user') || email.includes('luis') || email.includes('luigi')) {
+        renderHomepagePage();
+    } else {
+        renderHomepagePage();
     }
 }
 
@@ -54,9 +59,25 @@ async function renderFeedPage() {
     // Conectar botón Salir del panel
     document
         .getElementById("feed-btn-logout")
-        ?.addEventListener("click", async() => {
-            await cleanupMap();
-            renderLandingPagePage();
+        ?.addEventListener("click", () => {
+            Swal.fire({
+                title: '¿Confirmar Salida?',
+                text: '¿Estás seguro que deseas cerrar sesión?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, salir',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#ea580c',
+                cancelButtonColor: '#71717a',
+                customClass: {
+                    popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs'
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await cleanupMap();
+                    window.location.reload();
+                }
+            });
         });
     //Integracion del mapa
     await initMap();
@@ -81,9 +102,25 @@ async function renderHomepagePage() {
     // Conectar botón Salir del panel
     document
         .getElementById("homepage-btn-logout")
-        ?.addEventListener("click", async () => {
-            await cleanupMap();
-            renderLandingPagePage();
+        ?.addEventListener("click", () => {
+            Swal.fire({
+                title: '¿Confirmar Salida?',
+                text: '¿Estás seguro que deseas cerrar sesión?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, salir',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#ea580c',
+                cancelButtonColor: '#71717a',
+                customClass: {
+                    popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs'
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await cleanupMap();
+                    window.location.reload();
+                }
+            });
         });
 }
 
@@ -115,12 +152,6 @@ function renderLandingPagePage() {
             });
         });
     }
-
-    document
-        .getElementById("btn-preview-homepage")
-        ?.addEventListener("click", async () => {
-            await renderHomepagePage();
-        });
 }
 
 // Funciones para cargar los dashboards del perfil de Victoria
@@ -188,4 +219,42 @@ function sobreescribirBotonSalir() {
 // Inicializamos la aplicación y conectamos los eventos
 document.addEventListener("DOMContentLoaded", () => {
     renderLandingPagePage();
+});
+
+// Listener global para toggles del sidebar (menú hamburguesa móvil) en todos los perfiles
+document.addEventListener('click', (e) => {
+    // Abrir sidebar
+    if (e.target.closest('#btn-toggle-sidebar')) {
+        const sidebar = document.getElementById('sidebar-aside');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        if (sidebar && backdrop) {
+            sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('translate-x-0');
+            backdrop.classList.remove('hidden');
+        }
+    }
+    
+    // Cerrar sidebar (clic en botón X o clic fuera en el backdrop)
+    if (e.target.closest('#btn-close-sidebar') || e.target.id === 'sidebar-backdrop') {
+        const sidebar = document.getElementById('sidebar-aside');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        if (sidebar && backdrop) {
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+            backdrop.classList.add('hidden');
+        }
+    }
+
+    // Auto-cerrar sidebar al cambiar de pestaña en celulares
+    if (e.target.closest('.nav-item') || e.target.closest('.sidebar-nav-btn') || e.target.closest('.homepage-nav-btn')) {
+        if (window.innerWidth < 1024) {
+            const sidebar = document.getElementById('sidebar-aside');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (sidebar && backdrop) {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+                backdrop.classList.add('hidden');
+            }
+        }
+    }
 });

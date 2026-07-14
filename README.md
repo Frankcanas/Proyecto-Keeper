@@ -1,99 +1,143 @@
-# Proyecto Keeper 
+# 🛡️ keepeR - Plataforma Unificada de Seguridad Ciudadana y Vecinal
 
-**Keeper** es una plataforma colaborativa de seguridad ciudadana y vecinal en tiempo real. Está diseñada para conectar a los miembros de la comunidad, permitiendo reportar incidentes, gestionar roles de seguridad (como Bomberos, Policía y Ambulancia) y visualizar la actividad del cuadrante mediante mapas interactivos y métricas analíticas.
+¡Bienvenidos a **keepeR**! Este proyecto es el resultado de la integración y unificación de diferentes consolas de control y perfiles de seguridad en una sola plataforma interactiva, rápida y adaptable. Está diseñada para conectar a la comunidad y permitir tanto a los vecinos (usuarios) como a las fuerzas de emergencia del sector (**Policía, Bomberos y Ambulancias**) reportar incidentes, gestionar cuadrantes y coordinar acciones de manera inmediata.
 
-Este proyecto está construido como una Aplicación de una Sola Página (SPA) utilizando tecnologías frontend modernas como **Vite**, **Tailwind CSS**, y **SweetAlert2**.
+Está construido como una **Aplicación de una Sola Página (SPA)** modular y de alto rendimiento usando tecnologías modernas.
+
+##  Características Clave del Proyecto
+
+1. **Multi-perfil Integrado:** Una sola pantalla de inicio de sesión da acceso a los 5 paneles de control específicos del sistema:
+   * ** Policía:** Monitoreo de cuadrante, historial detallado de crímenes y gestión de patrullas.
+   * ** Bomberos:** Despacho ante incendios, materiales peligrosos y emergencias estructurales.
+   * ** Ambulancia:** Panel de urgencias médicas y control de traslados a centros de salud.
+   * ** Administrador:** Panel integral (Feed) con control de usuarios, moderación de reportes y exportación en PDF.
+   * ** (Usuario):** Panel de reporte ciudadano rápido, botón de pánico SOS y mapa de alertas activas.
+2. **Buscador de Direcciones Nominatim:** Integrado en los mapas de todos los perfiles, permitiendo buscar direcciones o cuadrantes directamente en tiempo real.
+3. **Diseño Líquido Responsivo (Mobile & TV Ready):** Eliminamos los límites de ancho fijo (`max-w`). Toda la interfaz se expande al 100% de pantalla, por lo que es perfecta tanto para el celular como para pantallas grandes o **televisores de monitoreo** en centros de comando.
+4. **Alertas de Cierre Unificadas:** Los flujos de salida de todos los perfiles se han unificado y estilizado para garantizar una experiencia consistente y segura al cerrar sesión.
 
 ---
 
-##  Estructura del Proyecto y Carpetas
+##  Estructura del Código y Organización
 
-A continuación se detalla el propósito y contenido de cada directorio en la rama actual (`feacture/lead-frontend-luigi`):
+Organizamos el proyecto de forma modular para evitar archivos masivos y facilitar el mantenimiento de la aplicación:
 
 ```bash
-Proyecto-Keeper/
-├── dist/                 # Carpeta autogenerada para producción (Vite build)
-├── node_modules/         # Dependencias de Node.js
-├── public/               # Archivos estáticos públicos no procesados por Vite
-│   └── favicon.png       # Icono de la pestaña del navegador
-├── src/                  # Directorio con el código fuente del proyecto
-│   ├── assets/           # Imágenes y recursos estáticos multimedia
-│   ├── components/       # Modales interactivos (SweetAlert2) reutilizables
-│   └── views/            # Vistas principales de la aplicación (SPA)
-│       └── feed/         # Módulos internos de la vista de Administración (Feed)
-├── index.html            # Plantilla HTML de entrada
-├── main.js               # Enrutador principal e inicializador del flujo SPA
-├── package.json          # Configuración de dependencias y scripts de ejecución
-├── postcss.config.js     # Configuración para el procesador CSS PostCSS
-├── style.css             # Estilos globales y directivas de Tailwind
-├── tailwind.config.js    # Configuración de estilos utilitarios de Tailwind CSS
-└── vite.config.js        # Configuración del empaquetador Vite
+Proyecto-Keeper-Unificado/
+├── dist/                 # Carpeta autogenerada con el bundle optimizado para producción
+├── node_modules/         # Dependencias de npm
+├── public/               # Recursos estáticos servidos directamente (ej. favicon)
+├── src/                  # Código fuente principal
+│   ├── assets/           # Imágenes y logos optimizados
+│   ├── components/       # Componentes interactivos e inicializadores de los perfiles
+│   ├── data/             # Mock de datos para pruebas locales
+│   ├── services/         # Servicios externos (geocodificación Nominatim, lógica de mapas)
+│   ├── ui/               # Plantillas HTML minimalistas de las consolas de emergencia
+│   ├── utils/            # Funciones auxiliares y formateadores de datos
+│   ├── views/            # Vistas principales de la SPA
+│   └── style.css         # Estilos globales y configuraciones personalizadas de Tailwind
+├── CREDENTIALS.md        # Guía oficial con correos y claves de prueba
+├── index.html            # Punto de entrada HTML principal
+├── main.js               # Enrutador reactivo del flujo SPA
+├── package.json          # Script de desarrollo, dependencias y librerías del proyecto
+├── postcss.config.js     # Configuración para PostCSS
+└── tailwind.config.js    # Configuración de Tailwind CSS (v4)
 ```
 
 ---
 
-##  Descripción Detallada de Carpetas y Componentes
+##  Descripción Detallada de Archivos
 
-### 1. `public/`
-Contiene archivos estáticos que se copian tal cual al directorio de distribución final al construir el proyecto. Contiene el [favicon.png](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/public/favicon.png) de la plataforma.
+Para entender exactamente qué hace cada archivo dentro de nuestro flujo de desarrollo, aquí tienes la explicación detallada componente por componente:
 
-### 2. `src/assets/`
-Almacena recursos de imagen optimizados para el consumo interno de los componentes y vistas:
-* **[hero.png](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/assets/hero.png):** Imagen principal para la sección de bienvenida (Hero) en la Landing Page.
-* **[logo.png](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/assets/logo.png):** Logotipo institucional de Keeper.
+###  Archivos de la Raíz del Proyecto
+* **[main.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/main.js):** El enrutador y núcleo de la SPA. Escucha el estado de la sesión, intercepta las redirecciones del login, monta las vistas de forma dinámica en el contenedor `#app` e inicializa los controladores correspondientes.
+* **[index.html](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/index.html):** Punto de entrada del navegador. Contiene el contenedor base `<div id="app">` donde se renderizan todas las páginas dinámicamente y las fuentes tipográficas.
+* **[style.css](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/style.css):** Define los estilos globales del proyecto e integra Tailwind CSS v4 para procesar clases de utilidad.
+* **[CREDENTIALS.md](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/CREDENTIALS.md):** Tabla explicativa de roles y credenciales (correos y contraseñas) asignadas para las pruebas de inicio de sesión.
 
-### 3. `src/components/`
-Módulos que encapsulan interfaces modales flotantes construidas con SweetAlert2 para la interacción de los usuarios:
-* **[loginmodal.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/components/loginmodal.js):** Controla la autenticación de usuarios y redirige al panel administrativo.
-* **[registermodal.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/components/registermodal.js):** Formulario para la auto-inscripción de vecinos en la red.
-* **[reports.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/components/reports.js):** Modal para reportar incidentes estándar (Vandalismo, robo, fallas de energía) con opción de describir la situación.
-* **[sos.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/components/sos.js):** Módulo crítico para el botón de pánico de emergencia (Policía, Bomberos y Ambulancia).
-* **[lugaresmodal.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/components/lugaresmodal.js):** Modal para visualizar y agregar puntos de interés comunitario en el sector.
-
-### 4. `src/views/`
-Contiene los controladores y maquetadores de las vistas completas de la aplicación:
-* **[homepage.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/views/homepage.js):** Vista para el usuario o vecino regular, donde puede ver alertas, interactuar con el botón SOS y crear reportes básicos.
-* **[sidebar.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/views/sidebar.js):** Sidebar lateral de navegación que permite alternar pestañas de forma reactiva en el Panel de Administración.
-* **[feed.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/views/feed.js):** Coordinador de la consola de administración. Enlaza los submódulos de la carpeta `feed/` con la inicialización del mapa y los eventos del navegador.
-
-### 5. `src/views/feed/` *(Nueva estructura modular)*
-Subcarpeta diseñada para evitar que el archivo de administración sea excesivamente grande y complejo:
-* **[feedState.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/views/feed/feedState.js):** Motor de estado local. Almacena las listas reactivas de usuarios, la cola de moderación de reportes, el historial de incidentes y las estadísticas semanales.
-* **[feedTemplate.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/views/feed/feedTemplate.js):** Aloja el diseño HTML y maquetación visual del dashboard completo de administración.
-* **[feedUsers.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/views/feed/feedUsers.js):** Administra el CRUD de usuarios de la red (tabla, acciones en línea de modificación, y el modal SweetAlert2 para crear/editar usuarios con sus roles como Bombero, Policía, Administrador, Usuario y Ambulancia).
-* **[feedReports.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/views/feed/feedReports.js):** Administra el renderizado y sincronización del estado de los reportes en la cola de moderación rápida y en la tabla del historial completo.
-* **[feedPdf.js](file:///C:/Users/Usuario/Downloads/Diagramas/Proyecto/Proyecto-Keeper/src/views/feed/feedPdf.js):** Genera y exporta dinámicamente resúmenes ejecutivos a formato PDF con un diseño limpio para impresión.
+###  Carpeta `src/components/` (Controladores e Interfaces de Flujo)
+Contiene la lógica de comportamiento y la creación de diálogos emergentes con SweetAlert2:
+* **[loginmodal.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/components/loginmodal.js):** Lógica que procesa las credenciales del usuario. Identifica qué tipo de rol ingresó (Policía, Bombero, Ambulancia, Administrador o Vecino) y bloquea el acceso con una alerta si el usuario no es válido.
+* **[registermodal.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/components/registermodal.js):** Controla el flujo para registrar nuevos usuarios dentro del sistema, capturando y guardando sus datos básicos de contacto.
+* **[reports.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/components/reports.js):** Maneja el modal de creación de alertas cotidianas (vandalismo, fallas eléctricas, etc.) que envían los vecinos desde el mapa principal.
+* **[sos.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/components/sos.js):** El panel de pánico ciudadano. Despliega la opción para llamar de forma rápida a Policía, Bomberos o Médicos ante una emergencia crítica.
+* **[lugaresmodal.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/components/lugaresmodal.js):** Permite a los usuarios marcar y visualizar "lugares seguros" o puntos comunitarios de interés en el mapa.
+* **[perfilpolicia.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/components/perfilpolicia.js):** Controlador del dashboard de Policía. Gestiona la base de datos de incidentes policiales, conecta filtros de gravedad y fechas, inicializa el mapa con incidentes de tipo policial y maneja el modal de detalle de casos y evidencias.
+* **[perfilbomberos.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/components/perfilbomberos.js):** Controlador del dashboard de Bomberos. Controla las alertas relativas a incendios, fugas y rescates, actualiza tablas y renderiza los estados de despacho.
+* **[perfilambulancia.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/components/perfilambulancia.js):** Controlador del dashboard de Ambulancias. Gestiona el historial de incidentes médicos, estado de las unidades de rescate y la asignación de traslados a hospitales en tiempo real.
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
-
-* **Vite:** Compilador y servidor de desarrollo rápido para el frontend.
-* **Tailwind CSS (v4):** Framework CSS basado en clases de utilidad para el diseño estético de interfaces.
-* **SweetAlert2:** Framework de modales estilizados e interactivos para formularios y alertas.
-* **OpenStreetMap (Nominatim API):** Servicio público geográfico integrado para la resolución de búsquedas de direcciones.
+###  Carpeta `src/ui/` (Plantillas de Diseño de Emergencia)
+Son los maquetados HTML estructurados con Tailwind CSS de las tres consolas operativas principales:
+* **[templatePolicia.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/ui/templatePolicia.js):** Genera la estructura HTML del oficial de policía. Incluye los módulos de Estadísticas Estratégicas, Historial de Delitos en tabla y la Consola de Monitoreo en Mapa (limpia de textos innecesarios).
+* **[templateBomberos.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/ui/templateBomberos.js):** Genera la estructura de la consola de despacho de bomberos, con indicadores rápidos de alarmas e incidentes activos.
+* **[templateAmbulancia.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/ui/templateAmbulancia.js):** Genera la estructura visual de urgencias médicas, optimizada para ver el estado de las ambulancias en servicio.
 
 ---
 
-##  Cómo Ejecutar el Proyecto
+### Carpeta `src/services/` (Servicios e Integraciones)
+* **[mapService.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/services/mapService.js):** Centraliza la lógica de inicialización del mapa (Maplibre-GL), carga el estilo base, y se encarga de posicionar y repintar de forma reactiva los marcadores geográficos de acuerdo al filtro de incidentes seleccionado.
+* **[findAddress.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/services/findAddress.js):** El buscador de direcciones Nominatim. Recibe el input de texto del buscador del mapa, realiza la petición a OpenStreetMap de forma asíncrona, y traslada el visor del mapa automáticamente a las coordenadas encontradas.
 
-Sigue estos sencillos pasos para correr el entorno de desarrollo local:
+---
 
-1. **Instalar Dependencias:**
-   Usa npm para descargar e instalar todas las dependencias definidas en el `package.json`:
-   ```bash
+###  Carpeta `src/views/` (Vistas e Interfaces Principales)
+* **[landingPage.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/views/landingPage.js):** Landing page de bienvenida. Es la página inicial de Keeper con información de las ventajas del sistema y el botón de acceso.
+* **[homepage.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/views/homepage.js):** La vista principal del vecino. Aloja el mapa comunitario completo con buscador de direcciones, panel de contactos seguros y accesos rápidos a reportes y SOS.
+* **[sidebar.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/views/sidebar.js):** Barra de navegación interactiva que permite a los operadores con privilegios de administración o soporte navegar entre pestañas de forma reactiva en los dashboards.
+
+---
+
+###  Carpeta `src/views/feed/` (Módulos de la Consola de Administración)
+* **[feedState.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/views/feed/feedState.js):** Motor de estado local del administrador. Guarda los arreglos de usuarios registrados y reportes en cola de moderación.
+* **[feedTemplate.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/views/feed/feedTemplate.js):** Maquetación HTML de la consola general de administración.
+* **[feedUsers.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/views/feed/feedUsers.js):** Lógica y listeners para la tabla de gestión de usuarios (creación, edición y eliminación de roles de la red).
+* **[feedReports.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/views/feed/feedReports.js):** Maneja la visualización y control de incidentes y las tablas de historial para la administración general.
+* **[feedPdf.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/src/views/feed/feedPdf.js):** Lógica del generador de reportes consolidados en formato de impresión PDF.
+
+---
+
+##  Stack Tecnológico Utilizado
+
+* **Vite (v8):** Nuestro empaquetador para recarga rápida en desarrollo y builds ligeros.
+* **Tailwind CSS (v4):** Framework CSS modular basado en clases de utilidad que nos permite crear layouts 100% responsivos sin escribir CSS ad-hoc.
+* **SweetAlert2:** Para los cuadros de diálogo, notificaciones y modales del flujo (como SOS, creación de reportes y confirmación de salida).
+* **Maplibre-GL / OpenStreetMap:** Proveedor de mapas de código abierto para ubicar las alertas e incidentes geográficamente.
+* **Nominatim API:** Para la búsqueda interactiva y traducción de direcciones a coordenadas en el buscador integrado.
+
+---
+
+##  Decisiones de Arquitectura Frontend
+
+* **SPA (Single Page Application):** El enrutamiento se maneja directamente en [main.js](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/main.js) mediante la manipulación del contenedor `#app`. Esto hace que las transiciones entre la Landing Page, el Login y los Dashboards sean instantáneas, sin recargas de página.
+* **Desacoplamiento UI/Controlador:** Las interfaces pesadas como las consolas de emergencia tienen su maquetación HTML separada en archivos de plantilla (`src/ui/template*.js`) y su lógica y listeners en sus respectivos componentes (`src/components/perfil*.js`).
+* **Optimización de Ancho Líquido:** Cambiamos los antiguos límites fijos por layouts que se adaptan de forma natural al viewport actual de la pantalla. Esto asegura que en dispositivos grandes, como **televisores de salas de control**, la aplicación aproveche todo el espacio de visualización disponible.
+
+---
+
+##  Cómo Poner en Marcha el Proyecto
+
+Asegúrate de tener instalado Node.js en tu equipo. Luego, sigue estos pasos:
+
+1. **Instalar dependencias:**
    npm install
-   ```
+   
 
-2. **Correr en Modo Desarrollo:**
-   Inicia el servidor local de desarrollo de Vite:
-   ```bash
+2. **Iniciar el servidor de desarrollo:**
    npm run dev
-   ```
-   Abre tu navegador en la dirección provista por la terminal (usualmente `http://localhost:5173`).
 
-3. **Construir para Producción:**
-   Para empaquetar y optimizar el proyecto en la carpeta `dist/`:
-   ```bash
+   *El servidor iniciará en un puerto disponible local (usualmente `http://localhost:5173` o `http://localhost:5174`).*
+
+3. **Compilar para producción:**
+   
    npm run build
-   ```
+   
+   *Esto generará el bundle optimizado y minificado dentro de la carpeta `dist/` listo para producción.*
+
+---
+
+## 🔑 Cuentas de Prueba
+
+Para probar los diferentes roles y accesos del sistema, puedes consultar la tabla detallada de correos y contraseñas en el archivo [CREDENTIALS.md](file:///C:/Users/Usuario/Desktop/Proyecto-Keeper-Unificado/CREDENTIALS.md) ubicado en la raíz del proyecto.

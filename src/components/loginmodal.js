@@ -61,6 +61,29 @@ export function initLoginModal(buttonId, onSuccess) {
           );
           return false;
         }
+
+        const emailLower = email.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        let isValid = false;
+
+        if (emailLower.includes('policia') && password === 'policia123') {
+          isValid = true;
+        } else if (emailLower.includes('bombero') && password === 'bombero123') {
+          isValid = true;
+        } else if (emailLower.includes('ambulancia') && password === 'ambulancia123') {
+          isValid = true;
+        } else if ((emailLower.includes('admin') || emailLower.includes('administrador')) && password === 'admin123') {
+          isValid = true;
+        } else if ((emailLower.includes('usuario') || emailLower.includes('user') || emailLower.includes('luis') || emailLower.includes('luigi')) && password === 'usuario123') {
+          isValid = true;
+        }
+
+        if (!isValid) {
+          Swal.showValidationMessage(
+            '<span class="text-xs font-semibold text-red-500">Correo o contraseña incorrectos.</span>'
+          );
+          return false;
+        }
+
         return { email, password };
       }
     }).then((result) => {

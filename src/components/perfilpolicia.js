@@ -2,6 +2,7 @@ import Swal from 'sweetalert2';
 import { getDashboardTemplate } from "../ui/templatePolicia.js";
 import { formatearFechaHumana } from '../utils/helpers.js';
 import { inicializarMapaVea, actualizarMarcadoresEnMapa } from '../services/mapService.js';
+import { findAddress } from "../services/findAddress.js";
 
 
 
@@ -51,6 +52,12 @@ export async function inicializarDashboard() {
 
   
   inicializarMapaVea(reportes);
+
+  const mapSearchInput = document.getElementById('map-search-input');
+  if (mapSearchInput) {
+    findAddress(mapSearchInput);
+  }
+
   actualizarEstadisticasVisuales();
   renderizarTablaHistorial();
   renderizarTablaModeracion();
@@ -630,31 +637,25 @@ function enlazarEventosAcciones() {
     btnSalir.addEventListener('click', () => {
       Swal.fire({
         title: '¿Confirmar Salida?',
-        text: "Saldrás de la consola táctica de seguridad.",
+        text: '¿Estás seguro que deseas cerrar sesión?',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Sí, Salir',
+        confirmButtonText: 'Sí, salir',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ff5d00',
-        cancelButtonColor: '#f4f4f5',
+        cancelButtonColor: '#71717a',
         background: '#ffffff',
         color: '#09090b',
         customClass: {
-          popup: 'border border-zinc-200 rounded-md shadow-none'
+          popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs'
         }
       }).then((result) => {
         if (result.isConfirmed) {
-          Swal.fire({
-            title: 'Sesión Finalizada',
-            text: 'Has salido de forma segura.',
-            icon: 'success',
-            confirmButtonColor: '#ff5d00',
-            background: '#ffffff',
-            color: '#09090b',
-            customClass: {
-              popup: 'border border-zinc-200 rounded-md'
-            }
-          });
+          if (typeof window.salirAlLogin === 'function') {
+            window.salirAlLogin();
+          } else {
+            window.location.reload();
+          }
         }
       });
     });

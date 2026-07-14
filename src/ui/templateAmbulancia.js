@@ -78,7 +78,7 @@ export function getDashboardTemplate(usuario) {
       </aside>
 
       <!-- CONTENIDO PRINCIPAL -->
-      <main class="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 max-w-[1600px] mx-auto flex flex-col justify-start">
+      <main class="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full flex flex-col justify-start">
         
         <!-- ======================================================= -->
         <!-- VISTA DE ESTADÍSTICAS (RESUMEN ESTRATÉGICO)             -->
@@ -341,34 +341,20 @@ export function getDashboardTemplate(usuario) {
         <div id="view-mapa" class="hidden grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch w-full">
           
           <div class="xl:col-span-8 bg-white rounded-lg p-5 border border-zinc-200 flex flex-col justify-between h-[650px] relative">
-            <div class="flex items-center justify-between z-20 absolute top-8 left-8 right-8 pointer-events-none">
-              <div class="bg-white border border-zinc-200 px-4 py-2 rounded-md flex items-center gap-2 pointer-events-auto">
-                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <div>
-                  <div class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold leading-none">Ruta de Emergencia</div>
-                  <div class="text-xs font-bold text-zinc-950 mt-0.5">Jurisdicción: Mapa de Despacho</div>
-                </div>
+            
+            <!-- Buscador de Direcciones Nominatim (Estilo Luigi/Luis) -->
+            <div class="absolute top-8 left-8 right-8 sm:right-auto z-20 pointer-events-none">
+              <div class="relative w-full sm:w-72 md:w-96 pointer-events-auto shadow-md">
+                <input id="map-search-input" type="text" placeholder="Buscar dirección o cuadrante..." class="w-full pl-9 pr-4 py-2 border border-zinc-200 bg-white text-zinc-800 rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-zinc-400">
+                <svg class="h-3.5 w-3.5 text-zinc-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
               </div>
             </div>
 
             <!-- Mapa Real -->
             <div class="w-full h-full rounded-md overflow-hidden border border-zinc-200 z-10 relative">
               <div id="map" class="w-full h-full" style="background: #18181b; background-image: radial-gradient(#27272a 1px, transparent 1px); background-size: 16px 16px;"></div>
-              
-              <!-- Cartografía en Espera Overlay -->
-              <div class="absolute bottom-4 right-4 bg-zinc-950/90 border border-zinc-800 text-zinc-300 px-3.5 py-2 rounded-md text-[10px] font-mono z-[1000] flex items-center gap-2 select-none shadow-lg">
-                <svg class="w-3.5 h-3.5 text-amber-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
-                <span>Soporte de Mapas: Modo Offline (Configura tu API en el código)</span>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between z-20 absolute bottom-8 left-8 right-8 pointer-events-none">
-              <div class="bg-[#3b82f6] text-white px-5 py-2.5 rounded-md flex flex-col justify-center pointer-events-auto border border-[#3b82f6]">
-                <span class="text-[8px] uppercase tracking-widest opacity-90 font-bold font-mono">Filtro Activo</span>
-                <span id="map-alert-text" class="text-xs font-bold mt-0.5">Todas las emergencias</span>
-              </div>
             </div>
 
           </div>

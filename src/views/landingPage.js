@@ -1,8 +1,4 @@
 export const landingPage = `
-    <button id="btn-preview-homepage" type="button" class="fixed bottom-6 right-6 z-[60] rounded-full bg-orange-600 px-5 py-3 text-sm font-black text-white shadow-xl shadow-orange-600/30 hover:bg-orange-700 transition">
-      Ver homepage
-    </button>
-
     <!-- Navbar con Botón de Logueo -->
     <header class="w-full bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">

@@ -1,6 +1,14 @@
 export function renderSidebar() {
   return `
-    <aside class="w-full border-b border-zinc-850 bg-[#09090b] px-5 py-6 text-zinc-150 lg:w-72 lg:border-b-0 lg:border-r lg:border-zinc-850 lg:px-6 lg:py-8 flex flex-col justify-between font-sans">
+    <aside id="sidebar-aside" class="fixed inset-y-0 left-0 w-72 bg-[#09090b] text-zinc-150 flex flex-col justify-between border-r border-zinc-850 z-50 transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static lg:flex shrink-0 select-none font-sans px-6 py-8">
+      <!-- Botón cerrar móvil -->
+      <div class="lg:hidden absolute top-4 right-4">
+        <button id="btn-close-sidebar" class="p-1 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded focus:outline-none">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
       <div>
         <!-- Logo -->
         <div class="flex items-center gap-3 pb-6 border-b border-zinc-850">
@@ -70,7 +78,15 @@ export function renderSidebar() {
 
 export function renderFeedSidebar() {
   return `
-    <aside class="w-full border-b border-zinc-850 bg-[#09090b] px-5 py-6 text-zinc-150 lg:w-72 lg:border-b-0 lg:border-r lg:border-zinc-850 lg:px-6 lg:py-8 flex flex-col justify-between font-sans">
+    <aside id="sidebar-aside" class="fixed inset-y-0 left-0 w-72 bg-[#09090b] text-zinc-150 flex flex-col justify-between border-r border-zinc-850 z-50 transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static lg:flex shrink-0 select-none font-sans px-6 py-8">
+      <!-- Botón cerrar móvil -->
+      <div class="lg:hidden absolute top-4 right-4">
+        <button id="btn-close-sidebar" class="p-1 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded focus:outline-none">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
       <div>
         <!-- Logo -->
         <div class="flex items-center gap-3 pb-6 border-b border-zinc-850">
