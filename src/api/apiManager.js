@@ -1,11 +1,12 @@
 import axios from "axios";
 
 // 1. Tu creador de Axios
-export const createApiClient = (url) => axios.create({
-    baseURL: url,
-    timeout: 5000,
-    headers: { "Content-Type": "application/json" },
-});
+export const createApiClient = (url) =>
+    axios.create({
+        baseURL: url,
+        timeout: 20000,
+        headers: { "Content-Type": "application/json" },
+    });
 
 // 2. El generador del CRUD
 export const createCrudService = (apiClient) => {
@@ -51,6 +52,11 @@ export const createCrudService = (apiClient) => {
             return response.data;
         },
 
+        putData: async (path, id, data) => {
+            const response = await apiClient.put(`${path}/${id}`, data);
+            return response.data;
+        },
+
         /**
          * Elimina un registro (DELETE)
          * @param {string} path - La ruta específica
@@ -59,6 +65,6 @@ export const createCrudService = (apiClient) => {
         deleteData: async (path, id) => {
             const response = await apiClient.delete(`${path}/${id}`);
             return response.data;
-        }
+        },
     };
 };

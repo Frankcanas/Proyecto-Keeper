@@ -7,8 +7,8 @@ export const geolocator =
 
 const GEO_OPTIONS = {
     enableHighAccuracy: true,
-    timeout: 10000,
-    maximumAge: 60000,
+    timeout: 50000,
+    maximumAge: 90000,
 };
 
 export function get_location() {

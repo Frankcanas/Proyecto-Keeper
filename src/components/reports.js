@@ -96,6 +96,14 @@ export function initReportModal(buttonId, onSubmitCallback) {
                 let selectedCat = null;
                 let files = [];
 
+                chkGPS.addEventListener("change", () => {
+                    if (chkGPS.checked) chkTarget.checked = false;
+                });
+
+                chkTarget.addEventListener("change", () => {
+                    if (chkTarget.checked) chkGPS.checked = false;
+                });
+
                 // === CONTROL DEL MARCADOR OBJETIVO (PUNTO ROJO) ===
                 const targetCoords = getTargetLocation();
 
@@ -146,14 +154,6 @@ export function initReportModal(buttonId, onSubmitCallback) {
                         }
                         locStatus.textContent = "Problemas obteniendo la dirección.";
                     });
-
-                // === EVENTO: CHECKBOX PUNTO SELECCIONADO ===
-                chkTarget.addEventListener("change", (e) => {
-                    if (e.target.checked) {
-                        chkGPS.checked = false;
-                        locStatus.textContent = "";
-                    }
-                });
 
                 // Botones de categoría
                 document.querySelectorAll(".report-cat").forEach((btn) => {
