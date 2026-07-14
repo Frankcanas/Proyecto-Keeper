@@ -45,7 +45,7 @@ KeepeR
 Sigue estos pasos para levantar el entorno de desarrollo localmente.
 
 ### 1. Clonar y preparar el entorno
-Abre tu terminal en la carpeta del proyecto y activa el entorno virtual (si no lo tienes, créalo con `python -m venv entornovirtual`):
+Abre tu terminal en la carpeta del proyecto y activa el entorno virtual (si no lo tienes, créalo con `py -m venv entornovirtual`):
 
 **En Linux/Mac:**
 ```bash
