@@ -1,4 +1,4 @@
-import { Map, Marker } from "maplibre-gl";
+import { Map, Marker, Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
@@ -31,6 +31,15 @@ export const updateMapPosition = (map, marker, location) => {
         center: location,
         speed: 1.2,
     });
+};
+
+export const createReportMarker = (map, location, element, popupHtml) => {
+    const popup = new Popup({ offset: 15, closeButton: false })
+        .setHTML(popupHtml);
+    return new Marker({ element })
+        .setLngLat(location)
+        .setPopup(popup)
+        .addTo(map);
 };
 
 export const destroyMapInstance = (map, marker) => {

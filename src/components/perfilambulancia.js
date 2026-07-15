@@ -3,15 +3,13 @@ import { getDashboardTemplate } from "../ui/templateAmbulancia.js";
 import { inicializarMapaVea, actualizarMarcadoresEnMapa } from "../services/mapService.js";
 import { findAddress } from "../services/findAddress.js";
 
-
-
-
+//Datos de reportes de ambulancia
 import { PARAMEDICO_LOGUEADO, REPORTES_MOCK } from "../data/mockAmbulancia.js";
 
 
 let reportes = [];
 
-
+// DownloadDataFromApi()
 async function cargarReportesDesdeAPI() {
   
   
@@ -50,7 +48,7 @@ export async function inicializarDashboard() {
   app.innerHTML = getDashboardTemplate(typeof PARAMEDICO_LOGUEADO !== "undefined" ? PARAMEDICO_LOGUEADO : (typeof AMBULANCIA_LOGUEADO !== "undefined" ? AMBULANCIA_LOGUEADO : {}));
 
   
-  inicializarMapaVea(reportes);
+  inicializarMapaVea(reportes); 
 
   const mapSearchInput = document.getElementById('map-search-input');
   if (mapSearchInput) {
