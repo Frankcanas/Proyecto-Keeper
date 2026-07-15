@@ -6,6 +6,7 @@ export const createApiClient = (url) =>
         baseURL: url,
         timeout: 20000,
         headers: { "Content-Type": "application/json" },
+        withCredentials: true,
     });
 
 // El generador del CRUD
