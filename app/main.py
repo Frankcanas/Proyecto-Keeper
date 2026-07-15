@@ -16,7 +16,7 @@ async def lifespan(app: FastAPI):
         # Hacemos la prueba rápida al arrancar
         conn = get_db_connection()
         conn.close()  # cerramos de inmediato tras verificar que sirve
-        print("✅ Conexión verificada exitosamente al iniciar.")
+        print("👍 Conexión verificada exitosamente al iniciar.")
         yield  # Aquí corre la app
     except Exception as e:
         print(f"❌ Error al conectar a la base de datos: {e}")
