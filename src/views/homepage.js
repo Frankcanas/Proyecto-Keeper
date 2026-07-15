@@ -1,62 +1,62 @@
 import { renderSidebar } from "./sidebar.js";
-import  {openLugarFormModal} from "../components/lugaresmodal.js";
+import { openLugarFormModal } from "../components/modalComponent/lugaresmodal.js";
 import Swal from "sweetalert2";
 import { findAddress } from "../services/findAddress.js";
 
 let listContactos = [
-  {
-    id: 1,
-    nombre: "María Morales",
-    email: "maria@family.com",
-    parentesco: "Familiar",
-  },
-  {
-    id: 2,
-    nombre: "Carlos Ruiz",
-    email: "carlos.vecino@gmail.com",
-    parentesco: "Vecino",
-  },
+    {
+        id: 1,
+        nombre: "María Morales",
+        email: "maria@family.com",
+        parentesco: "Familiar",
+    },
+    {
+        id: 2,
+        nombre: "Carlos Ruiz",
+        email: "carlos.vecino@gmail.com",
+        parentesco: "Vecino",
+    },
 ];
 
 let listLugares = [
-  {
-    id: 1,
-    nombre: "Mi Casa",
-    tipo: "Casa",
-    metros: 100,
-    coordenadas: "40.4167° N, 3.7037° W",
-  },
-  {
-    id: 2,
-    nombre: "Oficina Central",
-    tipo: "Trabajo",
-    metros: 200,
-    coordenadas: "40.4230° N, 3.6980° W",
-  },
+    {
+        id: 1,
+        nombre: "Mi Casa",
+        tipo: "Casa",
+        metros: 100,
+        coordenadas: "40.4167° N, 3.7037° W",
+    },
+    {
+        id: 2,
+        nombre: "Oficina Central",
+        tipo: "Trabajo",
+        metros: 200,
+        coordenadas: "40.4230° N, 3.6980° W",
+    },
 ];
 
 // Lista local de reportes para el Homepage
 let listReportes = [
-  {
-    id: "KP-8821",
-    tipo: "Vandalismo",
-    descripcion: "Graffiti y rayados en la fachada del centro comunitario.",
-    ubicacion: "Calle 8 #12-42",
-    fecha: "Hace 2 min",
-    estado: "Pendiente",
-  },
-  {
-    id: "KP-8819",
-    tipo: "Peligro",
-    descripcion: "Cables de alta tensión caídos sobre la acera peatonal.",
-    ubicacion: "Plaza Central",
-    fecha: "Hace 14 min",
-    estado: "Verificado",
-  },
+    {
+        id: "KP-8821",
+        tipo: "Vandalismo",
+        descripcion: "Graffiti y rayados en la fachada del centro comunitario.",
+        ubicacion: "Calle 8 #12-42",
+        fecha: "Hace 2 min",
+        estado: "Pendiente",
+    },
+    {
+        id: "KP-8819",
+        tipo: "Peligro",
+        descripcion: "Cables de alta tensión caídos sobre la acera peatonal.",
+        ubicacion: "Plaza Central",
+        fecha: "Hace 14 min",
+        estado: "Verificado",
+    },
 ];
 
 export function renderHomepage() {
-  return `
+    return `
     <section class="min-h-screen bg-slate-100 text-slate-900 font-sans">
       <div class="flex min-h-screen flex-col lg:flex-row">
         <!-- Backdrop para móvil -->
@@ -310,21 +310,21 @@ export function renderHomepage() {
 // CRUD: PERSONAS DE CONFIANZA
 // -------------------------------------------------------------
 function renderContactosTable() {
-  const tbody = document.getElementById("homepage-contactos-table-body");
-  if (!tbody) return;
+    const tbody = document.getElementById("homepage-contactos-table-body");
+    if (!tbody) return;
 
-  if (listContactos.length === 0) {
-    tbody.innerHTML = `
+    if (listContactos.length === 0) {
+        tbody.innerHTML = `
       <tr>
         <td colspan="4" class="py-8 text-center text-zinc-400 font-medium">No hay personas de confianza registradas.</td>
       </tr>
     `;
-    return;
-  }
+        return;
+    }
 
-  tbody.innerHTML = listContactos
-    .map(
-      (contacto) => `
+    tbody.innerHTML = listContactos
+        .map(
+            (contacto) => `
     <tr class="hover:bg-zinc-50/50 transition-colors">
       <td class="py-4 pr-4 font-semibold text-zinc-900">${contacto.nombre}</td>
       <td class="py-4 pr-4 text-zinc-500">${contacto.email}</td>
@@ -347,71 +347,67 @@ function renderContactosTable() {
       </td>
     </tr>
   `,
-    )
-    .join("");
+        )
+        .join("");
 
-  attachContactoActions();
+    attachContactoActions();
 }
 
 function attachContactoActions() {
-  document.querySelectorAll(".btn-contacto-edit").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = parseInt(btn.dataset.id);
-      const contacto = listContactos.find((c) => c.id === id);
-      if (contacto) openContactoFormModal(contacto);
+    document.querySelectorAll(".btn-contacto-edit").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const id = parseInt(btn.dataset.id);
+            const contacto = listContactos.find((c) => c.id === id);
+            if (contacto) openContactoFormModal(contacto);
+        });
     });
-  });
 
-  document.querySelectorAll(".btn-contacto-delete").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = parseInt(btn.dataset.id);
-      const contacto = listContactos.find((c) => c.id === id);
-      if (!contacto) return;
+    document.querySelectorAll(".btn-contacto-delete").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const id = parseInt(btn.dataset.id);
+            const contacto = listContactos.find((c) => c.id === id);
+            if (!contacto) return;
 
-      Swal.fire({
-        title:
-          '<h3 class="text-sm font-semibold text-zinc-900 text-left">Confirmar Eliminación</h3>',
-        html: `<p class="text-xs text-zinc-500 text-left">¿Estás seguro de que deseas eliminar permanentemente a <strong>${contacto.nombre}</strong> de tus contactos de confianza?</p>`,
-        showCancelButton: true,
-        confirmButtonText: "Eliminar",
-        cancelButtonText: "Cancelar",
-        buttonsStyling: false,
-        customClass: {
-          popup:
-            "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full font-sans",
-          confirmButton:
-            "bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded transition-colors mr-2",
-          cancelButton:
-            "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold px-3 py-1.5 rounded transition-colors",
-        },
-      }).then((result) => {
-        if (result.isConfirmed) {
-          listContactos = listContactos.filter((c) => c.id !== id);
-          renderContactosTable();
+            Swal.fire({
+                title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Confirmar Eliminación</h3>',
+                html: `<p class="text-xs text-zinc-500 text-left">¿Estás seguro de que deseas eliminar permanentemente a <strong>${contacto.nombre}</strong> de tus contactos de confianza?</p>`,
+                showCancelButton: true,
+                confirmButtonText: "Eliminar",
+                cancelButtonText: "Cancelar",
+                buttonsStyling: false,
+                customClass: {
+                    popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full font-sans",
+                    confirmButton:
+                        "bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded transition-colors mr-2",
+                    cancelButton:
+                        "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold px-3 py-1.5 rounded transition-colors",
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    listContactos = listContactos.filter((c) => c.id !== id);
+                    renderContactosTable();
 
-          Swal.fire({
-            icon: "success",
-            title:
-              '<h3 class="text-sm font-semibold text-zinc-900 text-left">Contacto Eliminado</h3>',
-            html: '<p class="text-xs text-zinc-500 text-left">El contacto ha sido removido con éxito de la lista.</p>',
-            showConfirmButton: false,
-            timer: 2000,
-            buttonsStyling: false,
-            customClass: {
-              popup:
-                "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-            },
-          });
-        }
-      });
+                    Swal.fire({
+                        icon: "success",
+                        title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Contacto Eliminado</h3>',
+                        html: '<p class="text-xs text-zinc-500 text-left">El contacto ha sido removido con éxito de la lista.</p>',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                        },
+                    });
+                }
+            });
+        });
     });
-  });
 }
 
 function openContactoFormModal(contacto = null) {
-  Swal.fire({
-    title: `<div class="text-left font-sans"><h3 class="text-base font-semibold text-zinc-900">${contacto ? "Editar Persona de Confianza" : "Nueva Persona de Confianza"}</h3><p class="text-zinc-500 mt-1 text-xs leading-relaxed">Completa los datos de tu contacto de emergencia.</p></div>`,
-    html: `
+    Swal.fire({
+        title: `<div class="text-left font-sans"><h3 class="text-base font-semibold text-zinc-900">${contacto ? "Editar Persona de Confianza" : "Nueva Persona de Confianza"}</h3><p class="text-zinc-500 mt-1 text-xs leading-relaxed">Completa los datos de tu contacto de emergencia.</p></div>`,
+        html: `
       <form id="swal-contacto-crud-form" class="space-y-4 mt-4 text-left font-sans">
         <div>
           <label class="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">Nombre Completo</label>
@@ -440,83 +436,88 @@ function openContactoFormModal(contacto = null) {
         </button>
       </form>
     `,
-    showConfirmButton: false,
-    showCancelButton: true,
-    cancelButtonText: "Cancelar",
-    buttonsStyling: false,
-    customClass: {
-      popup:
-        "rounded-md p-6 border border-zinc-200 bg-white max-w-md w-full font-sans",
-      cancelButton:
-        "w-full mt-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold py-2 rounded transition-colors text-center",
-    },
-    didOpen: () => {
-      const submitBtn = document.getElementById("contacto-modal-submit");
-      const errorEl = document.getElementById("contacto-modal-error");
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        buttonsStyling: false,
+        customClass: {
+            popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-md w-full font-sans",
+            cancelButton:
+                "w-full mt-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold py-2 rounded transition-colors text-center",
+        },
+        didOpen: () => {
+            const submitBtn = document.getElementById("contacto-modal-submit");
+            const errorEl = document.getElementById("contacto-modal-error");
 
-      submitBtn.addEventListener("click", () => {
-        const nombre = document.getElementById("contacto-nombre").value.trim();
-        const email = document.getElementById("contacto-email").value.trim();
-        const parentesco = document.getElementById("contacto-parentesco").value;
+            submitBtn.addEventListener("click", () => {
+                const nombre = document
+                    .getElementById("contacto-nombre")
+                    .value.trim();
+                const email = document
+                    .getElementById("contacto-email")
+                    .value.trim();
+                const parentesco = document.getElementById(
+                    "contacto-parentesco",
+                ).value;
 
-        if (!nombre || !email || !parentesco) {
-          errorEl.textContent = "Por favor, complete todos los campos.";
-          return;
-        }
+                if (!nombre || !email || !parentesco) {
+                    errorEl.textContent =
+                        "Por favor, complete todos los campos.";
+                    return;
+                }
 
-        if (contacto) {
-          contacto.nombre = nombre;
-          contacto.email = email;
-          contacto.parentesco = parentesco;
-        } else {
-          const newContacto = {
-            id: Date.now(),
-            nombre,
-            email,
-            parentesco,
-          };
-          listContactos.push(newContacto);
-        }
+                if (contacto) {
+                    contacto.nombre = nombre;
+                    contacto.email = email;
+                    contacto.parentesco = parentesco;
+                } else {
+                    const newContacto = {
+                        id: Date.now(),
+                        nombre,
+                        email,
+                        parentesco,
+                    };
+                    listContactos.push(newContacto);
+                }
 
-        renderContactosTable();
-        Swal.close();
+                renderContactosTable();
+                Swal.close();
 
-        Swal.fire({
-          icon: "success",
-          title: `<h3 class="text-sm font-semibold text-zinc-900 text-left">${contacto ? "Contacto Actualizado" : "Contacto Registrado"}</h3>`,
-          html: `<p class="text-xs text-zinc-500 text-left">La persona de confianza ha sido ${contacto ? "modificada" : "añadida"} exitosamente.</p>`,
-          showConfirmButton: false,
-          timer: 2000,
-          buttonsStyling: false,
-          customClass: {
-            popup:
-              "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-          },
-        });
-      });
-    },
-  });
+                Swal.fire({
+                    icon: "success",
+                    title: `<h3 class="text-sm font-semibold text-zinc-900 text-left">${contacto ? "Contacto Actualizado" : "Contacto Registrado"}</h3>`,
+                    html: `<p class="text-xs text-zinc-500 text-left">La persona de confianza ha sido ${contacto ? "modificada" : "añadida"} exitosamente.</p>`,
+                    showConfirmButton: false,
+                    timer: 2000,
+                    buttonsStyling: false,
+                    customClass: {
+                        popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                    },
+                });
+            });
+        },
+    });
 }
 
 // -------------------------------------------------------------
 // CRUD: LUGARES SEGUROS
 // -------------------------------------------------------------
 function renderLugaresTable() {
-  const tbody = document.getElementById("homepage-lugares-table-body");
-  if (!tbody) return;
+    const tbody = document.getElementById("homepage-lugares-table-body");
+    if (!tbody) return;
 
-  if (listLugares.length === 0) {
-    tbody.innerHTML = `
+    if (listLugares.length === 0) {
+        tbody.innerHTML = `
       <tr>
         <td colspan="5" class="py-8 text-center text-zinc-400 font-medium">No hay lugares seguros registrados.</td>
       </tr>
     `;
-    return;
-  }
+        return;
+    }
 
-  tbody.innerHTML = listLugares
-    .map(
-      (lugar) => `
+    tbody.innerHTML = listLugares
+        .map(
+            (lugar) => `
     <tr class="hover:bg-zinc-50/50 transition-colors">
       <td class="py-4 pr-4 font-semibold text-zinc-900">${lugar.nombre}</td>
       <td class="py-4 pr-4 text-zinc-500">${lugar.tipo}</td>
@@ -538,112 +539,106 @@ function renderLugaresTable() {
       </td>
     </tr>
   `,
-    )
-    .join("");
+        )
+        .join("");
 
-  attachLugarActions();
+    attachLugarActions();
 }
 
 function attachLugarActions() {
-  document.querySelectorAll(".btn-lugar-edit").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = parseInt(btn.dataset.id);
-      const lugar = listLugares.find((l) => l.id === id);
-      if (lugar) {
-        openLugarFormModal(lugar, (nombre, tipo, metros) => {
-          lugar.nombre = nombre;
-          lugar.tipo = tipo;
-          lugar.metros = metros;
-          renderLugaresTable();
+    document.querySelectorAll(".btn-lugar-edit").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const id = parseInt(btn.dataset.id);
+            const lugar = listLugares.find((l) => l.id === id);
+            if (lugar) {
+                openLugarFormModal(lugar, (nombre, tipo, metros) => {
+                    lugar.nombre = nombre;
+                    lugar.tipo = tipo;
+                    lugar.metros = metros;
+                    renderLugaresTable();
 
-          Swal.fire({
-            icon: "success",
-            title:
-              '<h3 class="text-sm font-semibold text-zinc-900 text-left">Lugar Actualizado</h3>',
-            html: '<p class="text-xs text-zinc-500 text-left">El lugar seguro ha sido modificado exitosamente.</p>',
-            showConfirmButton: false,
-            timer: 2000,
-            buttonsStyling: false,
-            customClass: {
-              popup:
-                "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-            },
-          });
+                    Swal.fire({
+                        icon: "success",
+                        title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Lugar Actualizado</h3>',
+                        html: '<p class="text-xs text-zinc-500 text-left">El lugar seguro ha sido modificado exitosamente.</p>',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                        },
+                    });
+                });
+            }
         });
-      }
     });
-  });
 
-  document.querySelectorAll(".btn-lugar-delete").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = parseInt(btn.dataset.id);
-      const lugar = listLugares.find((l) => l.id === id);
-      if (!lugar) return;
+    document.querySelectorAll(".btn-lugar-delete").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const id = parseInt(btn.dataset.id);
+            const lugar = listLugares.find((l) => l.id === id);
+            if (!lugar) return;
 
-      Swal.fire({
-        title:
-          '<h3 class="text-sm font-semibold text-zinc-900 text-left">Confirmar Eliminación</h3>',
-        html: `<p class="text-xs text-zinc-500 text-left">¿Estás seguro de que deseas eliminar permanentemente <strong>${lugar.nombre}</strong> de tus lugares seguros?</p>`,
-        showCancelButton: true,
-        confirmButtonText: "Eliminar",
-        cancelButtonText: "Cancelar",
-        buttonsStyling: false,
-        customClass: {
-          popup:
-            "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full font-sans",
-          confirmButton:
-            "bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded transition-colors mr-2",
-          cancelButton:
-            "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold px-3 py-1.5 rounded transition-colors",
-        },
-      }).then((result) => {
-        if (result.isConfirmed) {
-          listLugares = listLugares.filter((l) => l.id !== id);
-          renderLugaresTable();
+            Swal.fire({
+                title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Confirmar Eliminación</h3>',
+                html: `<p class="text-xs text-zinc-500 text-left">¿Estás seguro de que deseas eliminar permanentemente <strong>${lugar.nombre}</strong> de tus lugares seguros?</p>`,
+                showCancelButton: true,
+                confirmButtonText: "Eliminar",
+                cancelButtonText: "Cancelar",
+                buttonsStyling: false,
+                customClass: {
+                    popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full font-sans",
+                    confirmButton:
+                        "bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded transition-colors mr-2",
+                    cancelButton:
+                        "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold px-3 py-1.5 rounded transition-colors",
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    listLugares = listLugares.filter((l) => l.id !== id);
+                    renderLugaresTable();
 
-          Swal.fire({
-            icon: "success",
-            title:
-              '<h3 class="text-sm font-semibold text-zinc-900 text-left">Lugar Eliminado</h3>',
-            html: '<p class="text-xs text-zinc-500 text-left">El lugar seguro ha sido removido con éxito.</p>',
-            showConfirmButton: false,
-            timer: 2000,
-            buttonsStyling: false,
-            customClass: {
-              popup:
-                "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-            },
-          });
-        }
-      });
+                    Swal.fire({
+                        icon: "success",
+                        title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Lugar Eliminado</h3>',
+                        html: '<p class="text-xs text-zinc-500 text-left">El lugar seguro ha sido removido con éxito.</p>',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                        },
+                    });
+                }
+            });
+        });
     });
-  });
 }
 
 // -------------------------------------------------------------
 // CRUD: REPORTES (Actualizar Solamente)
 // -------------------------------------------------------------
 export function addHomepageReport(report) {
-  listReportes.unshift(report);
-  renderReportesTable();
+    listReportes.unshift(report);
+    renderReportesTable();
 }
 
 function renderReportesTable() {
-  const tbody = document.getElementById("homepage-reportes-table-body");
-  if (!tbody) return;
+    const tbody = document.getElementById("homepage-reportes-table-body");
+    if (!tbody) return;
 
-  if (listReportes.length === 0) {
-    tbody.innerHTML = `
+    if (listReportes.length === 0) {
+        tbody.innerHTML = `
       <tr>
         <td colspan="6" class="py-8 text-center text-zinc-400 font-medium">No hay incidentes reportados.</td>
       </tr>
     `;
-    return;
-  }
+        return;
+    }
 
-  tbody.innerHTML = listReportes
-    .map(
-      (report) => `
+    tbody.innerHTML = listReportes
+        .map(
+            (report) => `
     <tr class="hover:bg-zinc-50/50 transition-colors">
       <td class="py-4 pr-4 font-semibold text-zinc-900 font-mono">${report.id}</td>
       <td class="py-4 pr-4">
@@ -664,22 +659,22 @@ function renderReportesTable() {
       </td>
     </tr>
   `,
-    )
-    .join("");
+        )
+        .join("");
 
-  attachReportActions();
+    attachReportActions();
 }
 
 function attachReportActions() {
-  document.querySelectorAll(".btn-report-edit").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.id;
-      const report = listReportes.find((r) => r.id === id);
-      if (!report) return;
+    document.querySelectorAll(".btn-report-edit").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const id = btn.dataset.id;
+            const report = listReportes.find((r) => r.id === id);
+            if (!report) return;
 
-      Swal.fire({
-        title: `<div class="text-left font-sans"><h3 class="text-base font-semibold text-zinc-900">Actualizar Reporte</h3><p class="text-zinc-500 mt-1 text-xs leading-relaxed">Modifica los detalles del incidente reportado.</p></div>`,
-        html: `
+            Swal.fire({
+                title: `<div class="text-left font-sans"><h3 class="text-base font-semibold text-zinc-900">Actualizar Reporte</h3><p class="text-zinc-500 mt-1 text-xs leading-relaxed">Modifica los detalles del incidente reportado.</p></div>`,
+                html: `
           <form id="swal-report-edit-form" class="space-y-4 mt-4 text-left font-sans">
             <div>
               <label class="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">Tipo de Incidente</label>
@@ -707,178 +702,180 @@ function attachReportActions() {
             </button>
           </form>
         `,
-        showConfirmButton: false,
-        showCancelButton: true,
-        cancelButtonText: "Cancelar",
-        buttonsStyling: false,
-        customClass: {
-          popup:
-            "rounded-md p-6 border border-zinc-200 bg-white max-w-md w-full font-sans",
-          cancelButton:
-            "w-full mt-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold py-2 rounded transition-colors text-center",
-        },
-        didOpen: () => {
-          const submitBtn = document.getElementById("edit-report-submit");
-          const errorEl = document.getElementById("edit-report-error");
+                showConfirmButton: false,
+                showCancelButton: true,
+                cancelButtonText: "Cancelar",
+                buttonsStyling: false,
+                customClass: {
+                    popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-md w-full font-sans",
+                    cancelButton:
+                        "w-full mt-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold py-2 rounded transition-colors text-center",
+                },
+                didOpen: () => {
+                    const submitBtn =
+                        document.getElementById("edit-report-submit");
+                    const errorEl =
+                        document.getElementById("edit-report-error");
 
-          submitBtn.addEventListener("click", () => {
-            const tipo = document.getElementById("edit-report-tipo").value;
-            const desc = document
-              .getElementById("edit-report-desc")
-              .value.trim();
-            const ubicacion = document
-              .getElementById("edit-report-ubicacion")
-              .value.trim();
+                    submitBtn.addEventListener("click", () => {
+                        const tipo =
+                            document.getElementById("edit-report-tipo").value;
+                        const desc = document
+                            .getElementById("edit-report-desc")
+                            .value.trim();
+                        const ubicacion = document
+                            .getElementById("edit-report-ubicacion")
+                            .value.trim();
 
-            if (!tipo || !desc || !ubicacion) {
-              errorEl.textContent = "Por favor, complete todos los campos.";
-              return;
-            }
+                        if (!tipo || !desc || !ubicacion) {
+                            errorEl.textContent =
+                                "Por favor, complete todos los campos.";
+                            return;
+                        }
 
-            report.tipo = tipo;
-            report.descripcion = desc;
-            report.ubicacion = ubicacion;
+                        report.tipo = tipo;
+                        report.descripcion = desc;
+                        report.ubicacion = ubicacion;
 
-            renderReportesTable();
-            Swal.close();
+                        renderReportesTable();
+                        Swal.close();
 
-            Swal.fire({
-              icon: "success",
-              title:
-                '<h3 class="text-sm font-semibold text-zinc-900 text-left">Reporte Modificado</h3>',
-              html: '<p class="text-xs text-zinc-500 text-left">El incidente ha sido actualizado con éxito.</p>',
-              showConfirmButton: false,
-              timer: 2000,
-              buttonsStyling: false,
-              customClass: {
-                popup:
-                  "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-              },
+                        Swal.fire({
+                            icon: "success",
+                            title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Reporte Modificado</h3>',
+                            html: '<p class="text-xs text-zinc-500 text-left">El incidente ha sido actualizado con éxito.</p>',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            buttonsStyling: false,
+                            customClass: {
+                                popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                            },
+                        });
+                    });
+                },
             });
-          });
-        },
-      });
+        });
     });
-  });
 }
 
 // -------------------------------------------------------------
 // CONTROLADOR DE PESTAÑAS (HOMEPAGE)
 // -------------------------------------------------------------
 export function initHomepage() {
-  const btnInicio = document.getElementById("homepage-btn-inicio");
-  const btnLugares = document.getElementById("homepage-btn-rutas");
-  const btnReportes = document.getElementById("homepage-btn-reportes");
-  const btnContactos = document.getElementById("homepage-btn-contactos");
+    const btnInicio = document.getElementById("homepage-btn-inicio");
+    const btnLugares = document.getElementById("homepage-btn-rutas");
+    const btnReportes = document.getElementById("homepage-btn-reportes");
+    const btnContactos = document.getElementById("homepage-btn-contactos");
 
-  const contentInicio = document.getElementById("homepage-content-inicio");
-  const contentLugares = document.getElementById("homepage-content-lugares");
-  const contentReportes = document.getElementById("homepage-content-reportes");
-  const contentContactos = document.getElementById(
-    "homepage-content-contactos",
-  );
-  const map = document.getElementById("map");
+    const contentInicio = document.getElementById("homepage-content-inicio");
+    const contentLugares = document.getElementById("homepage-content-lugares");
+    const contentReportes = document.getElementById(
+        "homepage-content-reportes",
+    );
+    const contentContactos = document.getElementById(
+        "homepage-content-contactos",
+    );
+    const map = document.getElementById("map");
 
-  // Inicializar renderizado de tablas
-  renderContactosTable();
-  renderLugaresTable();
-  renderReportesTable();
+    // Inicializar renderizado de tablas
+    renderContactosTable();
+    renderLugaresTable();
+    renderReportesTable();
 
-  // Conectar botones de creación
-  const createContactoBtn = document.getElementById(
-    "btn-homepage-create-contacto",
-  );
-  if (createContactoBtn) {
-    createContactoBtn.addEventListener("click", () => openContactoFormModal());
-  }
+    // Conectar botones de creación
+    const createContactoBtn = document.getElementById(
+        "btn-homepage-create-contacto",
+    );
+    if (createContactoBtn) {
+        createContactoBtn.addEventListener("click", () =>
+            openContactoFormModal(),
+        );
+    }
 
-  const createLugarBtn = document.getElementById("btn-homepage-create-lugar");
-  if (createLugarBtn) {
-    createLugarBtn.addEventListener("click", () => {
-      openLugarFormModal(null, (nombre, tipo, metros) => {
-        const newLugar = {
-          id: Date.now(),
-          nombre,
-          tipo,
-          metros,
-          coordenadas: "40.4167° N, 3.7037° W",
-        };
-        listLugares.push(newLugar);
-        renderLugaresTable();
+    const createLugarBtn = document.getElementById("btn-homepage-create-lugar");
+    if (createLugarBtn) {
+        createLugarBtn.addEventListener("click", () => {
+            openLugarFormModal(null, (nombre, tipo, metros) => {
+                const newLugar = {
+                    id: Date.now(),
+                    nombre,
+                    tipo,
+                    metros,
+                    coordenadas: "40.4167° N, 3.7037° W",
+                };
+                listLugares.push(newLugar);
+                renderLugaresTable();
 
-        Swal.fire({
-          icon: "success",
-          title:
-            '<h3 class="text-sm font-semibold text-zinc-900 text-left">Lugar Registrado</h3>',
-          html: '<p class="text-xs text-zinc-500 text-left">El lugar seguro ha sido registrado con éxito.</p>',
-          showConfirmButton: false,
-          timer: 2000,
-          buttonsStyling: false,
-          customClass: {
-            popup:
-              "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-          },
+                Swal.fire({
+                    icon: "success",
+                    title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Lugar Registrado</h3>',
+                    html: '<p class="text-xs text-zinc-500 text-left">El lugar seguro ha sido registrado con éxito.</p>',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    buttonsStyling: false,
+                    customClass: {
+                        popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                    },
+                });
+            });
         });
-      });
-    });
-  }
+    }
 
-  const buttons = [
-    { btn: btnInicio, tab: contentInicio },
-    { btn: btnLugares, tab: contentLugares },
-    { btn: btnReportes, tab: contentReportes },
-    { btn: btnContactos, tab: contentContactos },
-  ];
+    const buttons = [
+        { btn: btnInicio, tab: contentInicio },
+        { btn: btnLugares, tab: contentLugares },
+        { btn: btnReportes, tab: contentReportes },
+        { btn: btnContactos, tab: contentContactos },
+    ];
 
-  function switchTab(activeBtn, activeTab) {
-    buttons.forEach((item) => {
-      if (item.btn && item.tab) {
-        if (item.btn === activeBtn) {
-          // Activo
-          item.btn.className =
-            "homepage-nav-btn flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-xs font-medium bg-zinc-900 text-white border border-zinc-800";
-          const icon = item.btn.querySelector("svg");
-          if (icon) {
-            icon.classList.remove("text-zinc-500");
-            icon.classList.add("text-zinc-400");
-          }
-          item.tab.classList.remove("hidden");
-        } else {
-          // Inactivo
-          item.btn.className =
-            "homepage-nav-btn flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-900/50";
-          const icon = item.btn.querySelector("svg");
-          if (icon) {
-            icon.classList.remove("text-zinc-400");
-            icon.classList.add("text-zinc-550");
-          }
-          item.tab.classList.add("hidden");
-        }
-      }
-    });
-  }
+    function switchTab(activeBtn, activeTab) {
+        buttons.forEach((item) => {
+            if (item.btn && item.tab) {
+                if (item.btn === activeBtn) {
+                    // Activo
+                    item.btn.className =
+                        "homepage-nav-btn flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-xs font-medium bg-zinc-900 text-white border border-zinc-800";
+                    const icon = item.btn.querySelector("svg");
+                    if (icon) {
+                        icon.classList.remove("text-zinc-500");
+                        icon.classList.add("text-zinc-400");
+                    }
+                    item.tab.classList.remove("hidden");
+                } else {
+                    // Inactivo
+                    item.btn.className =
+                        "homepage-nav-btn flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-900/50";
+                    const icon = item.btn.querySelector("svg");
+                    if (icon) {
+                        icon.classList.remove("text-zinc-400");
+                        icon.classList.add("text-zinc-550");
+                    }
+                    item.tab.classList.add("hidden");
+                }
+            }
+        });
+    }
 
-  if (btnInicio)
-    btnInicio.addEventListener("click", () =>
-      switchTab(btnInicio, contentInicio),
-    );
-  if (btnLugares)
-    btnLugares.addEventListener("click", () =>
-      switchTab(btnLugares, contentLugares),
-    );
-  if (btnReportes)
-    btnReportes.addEventListener("click", () =>
-      switchTab(btnReportes, contentReportes),
-    );
-  if (btnContactos)
-    btnContactos.addEventListener("click", () =>
-      switchTab(btnContactos, contentContactos),
-    );
+    if (btnInicio)
+        btnInicio.addEventListener("click", () =>
+            switchTab(btnInicio, contentInicio),
+        );
+    if (btnLugares)
+        btnLugares.addEventListener("click", () =>
+            switchTab(btnLugares, contentLugares),
+        );
+    if (btnReportes)
+        btnReportes.addEventListener("click", () =>
+            switchTab(btnReportes, contentReportes),
+        );
+    if (btnContactos)
+        btnContactos.addEventListener("click", () =>
+            switchTab(btnContactos, contentContactos),
+        );
 
-  // Buscador de direcciones Nominatim
-  const mapSearchInput = document.getElementById('map-search-input');
-  if (mapSearchInput) {
-    findAddress(mapSearchInput);
-  }
+    // Buscador de direcciones Nominatim
+    const mapSearchInput = document.getElementById("map-search-input");
+    if (mapSearchInput) {
+        findAddress(mapSearchInput);
+    }
 }
-

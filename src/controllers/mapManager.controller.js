@@ -10,7 +10,7 @@ import {
     pointerTarget,
     updateMapPosition,
     destroyMapInstance,
-} from "../components/mapDiv";
+} from "../components/mapComponent/mapView.js";
 
 const state = {
     map: null,

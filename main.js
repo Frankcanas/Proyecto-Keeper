@@ -3,16 +3,16 @@ import "./style.css";
 import Swal from "sweetalert2";
 
 // Importamos los componentes modales
-import { initRegisterModal } from "./src/components/registermodal.js";
-import { initLoginModal } from "./src/components/loginmodal.js";
+import { initRegisterModal } from "./src/components/modalComponent/registermodal.js";
+import { initLoginModal } from "./src/components/modalComponent/loginmodal.js";
 import { renderFeed, initFeed, addFeedReport } from "./src/views/feed.js";
-import { initSOSModal } from "./src/components/sos.js";
+import { initSOSModal } from "./src/components/modalComponent/sosModal.js";
 import {
     renderHomepage,
     initHomepage,
     addHomepageReport,
 } from "./src/views/homepage.js";
-import { initReportModal } from "./src/components/reports.js";
+import { initReportModal } from "./src/components/modalComponent/reportModal.js";
 import { landingPage } from "./src/views/landingPage.js";
 import {
     initMap,
@@ -21,9 +21,9 @@ import {
 } from "./src/controllers/mapManager.controller.js";
 
 // Importamos los dashboards de Victoria
-import { inicializarDashboard as initPolicia } from './src/components/perfilpolicia.js';
-import { inicializarDashboard as initBomberos } from './src/components/perfilbomberos.js';
-import { inicializarDashboard as initAmbulancia } from './src/components/perfilambulancia.js';
+import { inicializarDashboard as initPolicia } from "./src/components/profileComponent/perfilpolicia.js";
+import { inicializarDashboard as initBomberos } from "./src/components/profileComponent/perfilbomberos.js";
+import { inicializarDashboard as initAmbulancia } from "./src/components/profileComponent/perfilambulancia.js";
 
 function renderLandingPage() {
     const app = document.querySelector("#app");
@@ -36,15 +36,20 @@ function handleLoginSuccess(loginData) {
     // Normalizar acentos
     email = email.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-    if (email.includes('policia')) {
+    if (email.includes("policia")) {
         cargarDashboardPolicia();
-    } else if (email.includes('bombero')) {
+    } else if (email.includes("bombero")) {
         cargarDashboardBomberos();
-    } else if (email.includes('ambulancia')) {
+    } else if (email.includes("ambulancia")) {
         cargarDashboardAmbulancia();
-    } else if (email.includes('admin') || email.includes('administrador')) {
+    } else if (email.includes("admin") || email.includes("administrador")) {
         renderFeedPage();
-    } else if (email.includes('usuario') || email.includes('user') || email.includes('luis') || email.includes('luigi')) {
+    } else if (
+        email.includes("usuario") ||
+        email.includes("user") ||
+        email.includes("luis") ||
+        email.includes("luigi")
+    ) {
         renderHomepagePage();
     } else {
         renderHomepagePage();
@@ -59,19 +64,19 @@ async function renderFeedPage() {
     // Conectar botón Salir del panel
     document
         .getElementById("feed-btn-logout")
-        ?.addEventListener("click", async() => {
+        ?.addEventListener("click", async () => {
             Swal.fire({
-                title: '¿Confirmar Salida?',
-                text: '¿Estás seguro que deseas cerrar sesión?',
-                icon: 'warning',
+                title: "¿Confirmar Salida?",
+                text: "¿Estás seguro que deseas cerrar sesión?",
+                icon: "warning",
                 showCancelButton: true,
-                confirmButtonText: 'Sí, salir',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#ea580c',
-                cancelButtonColor: '#71717a',
+                confirmButtonText: "Sí, salir",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#ea580c",
+                cancelButtonColor: "#71717a",
                 customClass: {
-                    popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs'
-                }
+                    popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs",
+                },
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     await cleanupMap();
@@ -102,19 +107,19 @@ async function renderHomepagePage() {
     // Conectar botón Salir del panel
     document
         .getElementById("homepage-btn-logout")
-        ?.addEventListener("click", async() => {
+        ?.addEventListener("click", async () => {
             Swal.fire({
-                title: '¿Confirmar Salida?',
-                text: '¿Estás seguro que deseas cerrar sesión?',
-                icon: 'warning',
+                title: "¿Confirmar Salida?",
+                text: "¿Estás seguro que deseas cerrar sesión?",
+                icon: "warning",
                 showCancelButton: true,
-                confirmButtonText: 'Sí, salir',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#ea580c',
-                cancelButtonColor: '#71717a',
+                confirmButtonText: "Sí, salir",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#ea580c",
+                cancelButtonColor: "#71717a",
                 customClass: {
-                    popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs'
-                }
+                    popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs",
+                },
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     await cleanupMap();
@@ -126,7 +131,8 @@ async function renderHomepagePage() {
 
 function renderLandingPagePage() {
     // Asegurar clases del body para el Landing Page
-    document.body.className = "bg-slate-50 text-slate-900 font-sans antialiased selection:bg-orange-500 selection:text-white";
+    document.body.className =
+        "bg-slate-50 text-slate-900 font-sans antialiased selection:bg-orange-500 selection:text-white";
     renderLandingPage();
 
     // Conectamos los botones de la interfaz con sus respectivos modales
@@ -156,64 +162,70 @@ function renderLandingPagePage() {
 
 // Funciones para cargar los dashboards del perfil de Victoria
 function cargarDashboardPolicia() {
-  document.body.className = "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#ff5d00] selection:text-white";
-  const app = document.getElementById('app');
-  if (app) app.innerHTML = '';
-  
-  initPolicia();
-  sobreescribirBotonSalir();
+    document.body.className =
+        "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#ff5d00] selection:text-white";
+    const app = document.getElementById("app");
+    if (app) app.innerHTML = "";
+
+    initPolicia();
+    sobreescribirBotonSalir();
 }
 
 function cargarDashboardBomberos() {
-  document.body.className = "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#dc2626] selection:text-white";
-  const app = document.getElementById('app');
-  if (app) app.innerHTML = '';
-  
-  initBomberos();
-  sobreescribirBotonSalir();
+    document.body.className =
+        "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#dc2626] selection:text-white";
+    const app = document.getElementById("app");
+    if (app) app.innerHTML = "";
+
+    initBomberos();
+    sobreescribirBotonSalir();
 }
 
 function cargarDashboardAmbulancia() {
-  document.body.className = "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#3b82f6] selection:text-white";
-  const app = document.getElementById('app');
-  if (app) app.innerHTML = '';
-  
-  initAmbulancia();
-  sobreescribirBotonSalir();
+    document.body.className =
+        "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#3b82f6] selection:text-white";
+    const app = document.getElementById("app");
+    if (app) app.innerHTML = "";
+
+    initAmbulancia();
+    sobreescribirBotonSalir();
 }
 
 function sobreescribirBotonSalir() {
-  window.salirAlLogin = () => {
-    // Limpiamos mapa en caso de que esté inicializado (seguridad)
-    cleanupMap();
-    // Recargamos al estado inicial (Landing Page)
-    window.location.reload();
-  };
+    window.salirAlLogin = () => {
+        // Limpiamos mapa en caso de que esté inicializado (seguridad)
+        cleanupMap();
+        // Recargamos al estado inicial (Landing Page)
+        window.location.reload();
+    };
 
-  const btnSalir = document.getElementById('btn-salir');
-  if (btnSalir) {
-    btnSalir.addEventListener('click', () => {
-      const interval = setInterval(() => {
-        const swalPopup = document.querySelector('.swal2-popup');
-        if (swalPopup && swalPopup.textContent.includes('Sesión Finalizada')) {
-          clearInterval(interval);
-          
-          const okButton = swalPopup.querySelector('.swal2-confirm');
-          if (okButton) {
-            okButton.addEventListener('click', () => {
-              window.salirAlLogin();
-            });
-          }
-          
-          setTimeout(() => {
-            window.salirAlLogin();
-          }, 3000);
-        }
-      }, 200);
+    const btnSalir = document.getElementById("btn-salir");
+    if (btnSalir) {
+        btnSalir.addEventListener("click", () => {
+            const interval = setInterval(() => {
+                const swalPopup = document.querySelector(".swal2-popup");
+                if (
+                    swalPopup &&
+                    swalPopup.textContent.includes("Sesión Finalizada")
+                ) {
+                    clearInterval(interval);
 
-      setTimeout(() => clearInterval(interval), 15000);
-    });
-  }
+                    const okButton = swalPopup.querySelector(".swal2-confirm");
+                    if (okButton) {
+                        okButton.addEventListener("click", () => {
+                            window.salirAlLogin();
+                        });
+                    }
+
+                    setTimeout(() => {
+                        window.salirAlLogin();
+                    }, 3000);
+                }
+            }, 200);
+
+            setTimeout(() => clearInterval(interval), 15000);
+        });
+    }
 }
 
 // Inicializamos la aplicación y conectamos los eventos
@@ -222,38 +234,45 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Listener global para toggles del sidebar (menú hamburguesa móvil) en todos los perfiles
-document.addEventListener('click', (e) => {
+document.addEventListener("click", (e) => {
     // Abrir sidebar
-    if (e.target.closest('#btn-toggle-sidebar')) {
-        const sidebar = document.getElementById('sidebar-aside');
-        const backdrop = document.getElementById('sidebar-backdrop');
+    if (e.target.closest("#btn-toggle-sidebar")) {
+        const sidebar = document.getElementById("sidebar-aside");
+        const backdrop = document.getElementById("sidebar-backdrop");
         if (sidebar && backdrop) {
-            sidebar.classList.remove('-translate-x-full');
-            sidebar.classList.add('translate-x-0');
-            backdrop.classList.remove('hidden');
+            sidebar.classList.remove("-translate-x-full");
+            sidebar.classList.add("translate-x-0");
+            backdrop.classList.remove("hidden");
         }
     }
-    
+
     // Cerrar sidebar (clic en botón X o clic fuera en el backdrop)
-    if (e.target.closest('#btn-close-sidebar') || e.target.id === 'sidebar-backdrop') {
-        const sidebar = document.getElementById('sidebar-aside');
-        const backdrop = document.getElementById('sidebar-backdrop');
+    if (
+        e.target.closest("#btn-close-sidebar") ||
+        e.target.id === "sidebar-backdrop"
+    ) {
+        const sidebar = document.getElementById("sidebar-aside");
+        const backdrop = document.getElementById("sidebar-backdrop");
         if (sidebar && backdrop) {
-            sidebar.classList.add('-translate-x-full');
-            sidebar.classList.remove('translate-x-0');
-            backdrop.classList.add('hidden');
+            sidebar.classList.add("-translate-x-full");
+            sidebar.classList.remove("translate-x-0");
+            backdrop.classList.add("hidden");
         }
     }
 
     // Auto-cerrar sidebar al cambiar de pestaña en celulares
-    if (e.target.closest('.nav-item') || e.target.closest('.sidebar-nav-btn') || e.target.closest('.homepage-nav-btn')) {
+    if (
+        e.target.closest(".nav-item") ||
+        e.target.closest(".sidebar-nav-btn") ||
+        e.target.closest(".homepage-nav-btn")
+    ) {
         if (window.innerWidth < 1024) {
-            const sidebar = document.getElementById('sidebar-aside');
-            const backdrop = document.getElementById('sidebar-backdrop');
+            const sidebar = document.getElementById("sidebar-aside");
+            const backdrop = document.getElementById("sidebar-backdrop");
             if (sidebar && backdrop) {
-                sidebar.classList.add('-translate-x-full');
-                sidebar.classList.remove('translate-x-0');
-                backdrop.classList.add('hidden');
+                sidebar.classList.add("-translate-x-full");
+                sidebar.classList.remove("translate-x-0");
+                backdrop.classList.add("hidden");
             }
         }
     }

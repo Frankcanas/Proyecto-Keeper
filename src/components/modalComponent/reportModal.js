@@ -1,14 +1,14 @@
 import Swal from "sweetalert2";
-import { getTargetLocation } from "../controllers/mapManager.controller.js";
-import { geolocator } from "../models/locationModel";
-import { findMailingAddress } from "../services/findMailingAddress.js";
-import { get_location } from "../models/locationModel.js";
+import { getTargetLocation } from "../../controllers/mapManager.controller.js";
+import { geolocator } from "../../models/locationModel.js";
+import { findMailingAddress } from "../../services/findMailingAddress.js";
+import { get_location } from "../../models/locationModel.js";
 
 export function initReportModal(buttonId, onSubmitCallback) {
     const btn = document.getElementById(buttonId);
     if (!btn) return;
 
-    btn.addEventListener("click", async() => {
+    btn.addEventListener("click", async () => {
         Swal.fire({
             title: '<h3 class="text-base font-semibold text-zinc-900 text-left">Nuevo Reporte</h3>',
             html: `
@@ -77,7 +77,7 @@ export function initReportModal(buttonId, onSubmitCallback) {
                 cancelButton:
                     "w-full mt-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-755 text-xs font-semibold py-2 rounded transition-colors text-center",
             },
-            didOpen: async() => {
+            didOpen: async () => {
                 const dropzone = document.getElementById("dropzone");
                 const fileInput = document.getElementById("report-files");
                 const filesList = document.getElementById("files-list");
@@ -127,7 +127,8 @@ export function initReportModal(buttonId, onSubmitCallback) {
                     })
                     .catch((error) => {
                         console.error(error);
-                        locStatus.textContent = "Problemas obteniendo la dirección.";
+                        locStatus.textContent =
+                            "Problemas obteniendo la dirección.";
                     });
                 Promise.resolve()
                     .then(async () => {
@@ -152,7 +153,8 @@ export function initReportModal(buttonId, onSubmitCallback) {
                         if (!targetStatus.textContent) {
                             targetStatus.textContent = "No disponible";
                         }
-                        locStatus.textContent = "Problemas obteniendo la dirección.";
+                        locStatus.textContent =
+                            "Problemas obteniendo la dirección.";
                     });
 
                 // Botones de categoría
