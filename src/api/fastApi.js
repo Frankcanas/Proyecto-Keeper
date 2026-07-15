@@ -4,6 +4,3 @@ import { createApiClient, createCrudService } from "./client";
 const api = createApiClient("http://127.0.0.1:8000");
 export const fastApi = createCrudService(api);
 
-export const getAllAlerts = async() => fastApi.getAll("/alertas/")
-
-objeto = {report_name: "juan"}
