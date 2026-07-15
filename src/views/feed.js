@@ -22,6 +22,7 @@ export function initFeed() {
   const tabReportes = document.getElementById('tab-content-reportes');
   const tabMapa = document.getElementById('tab-content-mapa');
 
+
   // Inicializar renderizado de tablas
   renderUsersTable();
   renderReportesFeedTable();

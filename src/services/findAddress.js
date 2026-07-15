@@ -1,9 +1,6 @@
-import { createApiClient, createCrudService } from "../api/apiManager.js";
+import { nominatimService } from "../api/nominatim.js";
 import { moveToSearchedLocation } from "../controllers/mapManager.controller.js";
 import Swal from "sweetalert2";
-
-const apiClient = createApiClient("https://nominatim.openstreetmap.org", 75000);
-const nominatimService = createCrudService(apiClient);
 
 export function findAddress(htmlObject) {
     htmlObject?.addEventListener("keypress", async (e) => {

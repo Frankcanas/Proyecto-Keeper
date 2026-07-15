@@ -1,9 +1,6 @@
-import { createApiClient, createCrudService } from "../api/apiManager.js";
+import { nominatimService } from "../api/nominatim";
 
-const apiClient = createApiClient("https://nominatim.openstreetmap.org");
-const nominatimService = createCrudService(apiClient);
-
-const NOMINATIM_EMAIL = "luis@gmail.com";
+const NOMINATIM_EMAIL = "luis@gmail.com"; // Cambia esto por tu correo electrónico real para cumplir con la política de Nominatim
 
 /**
  * Caché en memoria para evitar peticiones repetidas.
