@@ -25,33 +25,27 @@ import { inicializarDashboard as initPolicia } from "./src/components/profileCom
 import { inicializarDashboard as initBomberos } from "./src/components/profileComponent/perfilbomberos.js";
 import { inicializarDashboard as initAmbulancia } from "./src/components/profileComponent/perfilambulancia.js";
 
+import { getRoleById } from "./src/services/endpoints/roles.js";
+
 function renderLandingPage() {
     const app = document.querySelector("#app");
     app.innerHTML = landingPage;
 }
 
 // Enrutador de Login Unificado
-function handleLoginSuccess(loginData) {
-    let email = loginData.email.toLowerCase();
-    // Normalizar acentos
-    email = email.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-    if (email.includes("policia")) {
+async function handleLoginSuccess(loginData) {
+    let nombre = loginData.nombres;
+    let rol = loginData.id_rol;
+    let rol_name = await getRoleById(rol);
+    if (rol_name.nombre === "Policía") {
         cargarDashboardPolicia();
-    } else if (email.includes("bombero")) {
+    } else if (rol_name.nombre === "Bomberos") {
         cargarDashboardBomberos();
-    } else if (email.includes("ambulancia")) {
+    } else if (rol_name.nombre === "Ambulancia") {
         cargarDashboardAmbulancia();
-    } else if (email.includes("admin") || email.includes("administrador")) {
+    } else if (rol_name.nombre === "Administrador") {
         renderFeedPage();
-    } else if (
-        email.includes("usuario") ||
-        email.includes("user") ||
-        email.includes("luis") ||
-        email.includes("luigi")
-    ) {
-        renderHomepagePage();
-    } else {
+    } else if (rol_name.nombre === "Ciudadano") {
         renderHomepagePage();
     }
 }

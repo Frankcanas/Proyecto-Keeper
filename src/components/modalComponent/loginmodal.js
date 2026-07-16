@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import authenticateLogin from '../../services/endpoints/auth';
+import { authenticateLogin } from '../../services/endpoints/auth';
 
 export async function initLoginModal(buttonId, onSuccess) {
   const btn = document.getElementById(buttonId);
@@ -52,11 +52,26 @@ export async function initLoginModal(buttonId, onSuccess) {
         emailInput?.addEventListener('keypress', handleEnter);
         passInput?.addEventListener('keypress', handleEnter);
       },
-      preConfirm: async() => {
+      preConfirm: async () => {
         const email = document.getElementById('swal-login-email').value;
         const password = document.getElementById('swal-login-password').value;
 
-        const validation = await authenticateLogin({ email, password });
+        try {
+            const respuesta = await authenticateLogin({
+                correo: email,
+                contrasena: password
+            });
+
+            return respuesta; // Login exitoso
+
+        } catch (error) {
+            Swal.showValidationMessage(
+                error.response?.data?.detail || "Ocurrió un error al iniciar sesión."
+            );
+
+            return false; // Evita que el modal se cierre
+        }
+
         
         // if (!email || !password) {
         //   Swal.showValidationMessage(
@@ -87,7 +102,6 @@ export async function initLoginModal(buttonId, onSuccess) {
         //   return false;
         // }
 
-        return { email, password };
       }
     }).then((result) => {
       if (result.isConfirmed) {

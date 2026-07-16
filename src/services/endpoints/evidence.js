@@ -1,4 +1,4 @@
-import { fastApi } from './api/fastApi';
+import { fastApi } from '../../api/fastApi';
 
 export const getEvidence = (id) => fastApi.getById('/evidencias', id);
 

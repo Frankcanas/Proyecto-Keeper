@@ -1,4 +1,4 @@
-import { fastApi } from '../utils/fastApi';
+import { fastApi } from '../../api/fastApi';
 
 export const getAllRoles = (params = {}) => fastApi.getAll('/roles/', params);
 

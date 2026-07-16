@@ -1,4 +1,4 @@
-import { fastApi } from './api/fastApi';
+import { fastApi } from '../../api/fastApi';
 
 export const getAllServices = (params = {}) => fastApi.getAll('/servicios_emergencia/', params);
 
