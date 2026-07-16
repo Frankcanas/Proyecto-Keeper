@@ -1,10 +1,7 @@
 import Swal from "sweetalert2";
 import { getDashboardTemplate } from "../../ui/templateAmbulancia.js";
-import {
-    inicializarMapaVea,
-    actualizarMarcadoresEnMapa,
-} from "../../services/mapService.js";
 import { findAddress } from "../../services/findAddress.js";
+import { inicializarMapaVea, actualizarMarcadoresEnMapa } from "../../controllers/mapReport.controller.js";
 
 //Datos de reportes de ambulancia
 import {
@@ -185,9 +182,8 @@ function renderizarAlertasRecientes() {
         item.addEventListener("click", (e) => {
             const id = parseInt(e.currentTarget.getAttribute("data-id"));
             const rep = reportes.find((r) => r.id === id);
-            if (rep && mapInstance && rep.lat && rep.lng) {
-                mapInstance.setView([rep.lat, rep.lng], 15, { animate: true });
-
+            if (rep && rep.lat && rep.lng) {
+                const map = getMap();
                 const marker = mapMarkers.find((m) => {
                     const latlng = m.getLatLng();
                     return (
@@ -593,12 +589,6 @@ function enlazarEventosAcciones() {
                 if (viewEstadisticas) viewEstadisticas.classList.add("hidden");
                 if (viewHistorial) viewHistorial.classList.add("hidden");
                 if (viewMapa) viewMapa.classList.remove("hidden");
-
-                if (mapInstance) {
-                    setTimeout(() => {
-                        mapInstance.invalidateSize();
-                    }, 100);
-                }
 
                 renderizarAlertasRecientes();
                 actualizarMarcadoresEnMapa(reportes);

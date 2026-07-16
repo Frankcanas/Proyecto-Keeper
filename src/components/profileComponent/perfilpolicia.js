@@ -1,11 +1,8 @@
 import Swal from "sweetalert2";
 import { getDashboardTemplate } from "../../ui/templatePolicia.js";
 import { formatearFechaHumana } from "../../utils/helpers.js";
-import {
-    inicializarMapaVea,
-    actualizarMarcadoresEnMapa,
-} from "../../services/mapService.js";
 import { findAddress } from "../../services/findAddress.js";
+import { inicializarMapaVea, actualizarMarcadoresEnMapa } from "../../controllers/mapReport.controller.js";
 
 import { POLICIAL_LOGUEADO, REPORTES_MOCK } from "../../data/mockPolicia.js";
 
@@ -563,12 +560,6 @@ function enlazarEventosAcciones() {
                 if (viewEstadisticas) viewEstadisticas.classList.add("hidden");
                 if (viewHistorial) viewHistorial.classList.add("hidden");
                 if (viewMapa) viewMapa.classList.remove("hidden");
-
-                if (mapInstance) {
-                    setTimeout(() => {
-                        mapInstance.invalidateSize();
-                    }, 100);
-                }
 
                 renderizarAlertasRecientes();
                 actualizarMarcadoresEnMapa(reportes);
