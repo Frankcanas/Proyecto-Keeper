@@ -83,7 +83,8 @@ export function initReportModal(buttonId, onSubmitCallback) {
                 const filesList = document.getElementById("files-list");
                 const errorEl = document.getElementById("report-error");
 
-                // Elementos de tracking visual
+        // <===================Checkboxes y estados de ubicación=======================>
+        // <===================Checkboxes y estados de ubicación=======================>
                 const chkGPS = document.getElementById("use-location");
                 const locStatus = document.getElementById("loc-status");
 

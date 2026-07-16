@@ -86,6 +86,7 @@ async function renderFeedPage() {
         });
     //Integracion del mapa
     await initMap();
+    initM
     startRealTimeTracking();
 }
 

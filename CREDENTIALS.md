@@ -8,7 +8,7 @@ Este archivo contiene la lista oficial de credenciales autorizadas para acceder 
 | Perfil | Correo de ejemplo (Clave en email) | Contraseña | Dashboard al que ingresa |
 | **👮 Policía** | `policia@keeper.com` *(o que contenga "policia")* | `policia123` | Consola de Monitoreo Policial |
 | **🚒 Bomberos** | `bombero@keeper.com` *(o que contenga "bombero")* | `bombero123` | Consola de Despacho de Bomberos |
-| **🚑 Ambulancia** | `ambulancia@keeper.com` *(o que contenga "ambulancia")* | `ambulancia123` | Consola de Urgencias Médicas |
+| **🚑 Ambulancia** | `ambulancia@keeper.com` *(o que contenga "ambulancia")* | git pull`ambulancia123` | Consola de Urgencias Médicas |
 | **💼 Administrador** | `admin@keeper.com` *(o que contenga "admin" / "administrador")* | `admin123` | **Consola General (Feed)** |
 | **🏘️ Usuario** | `usuario@keeper.com` *(o que contenga "usuario" / "user" / "luis")* | `usuario123` | **Monitoreo Vecinal (Homepage)** |
 
