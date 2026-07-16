@@ -26,7 +26,7 @@ const TRACKING_OPTIONS = {
 };
 
 // Inicializa el mapa con la ubicación actual del usuario o una ubicación predeterminada
-export async function initMap() {
+export async function initMap(containerId = "map") {
     cleanupMap()
     let coords = locationDefault;
 
@@ -37,7 +37,7 @@ export async function initMap() {
         console.error(error);
     }
 
-    state.map = renderMap(coords);
+    state.map = renderMap(coords, containerId);
     state.currentMarker = pointer(state.map, coords);
 
     state.map.doubleClickZoom.disable();

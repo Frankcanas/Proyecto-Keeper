@@ -9,8 +9,8 @@ import { formatearFechaHumana } from "../utils/helpers.js";
 let map = null;
 let mapMarkers = [];
 
-export async function inicializarMapaVea(reportes) {
-    await initMap();
+export async function inicializarMapaVea(reportes, containerId = "map") {
+    await initMap(containerId);
     actualizarMarcadoresEnMapa(reportes);
 }
 
@@ -41,12 +41,12 @@ export function actualizarMarcadoresEnMapa(reportes) {
             <div class="p-1 font-sans rounded text-zinc-900" style="min-width: 190px;">
                 <div class="flex items-center justify-between border-b border-zinc-150 pb-1.5 mb-1.5">
                     <span class="font-bold text-xs uppercase text-[#ff5d00]">${rep.tipo}</span>
-                    <span class="text-[9px] bg-zinc-100 text-zinc-650 px-2 py-0.5 rounded font-mono font-bold">${rep.gravedad}</span>
+                    ${rep.gravedad ? `<span class="text-[9px] bg-zinc-100 text-zinc-650 px-2 py-0.5 rounded font-mono font-bold">${rep.gravedad}</span>` : ""}
                 </div>
                 <p class="text-xs text-zinc-700 leading-tight mb-2 font-medium">${rep.descripcion}</p>
                 <div class="text-[9px] text-zinc-400 font-mono space-y-0.5">
-                    <div>Dir: ${rep.ubicacion} (B. ${rep.barrio})</div>
-                    <div class="font-bold text-zinc-500">${formatearFechaHumana(rep.fecha)}</div>
+                    <div>Dir: ${rep.ubicacion} ${rep.barrio ? `(B. ${rep.barrio})` : ""}</div>
+                    <div class="font-bold text-zinc-500">${rep.fecha instanceof Date ? formatearFechaHumana(rep.fecha) : (rep.fecha || "")}</div>
                 </div>
             </div>
         `;

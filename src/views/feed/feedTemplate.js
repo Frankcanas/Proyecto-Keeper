@@ -271,7 +271,6 @@ export function renderFeed() {
               <!-- Map Container -->
               <div id="map" class="relative w-full h-[600px] rounded-lg border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
                 
-                <!-- ID para la inserción del mapa real -->
                 <div id="feed-map-container" class="absolute inset-0 z-0">
                   <!-- Imagen SVG elegante de calles como placeholder de fondo de mapa -->
                   <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_#27272a_1px,_transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
@@ -306,26 +305,6 @@ export function renderFeed() {
                     </svg>
                   </div>
                 </div>
-
-                <!-- Panel Flotante de Leyendas / Controles a la derecha -->
-                <div class="absolute top-4 right-4 z-10 w-64 bg-zinc-900/95 border border-zinc-800 rounded p-4 text-white shadow-lg backdrop-blur-sm space-y-4">
-                  <div>
-                    <h3 class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Filtros de Capas</h3>
-                    <div class="space-y-2">
-                      <label class="flex items-center justify-between cursor-pointer">
-                        <span class="text-xs text-zinc-300">Mostrar Patrullas</span>
-                        <input type="checkbox" checked class="accent-orange-500 rounded bg-zinc-800 border-zinc-700">
-                      </label>
-                      <label class="flex items-center justify-between cursor-pointer">
-                        <span class="text-xs text-zinc-300">Cámaras de Vigilancia</span>
-                        <input type="checkbox" checked class="accent-orange-500 rounded bg-zinc-800 border-zinc-700">
-                      </label>
-                      <label class="flex items-center justify-between cursor-pointer">
-                        <span class="text-xs text-zinc-300">Reportes de Incidentes</span>
-                        <input type="checkbox" checked class="accent-orange-500 rounded bg-zinc-800 border-zinc-700">
-                      </label>
-                    </div>
-                  </div>
 
                   <div class="border-t border-zinc-800 pt-3">
                     <h3 class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Métricas Rápidas</h3>

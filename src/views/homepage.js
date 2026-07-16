@@ -45,7 +45,7 @@ let listLugares = [
 ];
 
 // Lista local de reportes para el Homepage
-let listReportes = [
+export let listReportes = [
     {
         id: "KP-8821",
         tipo: "Vandalismo",
@@ -53,6 +53,8 @@ let listReportes = [
         ubicacion: "Calle 8 #12-42",
         fecha: "Hace 2 min",
         estado: "Pendiente",
+        lat: 4.6320,
+        lng: -74.0680,
     },
     {
         id: "KP-8819",
@@ -61,6 +63,8 @@ let listReportes = [
         ubicacion: "Plaza Central",
         fecha: "Hace 14 min",
         estado: "Verificado",
+        lat: 4.5980,
+        lng: -74.0930,
     },
 ];
 
@@ -498,6 +502,7 @@ function renderLugaresTable() {
 export function addHomepageReport(report) {
     listReportes.unshift(report);
     renderReportesTable();
+    actualizarMarcadoresEnMapa(listReportes);
 }
 
 function renderReportesTable() {

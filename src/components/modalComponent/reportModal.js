@@ -218,7 +218,7 @@ export function initReportModal(buttonId, onSubmitCallback) {
                 // === SUBMIT DEL FORMULARIO ===
                 document
                     .getElementById("report-form")
-                    .addEventListener("submit", (ev) => {
+                    .addEventListener("submit", async (ev) => {
                         ev.preventDefault();
                         if (errorEl) errorEl.textContent = "";
                         const desc = document
@@ -239,10 +239,24 @@ export function initReportModal(buttonId, onSubmitCallback) {
 
                         // Capturamos el texto de la dirección limpia guardada en los estados visuales
                         let finalLocation = "Ubicación Manual";
+                        let lat = null;
+                        let lng = null;
+
                         if (chkGPS.checked) {
                             finalLocation = locStatus.textContent;
+                            try {
+                                const currentCoords = await get_location();
+                                lat = currentCoords.lat;
+                                lng = currentCoords.lon;
+                            } catch (e) {
+                                console.error(e);
+                            }
                         } else if (chkTarget.checked) {
                             finalLocation = targetStatus.textContent;
+                            if (targetCoords) {
+                                lat = targetCoords.lat;
+                                lng = targetCoords.lon ?? targetCoords.lng;
+                            }
                         }
 
                         const reportData = {
@@ -254,6 +268,8 @@ export function initReportModal(buttonId, onSubmitCallback) {
                             ubicacion: finalLocation, // Guardará la calle legible
                             fecha: "Hace un momento",
                             estado: "Pendiente",
+                            lat,
+                            lng,
                         };
 
                         if (onSubmitCallback) {

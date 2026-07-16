@@ -94,7 +94,9 @@ export const feedState = {
       fecha: 'Hace 2 min',
       estado: 'Pendiente',
       evidencia: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800',
-      accion: '—'
+      accion: '—',
+      lat: 4.6320,
+      lng: -74.0680
     },
     {
       id: '#KP-8819',
@@ -104,7 +106,9 @@ export const feedState = {
       fecha: 'Hace 14 min',
       estado: 'En revisión',
       evidencia: null,
-      accion: '—'
+      accion: '—',
+      lat: 4.5980,
+      lng: -74.0930
     },
     {
       id: '#KP-8815',
@@ -114,7 +118,9 @@ export const feedState = {
       fecha: 'Hace 42 min',
       estado: 'Completado',
       evidencia: null,
-      accion: '—'
+      accion: '—',
+      lat: 4.6860,
+      lng: -74.0480
     },
     {
       id: '#KP-8810',
@@ -124,7 +130,9 @@ export const feedState = {
       fecha: 'Hace 2 horas',
       estado: 'En revisión',
       evidencia: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800',
-      accion: '—'
+      accion: '—',
+      lat: 4.6010,
+      lng: -74.0720
     }
   ]
 };

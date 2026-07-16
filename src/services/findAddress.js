@@ -3,8 +3,9 @@ import { moveToSearchedLocation } from "../controllers/mapManager.controller.js"
 import Swal from "sweetalert2";
 
 export function findAddress(htmlObject) {
-    htmlObject?.addEventListener("keypress", async (e) => {
+    htmlObject?.addEventListener("keydown", async (e) => {
         if (e.key === "Enter") {
+            e.preventDefault(); // Evita que el navegador realice acciones por defecto o recargas
             const query = e.target.value.trim();
             if (!query) return;
             try {

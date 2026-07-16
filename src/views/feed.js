@@ -5,6 +5,7 @@ import { renderReportesFeedTable, renderHistorialReportesTable } from './feed/fe
 import { exportReportToPDF } from './feed/feedPdf.js';
 import { findAddress } from '../services/findAddress.js';
 import Swal from 'sweetalert2';
+import { actualizarMarcadoresEnMapa } from '../controllers/mapReport.controller.js';
 
 export { renderFeed };
 
@@ -183,11 +184,14 @@ export function addFeedReport(report) {
     fecha: report.fecha || 'Hace un momento',
     estado: report.estado || 'Pendiente',
     evidencia: null,
-    accion: '—'
+    accion: '—',
+    lat: report.lat || null,
+    lng: report.lng || null
   };
   feedState.listHistorialReportes.unshift(historyReport);
 
   // Si las tablas están actualmente dibujadas en el DOM, las refrescamos
   renderReportesFeedTable();
   renderHistorialReportesTable();
+  actualizarMarcadoresEnMapa(feedState.listHistorialReportes);
 }

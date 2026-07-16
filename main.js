@@ -11,6 +11,7 @@ import {
     renderHomepage,
     initHomepage,
     addHomepageReport,
+    listReportes,
 } from "./src/views/homepage.js";
 import { initReportModal } from "./src/components/modalComponent/reportModal.js";
 import { landingPage } from "./src/views/landingPage.js";
@@ -26,6 +27,8 @@ import { inicializarDashboard as initBomberos } from "./src/components/profileCo
 import { inicializarDashboard as initAmbulancia } from "./src/components/profileComponent/perfilambulancia.js";
 
 import { getRoleById } from "./src/services/endpoints/roles.js";
+import { inicializarMapaVea } from "./src/controllers/mapReport.controller.js";
+import { feedState } from "./src/views/feed/feedState.js";
 
 
 function renderLandingPage() {
@@ -80,8 +83,7 @@ async function renderFeedPage() {
             });
         });
     //Integracion del mapa
-    await initMap();
-    initM
+    await inicializarMapaVea(feedState.listHistorialReportes, "feed-map-container");
     startRealTimeTracking();
 }
 
@@ -98,7 +100,7 @@ async function renderHomepagePage() {
         addFeedReport(report);
     });
     //Integracion del mapa
-    await initMap();
+    await inicializarMapaVea(listReportes);
     startRealTimeTracking();
     // Conectar botón Salir del panel
     document
