@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.config.db_config import get_db_connection
 
@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
 # Configuración de CORS para que el frontend pueda conectarse
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # En producción cambiar esto por la URL del frontend
+    allow_origins=["http://127.0.0.1:5173"], # En producción cambiar esto por la URL del frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -81,4 +81,3 @@ app.include_router(sos_router)
 
 from app.router.notificacion_router import router as notificacion_router
 app.include_router(notificacion_router)
-
