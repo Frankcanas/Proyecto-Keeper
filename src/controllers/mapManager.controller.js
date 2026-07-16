@@ -122,3 +122,7 @@ export function getTargetLocation() {
         lat,
     };
 }
+
+export function getMap(){
+    return state.map;
+}
