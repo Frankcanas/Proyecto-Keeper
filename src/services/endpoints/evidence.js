@@ -1,9 +1,9 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const GetEvidence = (id) => { fastApi.getAll(`/evidencias/${id}`); }
+export const getEvidence = (id) => fastApi.getById('/evidencias', id);
 
-const GetEvidenceById = (id) => { fastApi.getById(`/evidencias/reporte/${id}`); }
+export const getEvidenceById = (id) => fastApi.getById('/evidencias/reporte', id);
 
-const CreateEvidence = (evidenceData) => { fastApi.postData('/evidencias/', evidenceData); }
+export const createEvidence = (evidenceData) => fastApi.postData('/evidencias/', evidenceData);
 
-const DeleteEvidence = (id) => { fastApi.deleteData(`/evidencias/${id}`); }
+export const deleteEvidence = (id) => fastApi.deleteData('/evidencias', id);

@@ -1,7 +1,7 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const GetAllAlerts = fastApi.getAll('/alertas/');
+export const getAllAlerts = (params = {}) => fastApi.getAll('/alertas/', params);
 
-const GetAlertById =  (id) => { return  fastApi.getById(`/alertas/${id}`); }
+export const getAlertById = (id) => fastApi.getById('/alertas', id);
 
-const CreateAlert =  (alertData) => { return  fastApi.postData('/alertas/', alertData); }
+export const createAlert = (alertData) => fastApi.postData('/alertas/', alertData);

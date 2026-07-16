@@ -1,10 +1,11 @@
 import Swal from 'sweetalert2';
+import authenticateLogin from '../../services/endpoints/auth';
 
-export function initLoginModal(buttonId, onSuccess) {
+export async function initLoginModal(buttonId, onSuccess) {
   const btn = document.getElementById(buttonId);
   if (!btn) return;
 
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', async () => {
     Swal.fire({
       title: '<h3 class="text-base font-semibold text-zinc-900 tracking-tight text-left">Iniciar Sesión</h3>',
       html: `
@@ -38,7 +39,7 @@ export function initLoginModal(buttonId, onSuccess) {
         confirmButton: 'bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold px-4 py-2 rounded transition-colors',
         cancelButton: 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold px-4 py-2 rounded transition-colors'
       },
-      didOpen: () => {
+      didOpen: async() => {
         const emailInput = document.getElementById('swal-login-email');
         const passInput = document.getElementById('swal-login-password');
         
@@ -51,38 +52,40 @@ export function initLoginModal(buttonId, onSuccess) {
         emailInput?.addEventListener('keypress', handleEnter);
         passInput?.addEventListener('keypress', handleEnter);
       },
-      preConfirm: () => {
+      preConfirm: async() => {
         const email = document.getElementById('swal-login-email').value;
         const password = document.getElementById('swal-login-password').value;
+
+        const validation = await authenticateLogin({ email, password });
         
-        if (!email || !password) {
-          Swal.showValidationMessage(
-            '<span class="text-xs font-semibold text-red-500">Por favor, ingresa tu correo y contraseña.</span>'
-          );
-          return false;
-        }
+        // if (!email || !password) {
+        //   Swal.showValidationMessage(
+        //     '<span class="text-xs font-semibold text-red-500">Por favor, ingresa tu correo y contraseña.</span>'
+        //   );
+        //   return false;
+        // }
 
-        const emailLower = email.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        let isValid = false;
+        // const emailLower = email.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        // let isValid = false;
 
-        if (emailLower.includes('policia') && password === 'policia123') {
-          isValid = true;
-        } else if (emailLower.includes('bombero') && password === 'bombero123') {
-          isValid = true;
-        } else if (emailLower.includes('ambulancia') && password === 'ambulancia123') {
-          isValid = true;
-        } else if ((emailLower.includes('admin') || emailLower.includes('administrador')) && password === 'admin123') {
-          isValid = true;
-        } else if ((emailLower.includes('usuario') || emailLower.includes('user') || emailLower.includes('luis') || emailLower.includes('luigi')) && password === 'usuario123') {
-          isValid = true;
-        }
+        // if (emailLower.includes('policia') && password === 'policia123') {
+        //   isValid = true;
+        // } else if (emailLower.includes('bombero') && password === 'bombero123') {
+        //   isValid = true;
+        // } else if (emailLower.includes('ambulancia') && password === 'ambulancia123') {
+        //   isValid = true;
+        // } else if ((emailLower.includes('admin') || emailLower.includes('administrador')) && password === 'admin123') {
+        //   isValid = true;
+        // } else if ((emailLower.includes('usuario') || emailLower.includes('user') || emailLower.includes('luis') || emailLower.includes('luigi')) && password === 'usuario123') {
+        //   isValid = true;
+        // }
 
-        if (!isValid) {
-          Swal.showValidationMessage(
-            '<span class="text-xs font-semibold text-red-500">Correo o contraseña incorrectos.</span>'
-          );
-          return false;
-        }
+        // if (!isValid) {
+        //   Swal.showValidationMessage(
+        //     '<span class="text-xs font-semibold text-red-500">Correo o contraseña incorrectos.</span>'
+        //   );
+        //   return false;
+        // }
 
         return { email, password };
       }
@@ -106,4 +109,4 @@ export function initLoginModal(buttonId, onSuccess) {
       }
     });
   });
-}
+}

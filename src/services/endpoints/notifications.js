@@ -1,7 +1,7 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const GetAllNotifications = fastApi.getAll('/notificaciones/');
+export const getAllNotifications = (params = {}) => fastApi.getAll('/notificaciones/', params);
 
-const createNotification = (notificationData) => { fastApi.postData('/notificaciones/', notificationData); }
+export const createNotification = (notificationData) => fastApi.postData('/notificaciones/', notificationData);
 
-const tickNotification = (id) => { fastApi.putData(`/notificaciones/${id}/leida`); }
+export const tickNotification = (id) => fastApi.putData('/notificaciones', `${id}/leida`, {});

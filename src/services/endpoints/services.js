@@ -1,11 +1,11 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const GetAllServices = fastApi.getAll('/servicios_emergencia/');
+export const getAllServices = (params = {}) => fastApi.getAll('/servicios_emergencia/', params);
 
-const GetServiceById = (id) => {fastApi.getById(`/servicios_emergencia/${id}`);}
+export const getServiceById = (id) => fastApi.getById('/servicios_emergencia', id);
 
-const CreateService = (serviceData) => {fastApi.postData('/servicios_emergencia/', serviceData);}
+export const createService = (serviceData) => fastApi.postData('/servicios_emergencia/', serviceData);
 
-const UpdateService = (id, serviceData) => {fastApi.putData(`/servicios_emergencia/${id}`, serviceData);}
+export const updateService = (id, serviceData) => fastApi.putData('/servicios_emergencia', id, serviceData);
 
-const DeleteService = (id) => {fastApi.deleteData(`/servicios_emergencia/${id}`);}
+export const deleteService = (id) => fastApi.deleteData('/servicios_emergencia', id);

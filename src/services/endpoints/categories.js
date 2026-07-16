@@ -1,11 +1,11 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const GetAllCategories = fastApi.getAll('/categorias/');
+export const getAllCategories = (params = {}) => fastApi.getAll('/categorias/', params);
 
-const GetCategoryById = (id) => { fastApi.getById(`/categorias/${id}`); }
+export const getCategoryById = (id) => fastApi.getById('/categorias', id);
 
-const CreateCategory = (categoryData) => { fastApi.postData('/categorias/', categoryData); }
+export const createCategory = (categoryData) => fastApi.postData('/categorias/', categoryData);
 
-const UpdateCategory = (id, categoryData) => { fastApi.putData(`/categorias/${id}`, categoryData); }
+export const updateCategory = (id, categoryData) => fastApi.putData('/categorias', id, categoryData);
 
-const DeleteCategory = (id) => { fastApi.deleteData(`/categorias/${id}`); }
+export const deleteCategory = (id) => fastApi.deleteData('/categorias', id);

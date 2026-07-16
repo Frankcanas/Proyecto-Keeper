@@ -1,11 +1,11 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const GetAllZones = fastApi.getAll('/zonas/');
+export const getAllZones = (params = {}) => fastApi.getAll('/zonas/', params);
 
-const GetZoneById = (id) => {fastApi.getById(`/zonas/${id}`);}
+export const getZoneById = (id) => fastApi.getById('/zonas', id);
 
-const CreateZone = (zoneData) => {fastApi.postData('/zonas/', zoneData);}
+export const createZone = (zoneData) => fastApi.postData('/zonas/', zoneData);
 
-const UpdateZone = (id, zoneData) => {fastApi.putData(`/zonas/${id}`, zoneData);}
+export const updateZone = (id, zoneData) => fastApi.putData('/zonas', id, zoneData);
 
-const DeleteZone = (id) => {fastApi.deleteData(`/zonas/${id}`);}
+export const deleteZone = (id) => fastApi.deleteData('/zonas', id);

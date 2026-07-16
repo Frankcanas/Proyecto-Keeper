@@ -1,5 +1,5 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const ValidationReportData = (reportData) => {fastApi.postData('/validaciones/', reportData);}
+export const validationReportData = (reportData) => fastApi.postData('/validaciones/', reportData);
 
-const GetValidation = (id) => {fastApi.getById(`/validaciones/reporte/${id}`);}
+export const getValidation = (id) => fastApi.getById('/validaciones/reporte', id);

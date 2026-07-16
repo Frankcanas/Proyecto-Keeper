@@ -1,11 +1,11 @@
-import fastApi from '../utils/fastApi';
+import { fastApi } from '../utils/fastApi';
 
-const GetAllRoles = fastApi.getAll('/roles/');
+export const getAllRoles = (params = {}) => fastApi.getAll('/roles/', params);
 
-const GetRoleById = (id) => {fastApi.getById(`/roles/${id}`);}
+export const getRoleById = (id) => fastApi.getById('/roles', id);
 
-const CreateRole = (roleData) => {fastApi.postData('/roles/', roleData);}
+export const createRole = (roleData) => fastApi.postData('/roles/', roleData);
 
-const UpdateRole = (id, roleData) => {fastApi.putData(`/roles/${id}`, roleData);}
+export const updateRole = (id, roleData) => fastApi.putData('/roles', id, roleData);
 
-const DeleteRole = (id) =>  {fastApi.deleteData(`/roles/${id}`);}
+export const deleteRole = (id) => fastApi.deleteData('/roles', id);

@@ -1,11 +1,11 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const GetAllUsers = fastApi.getAll('/usuarios/');
+export const getAllUsers = (params = {}) => fastApi.getAll('/usuarios/', params);
 
-const GetUserById = (id) => {fastApi.getById(`/usuarios/${id}`);}
+export const getUserById = (id) => fastApi.getById('/usuarios', id);
 
-const CreateUser = (userData) => {fastApi.postData('/usuarios/', userData);}
+export const createUser = (userData) => fastApi.postData('/usuarios/', userData);
 
-const UpdateUser = (id, userData) => {fastApi.putData(`/usuarios/${id}`, userData);}
+export const updateUser = (id, userData) => fastApi.putData('/usuarios', id, userData);
 
-const DeleteUser = (id) => {fastApi.deleteData(`/usuarios/${id}`);}
+export const deleteUser = (id) => fastApi.deleteData('/usuarios', id);

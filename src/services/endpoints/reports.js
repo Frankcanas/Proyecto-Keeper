@@ -1,11 +1,11 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const GetAllReports = fastApi.getAll('/reportes/');
+export const getAllReports = (params = {}) => fastApi.getAll('/reportes/', params);
 
-const GetReportById = (id) => { fastApi.getById(`/reportes/${id}`); }
+export const getReportById = (id) => fastApi.getById('/reportes', id);
 
-const CreateReport = (reportData) => { fastApi.postData('/reportes/', reportData); }
+export const createReport = (reportData) => fastApi.postData('/reportes/', reportData);
 
-const UpdateReport = (id, reportData) => { fastApi.putData(`/reportes/${id}`, reportData); }
+export const updateReport = (id, reportData) => fastApi.putData('/reportes', id, reportData);
 
-const DeleteReport = (id) => { fastApi.deleteData(`/reportes/${id}`); }
+export const deleteReport = (id) => fastApi.deleteData('/reportes', id);

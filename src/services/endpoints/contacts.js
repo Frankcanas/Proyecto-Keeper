@@ -1,11 +1,11 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const GetAllContacts = fastApi.getAll('/contactos/');
+export const getAllContacts = (params = {}) => fastApi.getAll('/contactos/', params);
 
-const GetContactById = (id) => { fastApi.getById(`/contactos/${id}`); }
+export const getContactById = (id) => fastApi.getById('/contactos', id); 
 
-const CreateContact = (contactData) => { fastApi.postData('/contactos/', contactData); }
+export const createContact = (contactData) => fastApi.postData('/contactos/', contactData); 
 
-const UpdateContact = (id, contactData) => { fastApi.putData(`/contactos/${id}`, contactData); }
+export const updateContact = (id, contactData) => fastApi.putData('/contactos', id, contactData); 
 
-const DeleteContact = (id) => { fastApi.deleteData(`/contactos/${id}`); }
+export const deleteContact = (id) => fastApi.deleteData('/contactos', id);

@@ -1,11 +1,11 @@
-import fastApi from './api/fastApi';
+import { fastApi } from './api/fastApi';
 
-const GetAllStatus = fastApi.getAll('/estados_reporte/');
+export const getAllStatus = (params = {}) => fastApi.getAll('/estados_reporte/', params);
 
-const GetStatusById = (id) => {fastApi.getById(`/estados_reporte/${id}`);}
+export const getStatusById = (id) => fastApi.getById('/estados_reporte', id);
 
-const CreateStatus = (statusData) => {fastApi.postData('/estados_reporte/', statusData);}
+export const createStatus = (statusData) => fastApi.postData('/estados_reporte/', statusData);
 
-const UpdateStatus = (id, statusData) => {fastApi.putData(`/estados_reporte/${id}`, statusData);}
+export const updateStatus = (id, statusData) => fastApi.putData('/estados_reporte', id, statusData);
 
-const DeleteStatus = (id)  => {fastApi.deleteData(`/estados_reporte/${id}`);}
+export const deleteStatus = (id) => fastApi.deleteData('/estados_reporte', id);
