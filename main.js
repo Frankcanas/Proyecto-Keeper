@@ -27,6 +27,7 @@ import { inicializarDashboard as initAmbulancia } from "./src/components/profile
 
 import { getRoleById } from "./src/services/endpoints/roles.js";
 
+
 function renderLandingPage() {
     const app = document.querySelector("#app");
     app.innerHTML = landingPage;

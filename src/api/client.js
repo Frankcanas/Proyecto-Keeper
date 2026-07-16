@@ -8,6 +8,15 @@ export const createApiClient = (url, time=45000) =>
         headers: { "Content-Type": "application/json" },
     });
 
+export const createApiClient2 = (url, time=45000) =>
+    axios.create({
+        baseURL: url,
+        timeout: time,
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true
+    });
+
+
 // El generador del CRUD
 export const createCrudService = (apiClient) => {
     return {
