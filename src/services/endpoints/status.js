@@ -1,4 +1,5 @@
-import { fastApi } from '../../api/fastApi';
+import {fastApi} from "../../api/fastApi";
+
 
 export const getAllStatus = (params = {}) => fastApi.getAll('/estados_reporte/', params);
 
