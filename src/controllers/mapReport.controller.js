@@ -25,10 +25,15 @@ export function actualizarMarcadoresEnMapa(reportes) {
     reportes.forEach((rep) => {
         if (!rep.lat || !rep.lng) return;
 
-        let colorClase = "bg-blue-500";
-        if (rep.tipo === "Robo") colorClase = "bg-red-650";
-        else if (rep.tipo === "Hurto") colorClase = "bg-[#ff5d00]";
-        else if (rep.tipo === "Amenazas y peleas") colorClase = "bg-yellow-500";
+        let colorClase = "bg-red-500"; // Rojo por defecto como pidió el usuario
+        
+        if (rep.tipo === "Robo" || rep.tipo === "Vandalismo") colorClase = "bg-red-700";
+        else if (rep.tipo === "Altercado") colorClase = "bg-orange-600";
+        else if (rep.tipo === "Incendio") colorClase = "bg-[#dc2626]"; // bg-red-600
+        else if (rep.tipo && rep.tipo.includes("SOS")) colorClase = "bg-red-600 animate-pulse";
+        else if (rep.tipo === "Accidente Tránsito") colorClase = "bg-yellow-500";
+        else if (rep.tipo === "Urgencia Médica" || rep.tipo === "Solicitar Ambulancia") colorClase = "bg-emerald-500";
+        else colorClase = "bg-red-500"; // Fallback siempre rojo
 
         const el = document.createElement("div");
         el.className = `w-6 h-6 rounded-full ${colorClase} border-2 border-white flex items-center justify-center shadow cursor-pointer`;
