@@ -1,6 +1,7 @@
 import Swal from 'sweetalert2';
 import { get_location } from '../../models/locationModel.js';
 import { findMailingAddress } from '../../services/findMailingAddress.js';
+import { createReport } from '../../services/endpoints/reports.js';
 
 export function initSOSModal(buttonId, onSOSCallback) {
   const btn = document.getElementById(buttonId);
@@ -270,6 +271,16 @@ export function initSOSModal(buttonId, onSOSCallback) {
           if (onSOSCallback) {
             onSOSCallback(reportData);
           }
+
+          // Guardar en backend asíncronamente
+          const apiData = {
+              id_categoria: 9, // SOS / Emergencia
+              titulo: reportType + ' en ' + address,
+              descripcion: reportData.descripcion,
+              latitud: currentCoords ? currentCoords.lat : 0,
+              longitud: currentCoords ? currentCoords.lon : 0
+          };
+          createReport(apiData).catch(e => console.error("Error guardando SOS en BD", e));
 
           Swal.close();
           Swal.fire({

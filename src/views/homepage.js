@@ -1,4 +1,5 @@
 import { renderSidebar } from "./sidebar.js";
+import { getAllReports } from "../services/endpoints/reports.js";
 import { openLugarFormModal } from "../components/modalComponent/lugaresmodal.js";
 import Swal from "sweetalert2";
 import { findAddress } from "../services/findAddress.js";
@@ -45,28 +46,28 @@ export let listLugares = [
 ];
 
 // Lista local de reportes para el Homepage
-export let listReportes = [
-    {
-        id: "KP-8821",
-        tipo: "Vandalismo",
-        descripcion: "Graffiti y rayados en la fachada del centro comunitario.",
-        ubicacion: "Calle 8 #12-42",
-        fecha: "Hace 2 min",
-        estado: "Pendiente",
-        lat: 4.6320,
-        lng: -74.0680,
-    },
-    {
-        id: "KP-8819",
-        tipo: "Peligro",
-        descripcion: "Cables de alta tensión caídos sobre la acera peatonal.",
-        ubicacion: "Plaza Central",
-        fecha: "Hace 14 min",
-        estado: "Verificado",
-        lat: 4.5980,
-        lng: -74.0930,
-    },
-];
+export let listReportes = [];
+
+export async function cargarReportesHomepage() {
+    try {
+        const data = await getAllReports();
+        const adapted = (data || []).map(r => ({
+            id: `KP-${r.id_reporte || r.id}`,
+            tipo: r.categoria_nombre || r.tipo || "General",
+            descripcion: r.descripcion,
+            ubicacion: (r.titulo || r.ubicacion_geografica || "").replace(/.*? en /, '') || "Desconocida",
+            fecha: new Date(r.fecha_hora_creacion || r.fecha_reporte || r.fecha || Date.now()),
+            estado: r.nombre_estado || r.estado || "Pendiente",
+            lat: parseFloat(r.latitud || r.lat) || 0,
+            lng: parseFloat(r.longitud || r.lng) || 0,
+            reportadoPor: r.usuario_nombre || "Desconocido",
+            gravedad: "Media"
+        }));
+        listReportes.splice(0, listReportes.length, ...adapted);
+    } catch(e) {
+        console.error("Error cargando reportes en homepage:", e);
+    }
+}
 
 export function renderHomepage() {
     return `
