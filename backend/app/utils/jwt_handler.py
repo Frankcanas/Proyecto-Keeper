@@ -45,14 +45,6 @@ def verify_token(request: Request):
             algorithms=[ALGORITHM]
         )
 
-        usuario_id = payload.get("sub")
-
-        if usuario_id is None:
-            raise HTTPException(
-                status_code=401,
-                detail="Token inválido, credenciales no encontradas"
-            )
-
         return payload
 
     except JWTError:
