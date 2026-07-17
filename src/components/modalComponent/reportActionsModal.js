@@ -1,3 +1,17 @@
+import Swal from "sweetalert2";
+import { openLugarFormModal } from "./lugaresmodal.js";
+import {
+    listReportes,
+    listLugares,
+    listContactos,
+    renderReportesTable,
+    renderLugaresTable,
+    renderContactosTable,
+    openContactoFormModal,
+    renderAlertasRecientes,
+    renderConfianzaVecinal,
+} from "../../views/homepage.js";
+
 export function attachReportActions() {
     document.querySelectorAll(".btn-report-edit").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -71,6 +85,8 @@ export function attachReportActions() {
                         report.ubicacion = ubicacion;
 
                         renderReportesTable();
+                        renderAlertasRecientes();
+                        renderConfianzaVecinal();
                         Swal.close();
 
                         Swal.fire({
@@ -97,10 +113,13 @@ export function attachLugarActions() {
             const id = parseInt(btn.dataset.id);
             const lugar = listLugares.find((l) => l.id === id);
             if (lugar) {
-                openLugarFormModal(lugar, (nombre, tipo, metros) => {
+                openLugarFormModal(lugar, (nombre, tipo, metros, coordinatesText, lat, lng) => {
                     lugar.nombre = nombre;
                     lugar.tipo = tipo;
                     lugar.metros = metros;
+                    lugar.coordenadas = coordinatesText;
+                    lugar.lat = lat;
+                    lugar.lng = lng;
                     renderLugaresTable();
 
                     Swal.fire({
@@ -141,7 +160,10 @@ export function attachLugarActions() {
                 },
             }).then((result) => {
                 if (result.isConfirmed) {
-                    listLugares = listLugares.filter((l) => l.id !== id);
+                    const index = listLugares.findIndex((l) => l.id === id);
+                    if (index > -1) {
+                        listLugares.splice(index, 1);
+                    }
                     renderLugaresTable();
 
                     Swal.fire({
@@ -192,7 +214,10 @@ export function attachContactoActions() {
                 },
             }).then((result) => {
                 if (result.isConfirmed) {
-                    listContactos = listContactos.filter((c) => c.id !== id);
+                    const index = listContactos.findIndex((c) => c.id === id);
+                    if (index > -1) {
+                        listContactos.splice(index, 1);
+                    }
                     renderContactosTable();
 
                     Swal.fire({

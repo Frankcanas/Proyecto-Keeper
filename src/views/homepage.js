@@ -12,7 +12,7 @@ import {
     actualizarMarcadoresEnMapa,
 } from "../controllers/mapReport.controller.js";
 
-let listContactos = [
+export let listContactos = [
     {
         id: 1,
         nombre: "María Morales",
@@ -27,7 +27,7 @@ let listContactos = [
     },
 ];
 
-let listLugares = [
+export let listLugares = [
     {
         id: 1,
         nombre: "Mi Casa",
@@ -158,15 +158,15 @@ export function renderHomepage() {
                   <div class="flex items-center justify-between">
                     <div>
                       <p class="text-[9px] font-bold uppercase tracking-wider text-zinc-500">Confianza Vecinal</p>
-                      <p class="mt-2 text-4xl font-extrabold text-orange-500">94%</p>
+                      <p id="homepage-confianza-percentage" class="mt-2 text-4xl font-extrabold text-orange-500">94%</p>
                     </div>
                     <span class="rounded bg-zinc-900 border border-zinc-850 px-2 py-1 text-[9px] font-bold text-zinc-300 uppercase tracking-wider">Live</span>
                   </div>
                   <div>
                     <div class="h-1.5 w-full rounded bg-zinc-900 overflow-hidden">
-                      <div class="h-full w-[94%] bg-orange-500 rounded"></div>
+                      <div id="homepage-confianza-bar" class="h-full bg-orange-500 rounded" style="width: 94%;"></div>
                     </div>
-                    <p class="mt-2.5 text-xs text-zinc-400 leading-snug">Tu zona presenta baja actividad sospechosa.</p>
+                    <p id="homepage-confianza-description" class="mt-2.5 text-xs text-zinc-400 leading-snug">Tu zona presenta baja actividad sospechosa.</p>
                   </div>
                 </div>
 
@@ -180,21 +180,8 @@ export function renderHomepage() {
                     <span class="rounded bg-zinc-50 border border-zinc-150 px-2 py-0.5 text-[9px] font-semibold text-zinc-500">Hoy</span>
                   </div>
                   
-                  <div class="space-y-2 flex-1">
-                    <div class="rounded border border-zinc-100 bg-zinc-50/50 p-3">
-                      <div class="flex items-center justify-between">
-                        <p class="text-xs font-bold text-zinc-800">Calle 8</p>
-                        <span class="text-[9px] font-bold text-orange-600 bg-orange-50 border border-orange-100 px-1.5 py-0.5 rounded">Urgente</span>
-                      </div>
-                      <p class="mt-1 text-[10px] text-zinc-500">Tráfico lento · 5 min</p>
-                    </div>
-                    <div class="rounded border border-zinc-100 bg-zinc-50/50 p-3">
-                      <div class="flex items-center justify-between">
-                        <p class="text-xs font-bold text-zinc-800">Plaza Norte</p>
-                        <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">Normal</span>
-                      </div>
-                      <p class="mt-1 text-[10px] text-zinc-500">Vigilancia activa · 12 min</p>
-                    </div>
+                  <div id="homepage-recent-alerts-list" class="space-y-2 flex-1">
+                    <!-- Dinámico: Alertas Recientes -->
                   </div>
                 </div>
               </aside>
@@ -311,7 +298,7 @@ export function renderHomepage() {
 // -------------------------------------------------------------
 // CRUD: PERSONAS DE CONFIANZA
 // -------------------------------------------------------------
-function renderContactosTable() {
+export function renderContactosTable() {
     const tbody = document.getElementById("homepage-contactos-table-body");
     if (!tbody) return;
 
@@ -355,7 +342,7 @@ function renderContactosTable() {
     attachContactoActions();
 }
 
-function openContactoFormModal(contacto = null) {
+export function openContactoFormModal(contacto = null) {
     Swal.fire({
         title: `<div class="text-left font-sans"><h3 class="text-base font-semibold text-zinc-900">${contacto ? "Editar Persona de Confianza" : "Nueva Persona de Confianza"}</h3><p class="text-zinc-500 mt-1 text-xs leading-relaxed">Completa los datos de tu contacto de emergencia.</p></div>`,
         html: `
@@ -453,7 +440,7 @@ function openContactoFormModal(contacto = null) {
 // -------------------------------------------------------------
 // CRUD: LUGARES SEGUROS
 // -------------------------------------------------------------
-function renderLugaresTable() {
+export function renderLugaresTable() {
     const tbody = document.getElementById("homepage-lugares-table-body");
     if (!tbody) return;
 
@@ -503,9 +490,11 @@ export function addHomepageReport(report) {
     listReportes.unshift(report);
     renderReportesTable();
     actualizarMarcadoresEnMapa(listReportes);
+    renderAlertasRecientes();
+    renderConfianzaVecinal();
 }
 
-function renderReportesTable() {
+export function renderReportesTable() {
     const tbody = document.getElementById("homepage-reportes-table-body");
     if (!tbody) return;
 
@@ -547,6 +536,96 @@ function renderReportesTable() {
     attachReportActions();
 }
 
+export function renderAlertasRecientes() {
+    const container = document.getElementById("homepage-recent-alerts-list");
+    if (!container) return;
+
+    const sessionUser = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Yo" };
+    const nombreCompleto = `${sessionUser.nombres} ${sessionUser.apellidos || ''}`.trim();
+
+    // Excluir reportes hechos por el usuario activo
+    const otrosReportes = listReportes.filter(rep => rep.reportadoPor !== nombreCompleto);
+    const ultimosReportes = otrosReportes.slice(0, 3);
+
+    if (ultimosReportes.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-6 text-zinc-400 font-medium text-[10px]">
+                No hay alertas de otros vecinos.
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = ultimosReportes.map(rep => {
+        let badgeColor = "text-emerald-650 bg-emerald-50 border-emerald-100 font-bold";
+        if (rep.gravedad === "Alta") {
+            badgeColor = "text-red-655 bg-red-50 border-red-200 font-bold";
+        } else if (rep.gravedad === "Baja") {
+            badgeColor = "text-[#10b981] bg-[#f0fdf4] border-[#bbf7d0]";
+        } else if (rep.gravedad === "Media" || !rep.gravedad) {
+            badgeColor = "text-orange-600 bg-orange-50 border-orange-200 font-semibold";
+        }
+
+        // Obtener tiempo legible
+        let tiempoTexto = "";
+        if (rep.fecha instanceof Date) {
+            const mins = Math.floor((new Date() - rep.fecha) / (1000 * 60));
+            if (mins < 1) tiempoTexto = "Hace un momento";
+            else if (mins < 60) tiempoTexto = `Hace ${mins} min`;
+            else tiempoTexto = rep.fecha.toLocaleDateString("es-ES", { day: "2-digit", month: "short" });
+        } else {
+            tiempoTexto = rep.fecha || "Hace un momento";
+        }
+
+        return `
+            <div class="rounded border border-zinc-150 bg-zinc-50/50 p-3 hover:bg-zinc-50 transition-colors">
+              <div class="flex items-center justify-between">
+                <p class="text-xs font-bold text-zinc-800 truncate max-w-[150px]" title="${rep.ubicacion || 'Ubicación General'}">${rep.ubicacion || 'Ubicación General'}</p>
+                <span class="text-[9px] uppercase tracking-wider font-bold ${badgeColor} border px-1.5 py-0.5 rounded">${rep.gravedad || 'Media'}</span>
+              </div>
+              <p class="mt-1 text-[10px] text-zinc-500 font-medium line-clamp-2">${rep.tipo} · ${rep.descripcion || ''}</p>
+              <p class="mt-1.5 text-[9px] text-zinc-400 font-mono">${tiempoTexto}</p>
+            </div>
+        `;
+    }).join('');
+}
+
+export function renderConfianzaVecinal() {
+    const pctEl = document.getElementById("homepage-confianza-percentage");
+    const barEl = document.getElementById("homepage-confianza-bar");
+    const descEl = document.getElementById("homepage-confianza-description");
+
+    if (!pctEl || !barEl || !descEl) return;
+
+    const sessionUser = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Yo" };
+    const nombreCompleto = `${sessionUser.nombres} ${sessionUser.apellidos || ''}`.trim();
+
+    // Excluir reportes hechos por el usuario activo
+    const otrosReportes = listReportes.filter(rep => rep.reportadoPor !== nombreCompleto);
+
+    const numReportes = otrosReportes.length;
+    // La confianza empieza en 100% y baja un 6% por cada reporte activo de otros vecinos, con un límite inferior de 20%
+    const confianza = Math.max(20, 100 - (numReportes * 6));
+
+    pctEl.textContent = `${confianza}%`;
+    barEl.style.width = `${confianza}%`;
+
+    // Cambiar color de la barra y el porcentaje dependiendo de la confianza
+    if (confianza >= 85) {
+        barEl.className = "h-full bg-emerald-500 rounded";
+        pctEl.className = "mt-2 text-4xl font-extrabold text-emerald-500";
+        descEl.textContent = "Tu zona presenta baja actividad sospechosa.";
+    } else if (confianza >= 60) {
+        barEl.className = "h-full bg-orange-500 rounded";
+        pctEl.className = "mt-2 text-4xl font-extrabold text-orange-500";
+        descEl.textContent = "Tu zona presenta actividad sospechosa moderada. Toma precauciones.";
+    } else {
+        barEl.className = "h-full bg-red-500 rounded";
+        pctEl.className = "mt-2 text-4xl font-extrabold text-red-500";
+        descEl.textContent = "Alerta: Tu zona presenta alta actividad sospechosa. Mantente alerta.";
+    }
+}
+
 // -------------------------------------------------------------
 // CONTROLADOR DE PESTAÑAS (HOMEPAGE)
 // -------------------------------------------------------------
@@ -570,6 +649,8 @@ export function initHomepage() {
     renderContactosTable();
     renderLugaresTable();
     renderReportesTable();
+    renderAlertasRecientes();
+    renderConfianzaVecinal();
 
     // Conectar botones de creación
     const createContactoBtn = document.getElementById(
@@ -584,13 +665,15 @@ export function initHomepage() {
     const createLugarBtn = document.getElementById("btn-homepage-create-lugar");
     if (createLugarBtn) {
         createLugarBtn.addEventListener("click", () => {
-            openLugarFormModal(null, (nombre, tipo, metros) => {
+            openLugarFormModal(null, (nombre, tipo, metros, coordinatesText, lat, lng) => {
                 const newLugar = {
                     id: Date.now(),
                     nombre,
                     tipo,
                     metros,
-                    coordenadas: "40.4167° N, 3.7037° W",
+                    coordenadas: coordinatesText,
+                    lat,
+                    lng,
                 };
                 listLugares.push(newLugar);
                 renderLugaresTable();

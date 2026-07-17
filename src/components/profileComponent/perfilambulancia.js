@@ -1,15 +1,16 @@
 import Swal from "sweetalert2";
 import { getDashboardTemplate } from "../../ui/templateAmbulancia.js";
 import { findAddress } from "../../services/findAddress.js";
-import { inicializarMapaVea, actualizarMarcadoresEnMapa } from "../../controllers/mapReport.controller.js";
+import { inicializarMapaVea, actualizarMarcadoresEnMapa, mapMarkers } from "../../controllers/mapReport.controller.js";
+import { getMap } from "../../controllers/mapManager.controller.js";
 
 //Datos de reportes de ambulancia
 import { getAllReports } from "../../services/endpoints/reports.js";
 let AMBULANCIA_LOGUEADO = { nombre: "Paramédico", rango: "Activo" };
 
 let reportes = [];
+let paramedicoLogueado = PARAMEDICO_LOGUEADO;
 
-// DownloadDataFromApi()
 async function cargarReportesDesdeAPI() {
     try {
         const data = await getAllReports();
@@ -43,13 +44,17 @@ export async function inicializarDashboard() {
 
     await cargarReportesDesdeAPI();
 
-    app.innerHTML = getDashboardTemplate(
-        typeof PARAMEDICO_LOGUEADO !== "undefined"
-            ? PARAMEDICO_LOGUEADO
-            : typeof AMBULANCIA_LOGUEADO !== "undefined"
-              ? AMBULANCIA_LOGUEADO
-              : {},
-    );
+    const sessionUser = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+    if (sessionUser) {
+        paramedicoLogueado = {
+            nombre: `${sessionUser.nombres} ${sessionUser.apellidos || ''}`.trim(),
+            rango: "Paramédico de Emergencia",
+            placa: sessionUser.cedula || "M-5533",
+            foto: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=120"
+        };
+    }
+
+    app.innerHTML = getDashboardTemplate(paramedicoLogueado);
 
     inicializarMapaVea(reportes);
 
@@ -193,7 +198,7 @@ function renderizarAlertasRecientes() {
             if (rep && rep.lat && rep.lng) {
                 const map = getMap();
                 const marker = mapMarkers.find((m) => {
-                    const latlng = m.getLatLng();
+                    const latlng = m.getLngLat();
                     return (
                         Math.abs(latlng.lat - rep.lat) < 0.0001 &&
                         Math.abs(latlng.lng - rep.lng) < 0.0001
@@ -201,7 +206,11 @@ function renderizarAlertasRecientes() {
                 });
 
                 if (marker) {
-                    marker.openPopup();
+                    if (typeof marker.togglePopup === "function") {
+                        marker.togglePopup();
+                    } else if (typeof marker.openPopup === "function") {
+                        marker.openPopup();
+                    }
                 }
             }
         });
@@ -479,14 +488,14 @@ function actualizarEstadoCasoDirecto(id, nuevoEstado) {
     caso.estadoCaso = nuevoEstado;
 
     if (nuevoEstado !== "Pendiente") {
-        caso.accionPolicia = PARAMEDICO_LOGUEADO.nombre;
+        caso.accionPolicia = paramedicoLogueado.nombre;
     } else {
         caso.accionPolicia = "—";
     }
 
     Swal.fire({
         title: "¡Estado Actualizado!",
-        text: `El caso ${caso.kpId} ha sido modificado a "${nuevoEstado}" por el paramédico ${PARAMEDICO_LOGUEADO.nombre}.`,
+        text: `El caso ${caso.kpId} ha sido modificado a "${nuevoEstado}" por el paramédico ${paramedicoLogueado.nombre}.`,
         icon: "success",
         confirmButtonText: "Aceptar",
         confirmButtonColor: "#3b82f6",

@@ -7,7 +7,7 @@ import { createReportMarker } from "../components/mapComponent/mapView.js";
 import { formatearFechaHumana } from "../utils/helpers.js";
 
 let map = null;
-let mapMarkers = [];
+export let mapMarkers = [];
 
 export async function inicializarMapaVea(reportes, containerId = "map") {
     await initMap(containerId);

@@ -8,6 +8,7 @@ import { getAllReports } from "../../services/endpoints/reports.js";
 let POLICIAL_LOGUEADO = { nombre: "Oficial", rango: "Activo" };
 
 let reportes = [];
+let oficialLogueado = POLICIAL_LOGUEADO;
 
 async function cargarReportesDesdeAPI() {
     try {
@@ -42,7 +43,17 @@ export async function inicializarDashboard() {
 
     await cargarReportesDesdeAPI();
 
-    app.innerHTML = getDashboardTemplate(POLICIAL_LOGUEADO);
+    const sessionUser = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+    if (sessionUser) {
+        oficialLogueado = {
+            nombre: `${sessionUser.nombres} ${sessionUser.apellidos || ''}`.trim(),
+            rango: "Oficial de Cuadrante",
+            placa: sessionUser.cedula || "KP-9988",
+            foto: "https://images.unsplash.com/photo-1618015358954-115ef1ed1515?auto=format&fit=crop&q=80&w=120"
+        };
+    }
+
+    app.innerHTML = getDashboardTemplate(oficialLogueado);
 
     inicializarMapaVea(reportes);
 
@@ -453,14 +464,14 @@ function actualizarEstadoCasoDirecto(id, nuevoEstado) {
     caso.estadoCaso = nuevoEstado;
 
     if (nuevoEstado !== "Pendiente") {
-        caso.accionPolicia = POLICIAL_LOGUEADO.nombre;
+        caso.accionPolicia = oficialLogueado.nombre;
     } else {
         caso.accionPolicia = "—";
     }
 
     Swal.fire({
         title: "¡Estado Actualizado!",
-        text: `El caso ${caso.kpId} ha sido modificado a "${nuevoEstado}" por el oficial ${POLICIAL_LOGUEADO.nombre}.`,
+        text: `El caso ${caso.kpId} ha sido modificado a "${nuevoEstado}" por el oficial ${oficialLogueado.nombre}.`,
         icon: "success",
         confirmButtonText: "Aceptar",
         confirmButtonColor: "#ff5d00",

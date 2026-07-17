@@ -1,4 +1,6 @@
 export function renderSidebar() {
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Luis", apellidos: "Morales" };
+  const nombreCompleto = `${usuario.nombres || 'Luis'} ${usuario.apellidos || 'Morales'}`.trim();
   return `
     <aside id="sidebar-aside" class="fixed inset-y-0 left-0 w-72 bg-[#09090b] text-zinc-150 flex flex-col justify-between border-r border-zinc-850 z-50 transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static lg:flex shrink-0 select-none font-sans px-6 py-8">
       <!-- Botón cerrar móvil -->
@@ -24,7 +26,7 @@ export function renderSidebar() {
           <div class="flex items-center justify-between">
             <div>
               <p class="text-[9px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Usuario</p>
-              <p class="mt-1 text-xs font-medium text-white">Luis Morales</p>
+              <p class="mt-1 text-xs font-medium text-white">${nombreCompleto}</p>
             </div>
             <span class="inline-flex items-center gap-1.5 rounded bg-emerald-500/10 px-2 py-0.5 text-[9px] font-medium text-emerald-400 border border-emerald-500/20">
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
@@ -77,6 +79,8 @@ export function renderSidebar() {
 }
 
 export function renderFeedSidebar() {
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Luis", apellidos: "Morales" };
+  const nombreCompleto = `${usuario.nombres || 'Luis'} ${usuario.apellidos || 'Morales'}`.trim();
   return `
     <aside id="sidebar-aside" class="fixed inset-y-0 left-0 w-72 bg-[#09090b] text-zinc-150 flex flex-col justify-between border-r border-zinc-850 z-50 transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static lg:flex shrink-0 select-none font-sans px-6 py-8">
       <!-- Botón cerrar móvil -->
@@ -102,7 +106,7 @@ export function renderFeedSidebar() {
           <div class="flex items-center justify-between">
             <div>
               <p class="text-[9px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Usuario</p>
-              <p class="mt-1 text-xs font-medium text-white">Luis Morales</p>
+              <p class="mt-1 text-xs font-medium text-white">${nombreCompleto}</p>
             </div>
             <span class="inline-flex items-center gap-1.5 rounded bg-emerald-500/10 px-2 py-0.5 text-[9px] font-medium text-emerald-400 border border-emerald-500/20">
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>

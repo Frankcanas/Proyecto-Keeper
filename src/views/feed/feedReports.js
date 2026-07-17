@@ -32,15 +32,17 @@ export function renderReportesFeedTable() {
       const id = select.dataset.id;
       const report = feedState.listReportesFeed.find(r => r.id === id);
       if (report) {
+        const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Luis", apellidos: "Morales" };
+        const nombreCompleto = `${usuario.nombres || 'Luis'} ${usuario.apellidos || 'Morales'}`.trim();
         report.estado = e.target.value;
-        report.accion = 'Luis Morales'; 
+        report.accion = nombreCompleto; 
         renderReportesFeedTable();
 
         Swal.fire({
           toast: true,
           position: 'top-end',
           icon: 'success',
-          title: `Reporte ${id} actualizado por Luis Morales`,
+          title: `Reporte ${id} actualizado por ${nombreCompleto}`,
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,
@@ -82,15 +84,17 @@ export function renderHistorialReportesTable() {
       const id = select.dataset.id;
       const report = feedState.listHistorialReportes.find(r => r.id === id);
       if (report) {
+        const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Luis", apellidos: "Morales" };
+        const nombreCompleto = `${usuario.nombres || 'Luis'} ${usuario.apellidos || 'Morales'}`.trim();
         report.estado = e.target.value;
-        report.accion = 'Luis Morales'; // Auditoría local sencilla
+        report.accion = nombreCompleto; // Auditoría local sencilla
         renderHistorialReportesTable();
 
         // Sincronizar con la tabla simplificada de la pestaña Estadísticas si existe allí también
         const simpleReport = feedState.listReportesFeed.find(r => r.id === id);
         if (simpleReport) {
           simpleReport.estado = e.target.value;
-          simpleReport.accion = 'Luis Morales';
+          simpleReport.accion = nombreCompleto;
           renderReportesFeedTable();
         }
 

@@ -38,6 +38,7 @@ function renderLandingPage() {
 
 // Enrutador de Login Unificado
 async function handleLoginSuccess(loginData) {
+    sessionStorage.setItem("usuarioLogueado", JSON.stringify(loginData));
     let nombre = loginData.nombres;
     let rol = loginData.id_rol;
     let rol_name = await getRoleById(rol);

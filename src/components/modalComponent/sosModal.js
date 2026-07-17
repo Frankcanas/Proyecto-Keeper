@@ -1,4 +1,6 @@
 import Swal from 'sweetalert2';
+import { get_location } from '../../models/locationModel.js';
+import { findMailingAddress } from '../../services/findMailingAddress.js';
 
 export function initSOSModal(buttonId, onSOSCallback) {
   const btn = document.getElementById(buttonId);
@@ -111,29 +113,16 @@ export function initSOSModal(buttonId, onSOSCallback) {
             </label>
           </div>
 
-          <!-- Mapa de calles GPS (Contenedor con ID sos-map-container para inserción de mapa real) -->
-          <div id="sos-map-container" class="relative rounded-md border border-zinc-200 bg-zinc-950 h-28 overflow-hidden flex items-end justify-between p-3">
-            <!-- Calles vectoriales (SVG placeholder) -->
-            <div class="absolute inset-0 opacity-40 pointer-events-none">
-              <svg viewBox="0 0 400 150" class="h-full w-full stroke-orange-500/60" stroke-width="1.5" stroke-linecap="round">
-                <line x1="50" y1="0" x2="100" y2="150" />
-                <line x1="0" y1="60" x2="400" y2="90" />
-                <line x1="180" y1="0" x2="180" y2="150" stroke-width="3" stroke="#ea580c" />
-                <line x1="300" y1="0" x2="250" y2="150" />
-                <line x1="0" y1="120" x2="400" y2="30" stroke-width="2" stroke="#ea580c" />
-              </svg>
+          <!-- CONTENEDOR DE UBICACIONES CON DISEÑO IDÉNTICO -->
+          <div class="flex flex-col gap-2.5 border-t border-zinc-100 pt-3">
+            <!-- Opción 1: GPS Actual -->
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2 text-xs text-zinc-650 cursor-pointer">
+                <input id="sos-use-location" type="checkbox" checked class="w-3.5 h-3.5 border-zinc-300 rounded text-zinc-900 focus:ring-0" />
+                <span>Usar mi ubicación actual (GPS)</span>
+              </label>
+              <div id="sos-loc-status" class="text-[10px] text-zinc-400 font-medium max-w-[180px] text-right truncate">Obteniendo ubicación...</div>
             </div>
-            
-            <!-- Indicador de Vigilancia -->
-            <span class="text-[9px] font-bold text-white flex items-center gap-1.5 z-10 bg-zinc-950/80 px-2.5 py-1 rounded border border-zinc-800">
-              <span class="h-1.5 w-1.5 rounded-full bg-orange-500 animate-pulse"></span>
-              Vigilancia Activa
-            </span>
-
-            <!-- Boton Expandir -->
-            <button type="button" class="text-[9px] font-bold text-white bg-zinc-900 border border-zinc-800 hover:bg-zinc-850 px-2.5 py-1 rounded z-10 uppercase tracking-wider transition-colors">
-              Expandir
-            </button>
           </div>
 
           <!-- Boton SOS Principal Naranja -->
@@ -169,6 +158,43 @@ export function initSOSModal(buttonId, onSOSCallback) {
         let holdTimer = null;
         let startTs = null;
         let selectedServices = [];
+
+        // Lógica de geolocalización GPS
+        const chkGPS = document.getElementById("sos-use-location");
+        const locStatus = document.getElementById("sos-loc-status");
+        const addressHeader = document.getElementById("sos-current-address");
+        let currentCoords = null;
+
+        const updateGPSLocation = async () => {
+          if (!chkGPS.checked) {
+            locStatus.textContent = "Ubicación desactivada";
+            if (addressHeader) addressHeader.textContent = "Ubicación desactivada";
+            currentCoords = null;
+            return;
+          }
+
+          locStatus.textContent = "Obteniendo ubicación...";
+          if (addressHeader) addressHeader.textContent = "Obteniendo ubicación...";
+          
+          try {
+            const coords = await get_location();
+            currentCoords = coords;
+            locStatus.textContent = "Buscando dirección...";
+            if (addressHeader) addressHeader.textContent = "Buscando dirección...";
+
+            const address = await findMailingAddress(coords.lat, coords.lon);
+            locStatus.textContent = address;
+            if (addressHeader) addressHeader.textContent = address;
+          } catch (error) {
+            console.error(error);
+            locStatus.textContent = "Problemas obteniendo la dirección.";
+            if (addressHeader) addressHeader.textContent = "Ubicación no disponible";
+            currentCoords = null;
+          }
+        };
+
+        chkGPS.addEventListener("change", updateGPSLocation);
+        updateGPSLocation(); // Ejecución inicial al abrir
 
         const toggleService = (btn, serviceName) => {
           const index = selectedServices.indexOf(serviceName);
@@ -226,13 +252,19 @@ export function initSOSModal(buttonId, onSOSCallback) {
           const servicesText = selectedServices.length > 0 ? selectedServices.join(', ') : 'Ninguno (Alerta General)';
           const reportType = selectedServices.length > 0 ? `SOS: ${selectedServices.join(' + ')}` : 'SOS Global';
           
+          const sessionUser = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Yo" };
+          const nombreCompleto = `${sessionUser.nombres} ${sessionUser.apellidos || ''}`.trim();
+
           const reportData = {
             id: `KP-${Math.floor(1000 + Math.random() * 9000)}`,
             tipo: reportType,
             descripcion: `ALERTA DE EMERGENCIA SOS: Solicitud de asistencia inmediata de: ${servicesText}.`,
             ubicacion: address,
             fecha: 'Hace un momento',
-            estado: 'Pendiente'
+            estado: 'Pendiente',
+            lat: currentCoords ? currentCoords.lat : null,
+            lng: currentCoords ? currentCoords.lon : null,
+            reportadoPor: nombreCompleto
           };
 
           if (onSOSCallback) {

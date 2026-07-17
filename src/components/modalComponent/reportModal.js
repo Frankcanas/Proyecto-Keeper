@@ -306,6 +306,7 @@ export function initReportModal(buttonId, onSubmitCallback) {
                             }
                         }
 
+
                         let id_categoria = 1;
                         if (selectedCat === 'Robo') id_categoria = 1;
                         else if (selectedCat === 'Vandalismo') id_categoria = 2;
@@ -316,6 +317,9 @@ export function initReportModal(buttonId, onSubmitCallback) {
                         else if (selectedCat === 'Urgencia Médica') id_categoria = 7;
                         else if (selectedCat === 'Solicitar Ambulancia') id_categoria = 8;
                         else id_categoria = 9;
+
+                        const sessionUser = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Yo" };
+                        const nombreCompleto = `${sessionUser.nombres} ${sessionUser.apellidos || ''}`.trim();
 
                         const apiData = {
                             id_categoria: id_categoria,
@@ -337,6 +341,7 @@ export function initReportModal(buttonId, onSubmitCallback) {
                                 estado: "Pendiente",
                                 lat,
                                 lng,
+                                reportadoPor: nombreCompleto,
                             };
                             if (onSubmitCallback) {
                                 onSubmitCallback(reportData);

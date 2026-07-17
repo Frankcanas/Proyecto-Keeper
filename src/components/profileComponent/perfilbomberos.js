@@ -1,12 +1,14 @@
 import Swal from "sweetalert2";
 import { getDashboardTemplate } from "../../ui/templateBomberos.js";
 import { findAddress } from "../../services/findAddress.js";
-import { inicializarMapaVea, actualizarMarcadoresEnMapa } from "../../controllers/mapReport.controller.js";
+import { inicializarMapaVea, actualizarMarcadoresEnMapa, mapMarkers } from "../../controllers/mapReport.controller.js";
+import { getMap } from "../../controllers/mapManager.controller.js";
 
 import { getAllReports } from "../../services/endpoints/reports.js";
 let BOMBERO_LOGUEADO = { nombre: "Bombero", rango: "Activo" };
 
 let reportes = [];
+let bomberoLogueado = BOMBERO_LOGUEADO;
 
 async function cargarReportesDesdeAPI() {
     try {
@@ -41,7 +43,17 @@ export async function inicializarDashboard() {
 
     await cargarReportesDesdeAPI();
 
-    app.innerHTML = getDashboardTemplate(BOMBERO_LOGUEADO);
+    const sessionUser = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+    if (sessionUser) {
+        bomberoLogueado = {
+            nombre: `${sessionUser.nombres} ${sessionUser.apellidos || ''}`.trim(),
+            rango: "Sargento de Estación",
+            placa: sessionUser.cedula || "B-7722",
+            foto: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=120"
+        };
+    }
+
+    app.innerHTML = getDashboardTemplate(bomberoLogueado);
 
     inicializarMapaVea(reportes);
 
@@ -182,10 +194,10 @@ function renderizarAlertasRecientes() {
         item.addEventListener("click", (e) => {
             const id = parseInt(e.currentTarget.getAttribute("data-id"));
             const rep = reportes.find((r) => r.id === id);
-            if (rep  && rep.lat && rep.lng) {
+            if (rep && rep.lat && rep.lng) {
                 const map = getMap();
                 const marker = mapMarkers.find((m) => {
-                    const latlng = m.getLatLng();
+                    const latlng = m.getLngLat();
                     return (
                         Math.abs(latlng.lat - rep.lat) < 0.0001 &&
                         Math.abs(latlng.lng - rep.lng) < 0.0001
@@ -193,7 +205,11 @@ function renderizarAlertasRecientes() {
                 });
 
                 if (marker) {
-                    marker.openPopup();
+                    if (typeof marker.togglePopup === "function") {
+                        marker.togglePopup();
+                    } else if (typeof marker.openPopup === "function") {
+                        marker.openPopup();
+                    }
                 }
             }
         });
@@ -472,14 +488,14 @@ function actualizarEstadoCasoDirecto(id, nuevoEstado) {
     caso.estadoCaso = nuevoEstado;
 
     if (nuevoEstado !== "Pendiente") {
-        caso.accionPolicia = BOMBERO_LOGUEADO.nombre;
+        caso.accionPolicia = bomberoLogueado.nombre;
     } else {
         caso.accionPolicia = "—";
     }
 
     Swal.fire({
         title: "¡Estado Actualizado!",
-        text: `El caso ${caso.kpId} ha sido modificado a "${nuevoEstado}" por el bombero ${BOMBERO_LOGUEADO.nombre}.`,
+        text: `El caso ${caso.kpId} ha sido modificado a "${nuevoEstado}" por el bombero ${bomberoLogueado.nombre}.`,
         icon: "success",
         confirmButtonText: "Aceptar",
         confirmButtonColor: "#dc2626",
