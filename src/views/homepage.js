@@ -1,5 +1,6 @@
 import { renderSidebar } from "./sidebar.js";
 import { getAllReports } from "../services/endpoints/reports.js";
+import { createZone, getAllZones } from "../services/endpoints/zones.js";
 import { openLugarFormModal } from "../components/modalComponent/lugaresmodal.js";
 import Swal from "sweetalert2";
 import { findAddress } from "../services/findAddress.js";
@@ -28,22 +29,25 @@ export let listContactos = [
     },
 ];
 
-export let listLugares = [
-    {
-        id: 1,
-        nombre: "Mi Casa",
-        tipo: "Casa",
-        metros: 100,
-        coordenadas: "40.4167° N, 3.7037° W",
-    },
-    {
-        id: 2,
-        nombre: "Oficina Central",
-        tipo: "Trabajo",
-        metros: 200,
-        coordenadas: "40.4230° N, 3.6980° W",
-    },
-];
+export let listLugares = [];
+
+export async function cargarLugaresHomepage() {
+    try {
+        const data = await getAllZones();
+        const adapted = (data || []).map(z => ({
+            id: z.id_zona,
+            nombre: z.nombre,
+            tipo: z.tipo,
+            metros: z.radio_metros,
+            coordenadas: `${z.latitud.toFixed(4)}° N, ${z.longitud.toFixed(4)}° W`,
+            lat: z.latitud,
+            lng: z.longitud
+        }));
+        listLugares.splice(0, listLugares.length, ...adapted);
+    } catch(e) {
+        console.error("Error cargando lugares en homepage:", e);
+    }
+}
 
 // Lista local de reportes para el Homepage
 export let listReportes = [];
@@ -666,18 +670,24 @@ export function initHomepage() {
     const createLugarBtn = document.getElementById("btn-homepage-create-lugar");
     if (createLugarBtn) {
         createLugarBtn.addEventListener("click", () => {
-            openLugarFormModal(null, (nombre, tipo, metros, coordinatesText, lat, lng) => {
-                const newLugar = {
-                    id: Date.now(),
+            openLugarFormModal(null, async (nombre, tipo, metros, coordinatesText, lat, lng) => {
+                const apiData = {
                     nombre,
-                    tipo,
-                    metros,
-                    coordenadas: coordinatesText,
-                    lat,
-                    lng,
+                    tipo: tipo.toLowerCase(),
+                    latitud: lat || 0,
+                    longitud: lng || 0,
+                    radio_metros: metros || 100
                 };
-                listLugares.push(newLugar);
-                renderLugaresTable();
+                
+                try {
+                    await createZone(apiData);
+                    await cargarLugaresHomepage();
+                    renderLugaresTable();
+                } catch(e) {
+                    console.error("Error guardando zona en BD:", e);
+                    Swal.fire('Error', 'No se pudo guardar el lugar seguro en la base de datos.', 'error');
+                    return;
+                }
 
                 Swal.fire({
                     icon: "success",

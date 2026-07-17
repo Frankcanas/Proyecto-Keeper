@@ -13,6 +13,7 @@ import {
     addHomepageReport,
     listReportes,
     cargarReportesHomepage,
+    cargarLugaresHomepage,
 } from "./src/views/homepage.js";
 import { initReportModal } from "./src/components/modalComponent/reportModal.js";
 import { landingPage } from "./src/views/landingPage.js";
@@ -92,6 +93,7 @@ async function renderFeedPage() {
 async function renderHomepagePage() {
     const app = document.querySelector("#app");
     await cargarReportesHomepage();
+    await cargarLugaresHomepage();
     app.innerHTML = renderHomepage();
     initHomepage();
     initReportModal("homepage-report-btn", (report) => {
