@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+/* 
+ * ==========================================
+ * ESTILOS DE PERSONALIZACIÓN Y SOPORTE
+ * ==========================================
+ * Ajustes de UI para mantener la consistencia estética del tema oscuro/naranja.
+ */
+
+/* Ajuste general del contenedor del mapa */
+.leaflet-container {
+  background-color: #f4f4f5 !important;
+}
+
+/* Sobrescribir popups de Leaflet para integrarlos con la claridad y estilo minimalista de Keeper */
+.leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: #18181b !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: none !important;
+  border-radius: 6px !important;
+}
+
+.leaflet-popup-tip {
+  background: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: none !important;
+}
+
+.leaflet-popup-close-button {
+  color: #a1a1aa !important; /* text-zinc-400 */
+  font-size: 11px !important;
+  font-weight: bold !important;
+  top: 8px !important;
+  right: 8px !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: #ff5d00 !important; /* text-orange-500 */
+  background: transparent !important;
+}
+
+/* Personalización de la barra de desplazamiento plana e integrada */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f4f4f5;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e4e4e7;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ff5d00;
+}
