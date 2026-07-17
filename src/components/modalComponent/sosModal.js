@@ -22,7 +22,7 @@ export function initSOSModal(buttonId, onSOSCallback) {
               </div>
             </div>
             <span class="text-[10px] font-bold text-orange-600 tracking-wider uppercase">Localización en Tiempo Real</span>
-            <span id="sos-current-address" class="text-xs font-medium text-zinc-500 mt-0.5">Calle Mayor 42, Madrid (Precisión 3m)</span>
+            <span id="sos-current-address" class="text-xs font-medium text-zinc-500 mt-0.5">Obteniendo ubicación...</span>
           </div>
 
           <!-- Servicios de Emergencia (Tarjetas oscuras) -->
@@ -248,7 +248,7 @@ export function initSOSModal(buttonId, onSOSCallback) {
 
         function triggerAlert() {
           const addressEl = document.getElementById('sos-current-address');
-          const address = addressEl ? addressEl.textContent : 'Calle Mayor 42, Madrid (Precisión 3m)';
+          const address = addressEl && addressEl.textContent !== 'Obteniendo ubicación...' ? addressEl.textContent : 'Dirección no identificada';
           
           const servicesText = selectedServices.length > 0 ? selectedServices.join(', ') : 'Ninguno (Alerta General)';
           const reportType = selectedServices.length > 0 ? `SOS: ${selectedServices.join(' + ')}` : 'SOS Global';
@@ -274,7 +274,7 @@ export function initSOSModal(buttonId, onSOSCallback) {
 
           // Guardar en backend asíncronamente
           const apiData = {
-              id_categoria: 9, // SOS / Emergencia
+              id_categoria: 5, // 5 = Ayuda Externa (Genérico para SOS)
               titulo: reportType + ' en ' + address,
               descripcion: reportData.descripcion,
               latitud: currentCoords ? currentCoords.lat : 0,
