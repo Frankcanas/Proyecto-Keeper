@@ -4,6 +4,7 @@ import { createZone, getAllZones } from "../services/endpoints/zones.js";
 import { openLugarFormModal } from "../components/modalComponent/lugaresmodal.js";
 import Swal from "sweetalert2";
 import { findAddress } from "../services/findAddress.js";
+import { findMailingAddress } from "../services/findMailingAddress.js";
 import {
     attachReportActions,
     attachContactoActions,
@@ -34,15 +35,28 @@ export let listLugares = [];
 export async function cargarLugaresHomepage() {
     try {
         const data = await getAllZones();
-        const adapted = (data || []).map(z => ({
-            id: z.id_zona,
-            nombre: z.nombre,
-            tipo: z.tipo,
-            metros: z.radio_metros,
-            coordenadas: `${z.latitud.toFixed(4)}° N, ${z.longitud.toFixed(4)}° W`,
-            lat: z.latitud,
-            lng: z.longitud
-        }));
+        const adapted = [];
+        
+        for (const z of (data || [])) {
+            let address = `${z.latitud.toFixed(4)}° N, ${z.longitud.toFixed(4)}° W`;
+            try {
+                const resolved = await findMailingAddress(z.latitud, z.longitud);
+                if (resolved && !resolved.startsWith("Error")) {
+                    address = resolved;
+                }
+            } catch(e) {}
+            
+            adapted.push({
+                id: z.id_zona,
+                nombre: z.nombre,
+                tipo: z.tipo,
+                metros: z.radio_metros,
+                coordenadas: address,
+                lat: z.latitud,
+                lng: z.longitud
+            });
+        }
+        
         listLugares.splice(0, listLugares.length, ...adapted);
     } catch(e) {
         console.error("Error cargando lugares en homepage:", e);
