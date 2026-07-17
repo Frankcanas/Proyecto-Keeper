@@ -152,7 +152,10 @@ class UsuarioController:
         try:
             UsuarioController.get_by_id(id_usuario)
             with conn.cursor() as cur:
-                cur.execute("UPDATE usuario SET status = FALSE WHERE id_usuario = %s", (id_usuario,))
+                cur.execute("DELETE FROM validacion WHERE id_usuario = %s", (id_usuario,))
+                cur.execute("DELETE FROM sos WHERE id_usuario = %s", (id_usuario,))
+                cur.execute("DELETE FROM reporte WHERE id_usuario = %s", (id_usuario,))
+                cur.execute("DELETE FROM usuario WHERE id_usuario = %s", (id_usuario,))
                 conn.commit()
                 return {"mensaje": "Usuario eliminado exitosamente"}
         except psycopg2.Error as e:

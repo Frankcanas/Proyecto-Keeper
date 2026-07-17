@@ -103,7 +103,7 @@ class ContactoConfianzaController:
         try:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 cur.execute(
-                    "UPDATE contacto_confianza SET status = FALSE WHERE id_contacto = %s AND id_usuario = %s RETURNING id_contacto;",
+                    "DELETE FROM contacto_confianza WHERE id_contacto = %s AND id_usuario = %s RETURNING id_contacto;",
                     (id_contacto, id_usuario)
                 )
                 borrado = cur.fetchone()

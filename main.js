@@ -60,7 +60,7 @@ async function handleLoginSuccess(loginData) {
 async function renderFeedPage() {
     const app = document.querySelector("#app");
     app.innerHTML = renderFeed();
-    initFeed();
+    await initFeed();
     await initSOSModal("btn-sos");
     // Conectar botón Salir del panel
     document

@@ -58,4 +58,11 @@ export function actualizarMarcadoresEnMapa(reportes) {
 
         mapMarkers.push(createReportMarker(map, [rep.lng, rep.lat], el, popupHtml));
     });
+
+    // Center map on the most recent valid report
+    const validReports = reportes.filter(r => r.lat && r.lng && (r.lat !== -90 || r.lng !== -180));
+    if (validReports.length > 0) {
+        const last = validReports[0];
+        map.flyTo({ center: [last.lng, last.lat], zoom: 14 });
+    }
 }

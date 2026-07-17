@@ -1,6 +1,6 @@
 import { feedState } from './feedState.js';
 import Swal from 'sweetalert2';
-import { createUser, getAllUsers } from '../../services/endpoints/user.js';
+import { createUser, getAllUsers, deleteUser, updateUser } from '../../services/endpoints/user.js';
 
 export function renderUsersTable() {
   const tbody = document.getElementById('users-table-body');
@@ -63,26 +63,39 @@ export function attachUserActions() {
     select.addEventListener('change', (e) => {
       const id = parseInt(select.dataset.id);
       const user = feedState.listUsers.find(u => u.id === id);
-      if (user) {
-        const newRol = e.target.value;
-        user.rol = newRol;
-        renderUsersTable(); // Refrescar para actualizar clases de color del select
+        if (user) {
+          const newRol = e.target.value;
+          let id_rol = 2; // Ciudadano
+          if (newRol === 'Policia') id_rol = 3;
+          else if (newRol === 'Bombero') id_rol = 4;
+          else if (newRol === 'Ambulancia') id_rol = 5;
+          else if (newRol === 'Administrador') id_rol = 1;
 
-        Swal.fire({
-          icon: 'success',
-          title: '<h3 class="text-xs font-semibold text-zinc-900 text-left">Rol Modificado</h3>',
-          html: `<p class="text-[11px] text-zinc-500 text-left">El rol de <strong>${user.nombre}</strong> ahora es <strong>${newRol}</strong>.</p>`,
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2000,
-          customClass: { popup: 'rounded-md p-4 border border-zinc-200 bg-white max-w-xs' }
-        });
-      }
+          updateUser(id, { id_rol: id_rol }).then(() => {
+              user.rol = newRol;
+              renderUsersTable(); // Refrescar para actualizar clases de color del select
+
+              Swal.fire({
+                icon: 'success',
+                title: '<h3 class="text-xs font-semibold text-zinc-900 text-left">Rol Modificado</h3>',
+                html: `<p class="text-[11px] text-zinc-500 text-left">El rol de <strong>${user.nombre}</strong> ahora es <strong>${newRol}</strong> en la base de datos real.</p>`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                customClass: { popup: 'rounded-md p-4 border border-zinc-200 bg-white max-w-xs' }
+              });
+          }).catch(err => {
+              console.error("Error actualizando rol:", err);
+              Swal.fire('Error', 'No se pudo actualizar el rol.', 'error');
+              renderUsersTable(); // Revert
+          });
+        }
+      });
     });
-  });
 
-  document.querySelectorAll('.btn-user-edit').forEach(btn => {
+    // Abrir modal de edicion
+    document.querySelectorAll('.btn-user-edit').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = parseInt(btn.dataset.id);
       const user = feedState.listUsers.find(u => u.id === id);
@@ -108,22 +121,28 @@ export function attachUserActions() {
           confirmButton: 'bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded transition-colors mr-2',
           cancelButton: 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold px-3 py-1.5 rounded transition-colors'
         }
-      }).then(result => {
-        if (result.isConfirmed) {
-          feedState.listUsers = feedState.listUsers.filter(u => u.id !== id);
-          renderUsersTable();
-          
-          Swal.fire({
-            icon: 'success',
-            title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Usuario Eliminado</h3>',
-            html: '<p class="text-xs text-zinc-500 text-left">El miembro ha sido removido con éxito de la lista.</p>',
-            showConfirmButton: false,
-            timer: 2000,
-            buttonsStyling: false,
-            customClass: { popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full' }
-          });
-        }
-      });
+        }).then(async result => {
+          if (result.isConfirmed) {
+            try {
+                await deleteUser(id);
+                feedState.listUsers = feedState.listUsers.filter(u => u.id !== id);
+                renderUsersTable();
+                Swal.fire({
+                  icon: 'success',
+                  title: '<h3 class="text-xs font-semibold text-zinc-900 text-left">Usuario Eliminado</h3>',
+                  html: `<p class="text-[11px] text-zinc-500 text-left"><strong>${user.nombre} ${user.apellido}</strong> ha sido eliminado del sistema.</p>`,
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 2000,
+                  customClass: { popup: 'rounded-md p-4 border border-zinc-200 bg-white max-w-xs' }
+                });
+            } catch (err) {
+                console.error("Error eliminando usuario:", err);
+                Swal.fire('Error', 'No se pudo eliminar el usuario de la base de datos real.', 'error');
+            }
+          }
+        });
     });
   });
 }
@@ -298,16 +317,37 @@ export function openUserFormModal(user = null) {
 
 
         if (user) {
-          // Update user (not fully implemented in backend yet, doing local update for now)
-          user.nombre = nombre;
-          user.apellido = apellido;
-          user.cedula = cedula;
-          user.email = email;
-          user.telefono = telefono;
-          user.fechaNacimiento = fechaNacimiento;
-          user.rol = rol;
-          renderUsersTable();
-          Swal.close();
+          // Update user in DB
+          Swal.fire({ title: 'Actualizando...', text: 'Guardando en la base de datos', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+          
+          updateUser(user.id, {
+            nombres: nombre,
+            apellidos: apellido,
+            cedula: cedula,
+            correo: email,
+            telefono: telefono,
+            fecha_nacimiento: fechaNacimiento,
+            id_rol: id_rol
+          }).then(() => {
+              user.nombre = nombre;
+              user.apellido = apellido;
+              user.cedula = cedula;
+              user.email = email;
+              user.telefono = telefono;
+              user.fechaNacimiento = fechaNacimiento;
+              user.rol = rol;
+              renderUsersTable();
+              Swal.close();
+              Swal.fire({
+                icon: 'success',
+                title: `<h3 class="text-sm font-semibold text-zinc-900 text-left">Usuario Actualizado</h3>`,
+                html: `<p class="text-xs text-zinc-500 text-left">El miembro ha sido modificado exitosamente.</p>`,
+                showConfirmButton: false, timer: 2000, buttonsStyling: false,
+                customClass: { popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full' }
+              });
+          }).catch(err => {
+              Swal.fire('Error', 'No se pudo actualizar el usuario.', 'error');
+          });
         } else {
           // Create real user in DB
           const newUser = {

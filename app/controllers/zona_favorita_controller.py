@@ -106,7 +106,7 @@ class ZonaFavoritaController:
         try:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 cur.execute(
-                    "UPDATE zona_favorita SET status = FALSE WHERE id_zona = %s AND id_usuario = %s RETURNING id_zona;",
+                    "DELETE FROM zona_favorita WHERE id_zona = %s AND id_usuario = %s RETURNING id_zona;",
                     (id_zona, id_usuario)
                 )
                 borrada = cur.fetchone()

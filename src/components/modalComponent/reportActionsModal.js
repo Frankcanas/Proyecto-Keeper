@@ -1,6 +1,8 @@
 import Swal from "sweetalert2";
 import { openLugarFormModal } from "./lugaresmodal.js";
 import { deleteZone, updateZone } from "../../services/endpoints/zones.js";
+import { deleteContact } from "../../services/endpoints/contacts.js";
+import { updateReport, deleteReport } from "../../services/endpoints/reports.js";
 import {
     listReportes,
     listLugares,
@@ -8,6 +10,8 @@ import {
     renderReportesTable,
     renderLugaresTable,
     renderContactosTable,
+    cargarContactosHomepage,
+    cargarReportesHomepage,
     openContactoFormModal,
     renderAlertasRecientes,
     renderConfianzaVecinal,
@@ -65,7 +69,7 @@ export function attachReportActions() {
                     const errorEl =
                         document.getElementById("edit-report-error");
 
-                    submitBtn.addEventListener("click", () => {
+                    submitBtn.addEventListener("click", async () => {
                         const tipo =
                             document.getElementById("edit-report-tipo").value;
                         const desc = document
@@ -80,27 +84,48 @@ export function attachReportActions() {
                                 "Por favor, complete todos los campos.";
                             return;
                         }
+                        
+                        try {
+                            submitBtn.disabled = true;
+                            submitBtn.textContent = "Guardando...";
 
-                        report.tipo = tipo;
-                        report.descripcion = desc;
-                        report.ubicacion = ubicacion;
+                            const numericId = parseInt(report.id.replace("KP-", ""), 10);
+                            let id_categoria = 1;
+                            if (tipo === "Robo") id_categoria = 1;
+                            else if (tipo === "Vandalismo") id_categoria = 2;
+                            else if (tipo === "Peligro") id_categoria = 3;
 
-                        renderReportesTable();
-                        renderAlertasRecientes();
-                        renderConfianzaVecinal();
-                        Swal.close();
+                            const apiData = {
+                                id_categoria,
+                                descripcion: desc,
+                                titulo: ubicacion
+                            };
+                            
+                            await updateReport(numericId, apiData);
+                            await cargarReportesHomepage();
 
-                        Swal.fire({
-                            icon: "success",
-                            title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Reporte Modificado</h3>',
-                            html: '<p class="text-xs text-zinc-500 text-left">El incidente ha sido actualizado con éxito.</p>',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            buttonsStyling: false,
-                            customClass: {
-                                popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-                            },
-                        });
+                            renderReportesTable();
+                            renderAlertasRecientes();
+                            renderConfianzaVecinal();
+                            Swal.close();
+
+                            Swal.fire({
+                                icon: "success",
+                                title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Reporte Modificado</h3>',
+                                html: '<p class="text-xs text-zinc-500 text-left">El incidente ha sido actualizado con éxito.</p>',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                buttonsStyling: false,
+                                customClass: {
+                                    popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                                },
+                            });
+                        } catch (e) {
+                            console.error("Error guardando reporte:", e);
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = "Guardar Cambios";
+                            errorEl.textContent = "Hubo un error al guardar los cambios.";
+                        }
                     });
                 },
             });
@@ -236,25 +261,28 @@ export function attachContactoActions() {
                     cancelButton:
                         "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold px-3 py-1.5 rounded transition-colors",
                 },
-            }).then((result) => {
+            }).then(async (result) => {
                 if (result.isConfirmed) {
-                    const index = listContactos.findIndex((c) => c.id === id);
-                    if (index > -1) {
-                        listContactos.splice(index, 1);
-                    }
-                    renderContactosTable();
+                    try {
+                        await deleteContact(id);
+                        await cargarContactosHomepage();
+                        renderContactosTable();
 
-                    Swal.fire({
-                        icon: "success",
-                        title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Contacto Eliminado</h3>',
-                        html: '<p class="text-xs text-zinc-500 text-left">El contacto ha sido removido con éxito de la lista.</p>',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        buttonsStyling: false,
-                        customClass: {
-                            popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-                        },
-                    });
+                        Swal.fire({
+                            icon: "success",
+                            title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Contacto Eliminado</h3>',
+                            html: '<p class="text-xs text-zinc-500 text-left">El contacto ha sido removido con éxito de la lista.</p>',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            buttonsStyling: false,
+                            customClass: {
+                                popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                            },
+                        });
+                    } catch (e) {
+                        console.error("Error eliminando contacto:", e);
+                        Swal.fire('Error', 'No se pudo eliminar el contacto de la base de datos.', 'error');
+                    }
                 }
             });
         });

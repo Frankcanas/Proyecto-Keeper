@@ -144,7 +144,7 @@ class ReporteController:
         try:
             ReporteController.get_by_id(id_reporte)
             with conn.cursor() as cur:
-                cur.execute("UPDATE reporte SET status = FALSE WHERE id_reporte = %s", (id_reporte,))
+                cur.execute("DELETE FROM reporte WHERE id_reporte = %s", (id_reporte,))
                 conn.commit()
                 return {"mensaje": "Reporte eliminado exitosamente"}
         except psycopg2.Error as e:

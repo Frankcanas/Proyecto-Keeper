@@ -177,7 +177,8 @@ export function renderFeed() {
                         <th class="pb-3 pr-4">Reportado Por</th>
                         <th class="pb-3 pr-4">Fecha/Hora</th>
                         <th class="pb-3 pr-4">Estado</th>
-                        <th class="pb-3">Acción</th>
+                        <th class="pb-3 pr-4">Acción</th>
+                        <th class="pb-3 text-right">Opciones</th>
                       </tr>
                     </thead>
                     <tbody id="reportes-feed-table-body" class="divide-y divide-zinc-100">
@@ -248,7 +249,7 @@ export function renderFeed() {
                         <th class="pb-3 pr-4">Fecha</th>
                         <th class="pb-3 pr-4">Estado</th>
                         <th class="pb-3 pr-4">Acción</th>
-                        <th class="pb-3 text-right">Evidencia</th>
+                        <th class="pb-3 pr-4 text-right">Opciones</th>
                       </tr>
                     </thead>
                     <tbody id="historial-reportes-table-body" class="divide-y divide-zinc-100">

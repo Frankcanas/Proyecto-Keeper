@@ -1,6 +1,7 @@
 import { renderSidebar } from "./sidebar.js";
 import { getAllReports } from "../services/endpoints/reports.js";
 import { createZone, getAllZones } from "../services/endpoints/zones.js";
+import { createContact, getAllContacts, updateContact } from "../services/endpoints/contacts.js";
 import { openLugarFormModal } from "../components/modalComponent/lugaresmodal.js";
 import Swal from "sweetalert2";
 import { findAddress } from "../services/findAddress.js";
@@ -15,20 +16,23 @@ import {
     actualizarMarcadoresEnMapa,
 } from "../controllers/mapReport.controller.js";
 
-export let listContactos = [
-    {
-        id: 1,
-        nombre: "María Morales",
-        email: "maria@family.com",
-        parentesco: "Familiar",
-    },
-    {
-        id: 2,
-        nombre: "Carlos Ruiz",
-        email: "carlos.vecino@gmail.com",
-        parentesco: "Vecino",
-    },
-];
+export let listContactos = [];
+
+export async function cargarContactosHomepage() {
+    try {
+        const data = await getAllContacts();
+        const adapted = (data || []).map(c => ({
+            id: c.id_contacto,
+            nombre: c.nombre,
+            email: c.correo,
+            telefono: c.telefono,
+            parentesco: c.parentesco
+        }));
+        listContactos.splice(0, listContactos.length, ...adapted);
+    } catch(e) {
+        console.error("Error cargando contactos:", e);
+    }
+}
 
 export let listLugares = [];
 
@@ -293,6 +297,7 @@ export function renderHomepage() {
                     <thead>
                       <tr class="border-b border-zinc-200 text-zinc-400 font-semibold uppercase tracking-wider text-[9px] pb-2">
                         <th class="pb-3 pr-4">Nombre Completo</th>
+                        <th class="pb-3 pr-4">Teléfono</th>
                         <th class="pb-3 pr-4">Correo Electrónico</th>
                         <th class="pb-3 pr-4">Parentesco</th>
                         <th class="pb-3 text-right">Acciones</th>
@@ -335,7 +340,8 @@ export function renderContactosTable() {
             (contacto) => `
     <tr class="hover:bg-zinc-50/50 transition-colors">
       <td class="py-4 pr-4 font-semibold text-zinc-900">${contacto.nombre}</td>
-      <td class="py-4 pr-4 text-zinc-500">${contacto.email}</td>
+      <td class="py-4 pr-4 text-zinc-500 font-mono">${contacto.telefono || "N/A"}</td>
+      <td class="py-4 pr-4 text-zinc-500">${contacto.email || "N/A"}</td>
       <td class="py-4 pr-4">
         <span class="inline-flex items-center rounded bg-orange-50 px-2.5 py-0.5 text-[10px] font-medium text-orange-700 border border-orange-100">${contacto.parentesco}</span>
       </td>
@@ -369,6 +375,11 @@ export function openContactoFormModal(contacto = null) {
         <div>
           <label class="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">Nombre Completo</label>
           <input id="contacto-nombre" type="text" class="w-full px-3 py-2 border border-zinc-200 rounded focus:outline-none focus:border-zinc-400 text-xs text-zinc-800 placeholder-zinc-400 bg-white" placeholder="Ej. María Morales" value="${contacto ? contacto.nombre : ""}">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">Teléfono</label>
+          <input id="contacto-telefono" type="tel" class="w-full px-3 py-2 border border-zinc-200 rounded focus:outline-none focus:border-zinc-400 text-xs text-zinc-800 placeholder-zinc-400 bg-white" placeholder="Ej. 3001234567" value="${contacto ? contacto.telefono || "" : ""}">
         </div>
 
         <div>
@@ -406,9 +417,12 @@ export function openContactoFormModal(contacto = null) {
             const submitBtn = document.getElementById("contacto-modal-submit");
             const errorEl = document.getElementById("contacto-modal-error");
 
-            submitBtn.addEventListener("click", () => {
+            submitBtn.addEventListener("click", async () => {
                 const nombre = document
                     .getElementById("contacto-nombre")
+                    .value.trim();
+                const telefono = document
+                    .getElementById("contacto-telefono")
                     .value.trim();
                 const email = document
                     .getElementById("contacto-email")
@@ -417,40 +431,50 @@ export function openContactoFormModal(contacto = null) {
                     "contacto-parentesco",
                 ).value;
 
-                if (!nombre || !email || !parentesco) {
+                if (!nombre || !telefono || !parentesco) {
                     errorEl.textContent =
-                        "Por favor, complete todos los campos.";
+                        "Por favor, complete nombre, teléfono y parentesco.";
                     return;
                 }
 
-                if (contacto) {
-                    contacto.nombre = nombre;
-                    contacto.email = email;
-                    contacto.parentesco = parentesco;
-                } else {
-                    const newContacto = {
-                        id: Date.now(),
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Guardando...";
+
+                try {
+                    const apiData = {
                         nombre,
-                        email,
-                        parentesco,
+                        telefono,
+                        correo: email || null,
+                        parentesco
                     };
-                    listContactos.push(newContacto);
+
+                    if (contacto) {
+                        await updateContact(contacto.id, apiData);
+                    } else {
+                        await createContact(apiData);
+                    }
+                    
+                    await cargarContactosHomepage();
+                    renderContactosTable();
+                    Swal.close();
+
+                    Swal.fire({
+                        icon: "success",
+                        title: `<h3 class="text-sm font-semibold text-zinc-900 text-left">${contacto ? "Contacto Actualizado" : "Contacto Registrado"}</h3>`,
+                        html: `<p class="text-xs text-zinc-500 text-left">La persona de confianza ha sido ${contacto ? "modificada" : "añadida"} exitosamente.</p>`,
+                        showConfirmButton: false,
+                        timer: 2000,
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                        },
+                    });
+                } catch(e) {
+                    console.error("Error guardando contacto:", e);
+                    Swal.fire('Error', 'Hubo un error guardando el contacto.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = contacto ? "Guardar Cambios" : "Registrar Contacto";
                 }
-
-                renderContactosTable();
-                Swal.close();
-
-                Swal.fire({
-                    icon: "success",
-                    title: `<h3 class="text-sm font-semibold text-zinc-900 text-left">${contacto ? "Contacto Actualizado" : "Contacto Registrado"}</h3>`,
-                    html: `<p class="text-xs text-zinc-500 text-left">La persona de confianza ha sido ${contacto ? "modificada" : "añadida"} exitosamente.</p>`,
-                    showConfirmButton: false,
-                    timer: 2000,
-                    buttonsStyling: false,
-                    customClass: {
-                        popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-                    },
-                });
             });
         },
     });
@@ -665,7 +689,7 @@ export function initHomepage() {
     const map = document.getElementById("map");
 
     // Inicializar renderizado de tablas
-    renderContactosTable();
+    cargarContactosHomepage().then(() => renderContactosTable());
     renderLugaresTable();
     renderReportesTable();
     renderAlertasRecientes();

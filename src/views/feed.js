@@ -6,13 +6,15 @@ import { exportReportToPDF } from './feed/feedPdf.js';
 import { findAddress } from '../services/findAddress.js';
 import Swal from 'sweetalert2';
 import { actualizarMarcadoresEnMapa } from '../controllers/mapReport.controller.js';
+import { getAllReports } from '../services/endpoints/reports.js';
+import { getAllUsers } from '../services/endpoints/user.js';
 
 export { renderFeed };
 
 // -------------------------------------------------------------
 // CONTROLADOR DE PESTAÑAS (TABS) & MAPAS
 // -------------------------------------------------------------
-export function initFeed() {
+export async function initFeed() {
   const btnUsuarios = document.getElementById('sidebar-btn-usuarios');
   const btnReportes = document.getElementById('sidebar-btn-reportes');
   const btnEstadisticas = document.getElementById('sidebar-btn-estadisticas');
@@ -23,6 +25,53 @@ export function initFeed() {
   const tabReportes = document.getElementById('tab-content-reportes');
   const tabMapa = document.getElementById('tab-content-mapa');
 
+
+  // Fetch data from backend
+  try {
+      const data = await getAllReports();
+      const adapted = (data || []).map(r => ({
+          id: `KP-${r.id_reporte || r.id}`,
+          tipo: r.categoria_nombre || r.tipo || "General",
+          descripcion: r.descripcion,
+          ubicacion: (r.titulo || r.ubicacion_geografica || "").replace(/.*? en /, '') || "Desconocida",
+          fecha: new Date(r.fecha_hora_creacion || r.fecha_reporte || r.fecha || Date.now()).toLocaleString(),
+          estado: r.nombre_estado || r.estado || "Pendiente",
+          lat: parseFloat(r.latitud || r.lat) || 0,
+          lng: parseFloat(r.longitud || r.lng) || 0,
+          reportadoPor: r.usuario_nombre || "Desconocido",
+          accion: '?'
+      }));
+      
+      feedState.listHistorialReportes = [...adapted];
+      feedState.listReportesFeed = adapted.slice(0, 5); // top 5 recent
+  } catch (e) {
+      console.error("Error cargando reportes en admin feed:", e);
+  }
+  try {
+      const usersData = await getAllUsers();
+      const mappedUsers = (usersData || []).map(u => {
+          let roleName = "Usuario";
+          if (u.id_rol === 1) roleName = "Administrador";
+          else if (u.id_rol === 2) roleName = "Usuario";
+          else if (u.id_rol === 3) roleName = "Policia";
+          else if (u.id_rol === 4) roleName = "Bombero";
+          else if (u.id_rol === 5) roleName = "Ambulancia";
+          
+          return {
+              id: u.id_usuario,
+              nombre: u.nombres || "Sin nombre",
+              apellido: u.apellidos || "",
+              cedula: u.cedula || "N/A",
+              email: u.correo || "N/A",
+              telefono: u.telefono || "N/A",
+              fechaNacimiento: u.fecha_nacimiento || "N/A",
+              rol: roleName
+          };
+      });
+      feedState.listUsers = [...mappedUsers];
+  } catch (e) {
+      console.error("Error cargando usuarios en admin feed:", e);
+  }
 
   // Inicializar renderizado de tablas
   renderUsersTable();
