@@ -39,7 +39,7 @@ export async function findMailingAddress(lat, lon) {
         );
 
         if (!data?.display_name) {
-            return "Dirección no identificada";
+            return `Ubicación: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
         }
 
         const address = data.display_name

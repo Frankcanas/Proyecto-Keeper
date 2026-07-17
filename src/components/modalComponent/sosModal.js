@@ -246,9 +246,26 @@ export function initSOSModal(buttonId, onSOSCallback) {
         btnAmbulancia?.addEventListener('click', () => toggleService(btnAmbulancia, 'Ambulancia'));
         btnBomberos?.addEventListener('click', () => toggleService(btnBomberos, 'Bomberos'));
 
-        function triggerAlert() {
+        async function triggerAlert() {
+          let address = 'Dirección no identificada';
           const addressEl = document.getElementById('sos-current-address');
-          const address = addressEl && addressEl.textContent !== 'Obteniendo ubicación...' ? addressEl.textContent : 'Dirección no identificada';
+          const chkGPS = document.getElementById('sos-use-location');
+          
+          if (chkGPS && chkGPS.checked && !currentCoords) {
+              const btn = document.getElementById('sos-button');
+              if (btn) btn.innerHTML = 'Fijando ubicación...';
+              try {
+                  currentCoords = await get_location();
+                  address = await findMailingAddress(currentCoords.lat, currentCoords.lon);
+              } catch (e) {
+                  address = 'Ubicación no disponible';
+              }
+          } else if (addressEl) {
+              address = addressEl.textContent;
+              if (address === 'Obteniendo ubicación...' || address === 'Buscando dirección...') {
+                  address = 'Ubicación por GPS detectada';
+              }
+          }
           
           const servicesText = selectedServices.length > 0 ? selectedServices.join(', ') : 'Ninguno (Alerta General)';
           const reportType = selectedServices.length > 0 ? `SOS: ${selectedServices.join(' + ')}` : 'SOS Global';
