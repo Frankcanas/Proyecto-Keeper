@@ -4,19 +4,27 @@ import { findAddress } from "../../services/findAddress.js";
 import { inicializarMapaVea, actualizarMarcadoresEnMapa } from "../../controllers/mapReport.controller.js";
 
 //Datos de reportes de ambulancia
-import {
-    PARAMEDICO_LOGUEADO,
-    REPORTES_MOCK,
-} from "../../data/mockAmbulancia.js";
+import { getAllReports } from "../../services/endpoints/reports.js";
+let AMBULANCIA_LOGUEADO = { nombre: "Paramédico", rango: "Activo" };
 
 let reportes = [];
 
 // DownloadDataFromApi()
 async function cargarReportesDesdeAPI() {
-    reportes = REPORTES_MOCK.map((r) => ({
-        ...r,
-        fecha: r.fecha instanceof Date ? r.fecha : new Date(r.fecha),
-    }));
+    try {
+        const data = await getAllReports();
+        reportes = (data || []).map((r) => ({
+            ...r,
+            fecha: new Date(r.fecha_hora_creacion || r.fecha || Date.now()),
+            kpId: r.id,
+            ubicacion: r.ubicacion_geografica || "Desconocida",
+            estadoCaso: r.estado || "Pendiente",
+            gravedad: r.gravedad || "Baja"
+        }));
+    } catch (e) {
+        console.error("Error cargando reportes reales:", e);
+        reportes = [];
+    }
 }
 
 let tabActivo = "Estadisticas";

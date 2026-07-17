@@ -1,5 +1,6 @@
 import { feedState } from './feedState.js';
 import Swal from 'sweetalert2';
+import { createUser, getAllUsers } from '../../services/endpoints/user.js';
 
 export function renderUsersTable() {
   const tbody = document.getElementById('users-table-body');
@@ -287,7 +288,17 @@ export function openUserFormModal(user = null) {
           }
         }
 
+
+        
+        let id_rol = 2; // Ciudadano
+        if (rol === 'Policia') id_rol = 3;
+        else if (rol === 'Bombero') id_rol = 4;
+        else if (rol === 'Ambulancia') id_rol = 5;
+        else if (rol === 'Administrador') id_rol = 1;
+
+
         if (user) {
+          // Update user (not fully implemented in backend yet, doing local update for now)
           user.nombre = nombre;
           user.apellido = apellido;
           user.cedula = cedula;
@@ -295,22 +306,43 @@ export function openUserFormModal(user = null) {
           user.telefono = telefono;
           user.fechaNacimiento = fechaNacimiento;
           user.rol = rol;
+          renderUsersTable();
+          Swal.close();
         } else {
+          // Create real user in DB
           const newUser = {
-            id: Date.now(),
-            nombre,
-            apellido,
-            cedula,
-            email,
-            telefono,
-            fechaNacimiento,
-            rol
+            id_rol: id_rol,
+            nombres: nombre,
+            apellidos: apellido,
+            cedula: cedula,
+            correo: email,
+            telefono: telefono,
+            fecha_nacimiento: fechaNacimiento,
+            password_hash: document.getElementById('user-password').value
           };
-          feedState.listUsers.push(newUser);
+          
+          Swal.fire({ title: 'Creando...', text: 'Guardando en la base de datos', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+          
+          createUser(newUser).then(() => {
+             // Refresh list from DB if possible, or just add locally for now
+             feedState.listUsers.push({
+                id: Date.now(), nombre, apellido, cedula, email, telefono, fechaNacimiento, rol
+             });
+             renderUsersTable();
+             Swal.close();
+             Swal.fire({
+               icon: 'success',
+               title: `<h3 class="text-sm font-semibold text-zinc-900 text-left">Usuario Creado</h3>`,
+               html: `<p class="text-xs text-zinc-500 text-left">El miembro ha sido añadido exitosamente a la base de datos real.</p>`,
+               showConfirmButton: false, timer: 2000, buttonsStyling: false,
+               customClass: { popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full' }
+             });
+          }).catch(err => {
+             Swal.fire('Error', 'No se pudo crear el usuario: ' + (err.response?.data?.detail || err.message), 'error');
+          });
+          return;
         }
 
-        renderUsersTable();
-        Swal.close();
 
         Swal.fire({
           icon: 'success',

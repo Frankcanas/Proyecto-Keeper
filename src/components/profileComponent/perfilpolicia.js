@@ -4,15 +4,26 @@ import { formatearFechaHumana } from "../../utils/helpers.js";
 import { findAddress } from "../../services/findAddress.js";
 import { inicializarMapaVea, actualizarMarcadoresEnMapa } from "../../controllers/mapReport.controller.js";
 
-import { POLICIAL_LOGUEADO, REPORTES_MOCK } from "../../data/mockPolicia.js";
+import { getAllReports } from "../../services/endpoints/reports.js";
+let POLICIAL_LOGUEADO = { nombre: "Oficial", rango: "Activo" };
 
 let reportes = [];
 
 async function cargarReportesDesdeAPI() {
-    reportes = REPORTES_MOCK.map((r) => ({
-        ...r,
-        fecha: r.fecha instanceof Date ? r.fecha : new Date(r.fecha),
-    }));
+    try {
+        const data = await getAllReports();
+        reportes = (data || []).map((r) => ({
+            ...r,
+            fecha: new Date(r.fecha_hora_creacion || r.fecha || Date.now()),
+            kpId: r.id,
+            ubicacion: r.ubicacion_geografica || "Desconocida",
+            estadoCaso: r.estado || "Pendiente",
+            gravedad: r.gravedad || "Baja"
+        }));
+    } catch (e) {
+        console.error("Error cargando reportes reales:", e);
+        reportes = [];
+    }
 }
 
 let tabActivo = "Estadisticas";

@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import { createReport } from "../../services/endpoints/reports.js";
 import { getTargetLocation } from "../../controllers/mapManager.controller.js";
 import { geolocator } from "../../models/locationModel.js";
 import { findMailingAddress } from "../../services/findMailingAddress.js";
@@ -14,11 +15,16 @@ export function initReportModal(buttonId, onSubmitCallback) {
             html: `
         <form id="report-form" class="text-left space-y-4 font-sans">
           <div>
-            <h4 class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Categoría del incidente</h4>
+            <h4 class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Entidad de Emergencia</h4>
             <div class="mt-2.5 flex gap-2">
-              <button type="button" data-cat="robo" class="report-cat px-3 py-2 rounded border border-zinc-200 bg-white text-xs flex-1 font-medium transition-colors hover:bg-zinc-50 text-zinc-700">Robo</button>
-              <button type="button" data-cat="vandalismo" class="report-cat px-3 py-2 rounded border border-zinc-200 bg-white text-xs flex-1 font-medium transition-colors hover:bg-zinc-50 text-zinc-700">Vandalismo</button>
-              <button type="button" data-cat="peligro" class="report-cat px-3 py-2 rounded border border-zinc-200 bg-white text-xs flex-1 font-medium transition-colors hover:bg-zinc-50 text-zinc-700">Peligro</button>
+              <button type="button" data-entity="policia" class="report-entity px-3 py-2 rounded border border-zinc-200 bg-white text-xs flex-1 font-medium transition-colors hover:bg-zinc-50 text-zinc-700">Policía</button>
+              <button type="button" data-entity="bomberos" class="report-entity px-3 py-2 rounded border border-zinc-200 bg-white text-xs flex-1 font-medium transition-colors hover:bg-zinc-50 text-zinc-700">Bomberos</button>
+              <button type="button" data-entity="ambulancia" class="report-entity px-3 py-2 rounded border border-zinc-200 bg-white text-xs flex-1 font-medium transition-colors hover:bg-zinc-50 text-zinc-700">Ambulancia</button>
+            </div>
+          </div>
+          <div id="subcat-container" class="mt-3 hidden">
+            <h4 class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Categoría Específica</h4>
+            <div class="mt-2.5 flex gap-2 flex-wrap" id="subcat-buttons">
             </div>
           </div>
 
@@ -94,8 +100,28 @@ export function initReportModal(buttonId, onSubmitCallback) {
                 const labelTarget = document.getElementById("use-target-label");
                 const targetStatus = document.getElementById("target-status");
 
+                let selectedEntity = null;
                 let selectedCat = null;
                 let files = [];
+                const subcatContainer = document.getElementById("subcat-container");
+                const subcatButtonsContainer = document.getElementById("subcat-buttons");
+
+                const categories = {
+                    policia: [
+                        { id: "Robo", label: "Robo" },
+                        { id: "Vandalismo", label: "Vandalismo" },
+                        { id: "Altercado", label: "Altercado" }
+                    ],
+                    bomberos: [
+                        { id: "Incendio", label: "Incendio" },
+                        { id: "Ayuda Externa", label: "Ayuda Externa" }
+                    ],
+                    ambulancia: [
+                        { id: "Accidente Tránsito", label: "Accidente Tránsito" },
+                        { id: "Urgencia Médica", label: "Urgencia Médica" },
+                        { id: "Solicitar Ambulancia", label: "Pedir Ambulancia" }
+                    ]
+                };
 
                 chkGPS.addEventListener("change", () => {
                     if (chkGPS.checked) chkTarget.checked = false;
@@ -158,26 +184,47 @@ export function initReportModal(buttonId, onSubmitCallback) {
                             "Problemas obteniendo la dirección.";
                     });
 
-                // Botones de categoría
-                document.querySelectorAll(".report-cat").forEach((btn) => {
+                // Botones de entidad
+                document.querySelectorAll(".report-entity").forEach((btn) => {
                     btn.style.backgroundColor = "#ffffff";
                     btn.style.color = "#3f3f46";
                     btn.style.borderColor = "#e4e4e7";
                     btn.style.fontWeight = "500";
                     btn.addEventListener("click", () => {
-                        document
-                            .querySelectorAll(".report-cat")
-                            .forEach((b) => {
-                                b.style.backgroundColor = "#ffffff";
-                                b.style.color = "#3f3f46";
-                                b.style.borderColor = "#e4e4e7";
-                                b.style.fontWeight = "500";
-                            });
+                        document.querySelectorAll(".report-entity").forEach((b) => {
+                            b.style.backgroundColor = "#ffffff";
+                            b.style.color = "#3f3f46";
+                            b.style.borderColor = "#e4e4e7";
+                            b.style.fontWeight = "500";
+                        });
                         btn.style.backgroundColor = "#f4f4f5";
                         btn.style.color = "#09090b";
                         btn.style.borderColor = "#71717a";
                         btn.style.fontWeight = "600";
-                        selectedCat = btn.dataset.cat;
+                        
+                        selectedEntity = btn.dataset.entity;
+                        selectedCat = null;
+                        
+                        subcatContainer.classList.remove("hidden");
+                        subcatButtonsContainer.innerHTML = categories[selectedEntity].map(cat => 
+                            `<button type="button" data-cat="${cat.id}" class="report-cat px-2.5 py-1.5 rounded border border-zinc-200 bg-white text-[11px] flex-1 font-medium transition-colors hover:bg-zinc-50 text-zinc-700 leading-tight">${cat.label}</button>`
+                        ).join('');
+
+                        document.querySelectorAll(".report-cat").forEach((subBtn) => {
+                            subBtn.addEventListener("click", () => {
+                                document.querySelectorAll(".report-cat").forEach((b) => {
+                                    b.style.backgroundColor = "#ffffff";
+                                    b.style.color = "#3f3f46";
+                                    b.style.borderColor = "#e4e4e7";
+                                    b.style.fontWeight = "500";
+                                });
+                                subBtn.style.backgroundColor = "#f4f4f5";
+                                subBtn.style.color = "#09090b";
+                                subBtn.style.borderColor = "#71717a";
+                                subBtn.style.fontWeight = "600";
+                                selectedCat = subBtn.dataset.cat;
+                            });
+                        });
                     });
                 });
 
@@ -224,10 +271,10 @@ export function initReportModal(buttonId, onSubmitCallback) {
                         const desc = document
                             .getElementById("report-desc")
                             ?.value?.trim();
-                        if (!selectedCat) {
+                        if (!selectedEntity || !selectedCat) {
                             if (errorEl)
                                 errorEl.textContent =
-                                    "Seleccione una categoría.";
+                                    "Seleccione una entidad y categoría específica.";
                             return;
                         }
                         if (!desc) {
@@ -259,35 +306,57 @@ export function initReportModal(buttonId, onSubmitCallback) {
                             }
                         }
 
-                        const reportData = {
-                            id: `KP-${Math.floor(1000 + Math.random() * 9000)}`,
-                            tipo:
-                                selectedCat.charAt(0).toUpperCase() +
-                                selectedCat.slice(1),
+                        let id_categoria = 1;
+                        if (selectedCat === 'Robo') id_categoria = 1;
+                        else if (selectedCat === 'Vandalismo') id_categoria = 2;
+                        else if (selectedCat === 'Altercado') id_categoria = 3;
+                        else if (selectedCat === 'Incendio') id_categoria = 4;
+                        else if (selectedCat === 'Ayuda Externa') id_categoria = 5;
+                        else if (selectedCat === 'Accidente Tránsito') id_categoria = 6;
+                        else if (selectedCat === 'Urgencia Médica') id_categoria = 7;
+                        else if (selectedCat === 'Solicitar Ambulancia') id_categoria = 8;
+                        else id_categoria = 9;
+
+                        const apiData = {
+                            id_categoria: id_categoria,
+                            titulo: selectedCat + ' en ' + finalLocation,
                             descripcion: desc,
-                            ubicacion: finalLocation, // Guardará la calle legible
-                            fecha: "Hace un momento",
-                            estado: "Pendiente",
-                            lat,
-                            lng,
+                            latitud: lat || 0,
+                            longitud: lng || 0
                         };
 
-                        if (onSubmitCallback) {
-                            onSubmitCallback(reportData);
-                        }
+                        Swal.fire({ title: 'Enviando...', text: 'Registrando reporte en la base de datos', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
-                        Swal.close();
-                        Swal.fire({
-                            icon: "success",
-                            title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Reporte enviado</h3>',
-                            html: '<p class="text-xs text-zinc-500 text-left">Gracias por colaborar. Su reporte será evaluado por moderadores.</p>',
-                            timer: 2000,
-                            showConfirmButton: false,
-                            buttonsStyling: false,
-                            customClass: {
-                                popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-                            },
+                        createReport(apiData).then((res) => {
+                            const reportData = {
+                                id: `KP-${res.id || Math.floor(1000 + Math.random() * 9000)}`,
+                                tipo: selectedCat,
+                                descripcion: desc,
+                                ubicacion: finalLocation,
+                                fecha: "Hace un momento",
+                                estado: "Pendiente",
+                                lat,
+                                lng,
+                            };
+                            if (onSubmitCallback) {
+                                onSubmitCallback(reportData);
+                            }
+                            Swal.close();
+                            Swal.fire({
+                                icon: "success",
+                                title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Reporte enviado</h3>',
+                                html: '<p class="text-xs text-zinc-500 text-left">Su reporte ha sido registrado exitosamente en la base de datos real.</p>',
+                                timer: 2000,
+                                showConfirmButton: false,
+                                buttonsStyling: false,
+                                customClass: {
+                                    popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                                },
+                            });
+                        }).catch(err => {
+                            Swal.fire('Error', 'No se pudo crear el reporte en la base de datos. Verifique su sesión o conexión: ' + (err.response?.data?.detail || err.message), 'error');
                         });
+
                     });
             },
         });

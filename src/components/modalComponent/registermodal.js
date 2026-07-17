@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2';
+import { createUser } from '../../services/endpoints/user.js';
 
 export function initRegisterModal(buttonId) {
   const btn = document.getElementById(buttonId);
@@ -164,19 +165,36 @@ export function initRegisterModal(buttonId) {
               return;
             }
 
-            Swal.close();
-            Swal.fire({
-              icon: 'success',
-              title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Registro enviado</h3>',
-              html: '<p class="text-xs text-zinc-500 text-left">Revisa tu correo para confirmar tu cuenta.</p>',
-              showConfirmButton: false,
-              timer: 2000,
-              buttonsStyling: false,
-              customClass: { popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full' }
+            const newUser = {
+              id_rol: 2, // 2 = Ciudadano
+              nombres: nombre,
+              apellidos: apellido,
+              cedula: cedula,
+              correo: email,
+              telefono: telefono,
+              fecha_nacimiento: fechaNacimiento,
+              password_hash: password
+            };
+
+            Swal.fire({ title: 'Registrando...', text: 'Creando cuenta', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            createUser(newUser).then(() => {
+                Swal.close();
+                Swal.fire({
+                  icon: 'success',
+                  title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Registro completado</h3>',
+                  html: '<p class="text-xs text-zinc-500 text-left">Tu cuenta ha sido creada. Ahora puedes iniciar sesión.</p>',
+                  showConfirmButton: false,
+                  timer: 2000,
+                  buttonsStyling: false,
+                  customClass: { popup: 'rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full' }
+                });
+            }).catch(err => {
+                Swal.fire('Error', 'No se pudo crear el usuario: ' + (err.response?.data?.detail || err.message), 'error');
             });
           });
         }
       }
     });
   });
-}
+}
