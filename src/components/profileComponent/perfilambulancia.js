@@ -9,7 +9,7 @@ import { getAllReports } from "../../services/endpoints/reports.js";
 let AMBULANCIA_LOGUEADO = { nombre: "Paramédico", rango: "Activo" };
 
 let reportes = [];
-let paramedicoLogueado = PARAMEDICO_LOGUEADO;
+let paramedicoLogueado = AMBULANCIA_LOGUEADO;
 
 async function cargarReportesDesdeAPI() {
     try {
