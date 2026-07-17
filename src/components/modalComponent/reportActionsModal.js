@@ -1,5 +1,6 @@
 import Swal from "sweetalert2";
 import { openLugarFormModal } from "./lugaresmodal.js";
+import { deleteZone, updateZone } from "../../services/endpoints/zones.js";
 import {
     listReportes,
     listLugares,
@@ -113,26 +114,42 @@ export function attachLugarActions() {
             const id = parseInt(btn.dataset.id);
             const lugar = listLugares.find((l) => l.id === id);
             if (lugar) {
-                openLugarFormModal(lugar, (nombre, tipo, metros, coordinatesText, lat, lng) => {
-                    lugar.nombre = nombre;
-                    lugar.tipo = tipo;
-                    lugar.metros = metros;
-                    lugar.coordenadas = coordinatesText;
-                    lugar.lat = lat;
-                    lugar.lng = lng;
-                    renderLugaresTable();
+                openLugarFormModal(lugar, async (nombre, tipo, metros, coordinatesText, lat, lng) => {
+                    const apiData = {
+                        nombre,
+                        tipo: tipo.toLowerCase(),
+                        latitud: lat || lugar.lat || 0,
+                        longitud: lng || lugar.lng || 0,
+                        radio_metros: metros || 100
+                    };
+                    
+                    try {
+                        await updateZone(lugar.id, apiData);
+                        
+                        lugar.nombre = nombre;
+                        lugar.tipo = tipo;
+                        lugar.metros = metros;
+                        if (coordinatesText) lugar.coordenadas = coordinatesText;
+                        if (lat) lugar.lat = lat;
+                        if (lng) lugar.lng = lng;
+                        
+                        renderLugaresTable();
 
-                    Swal.fire({
-                        icon: "success",
-                        title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Lugar Actualizado</h3>',
-                        html: '<p class="text-xs text-zinc-500 text-left">El lugar seguro ha sido modificado exitosamente.</p>',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        buttonsStyling: false,
-                        customClass: {
-                            popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-                        },
-                    });
+                        Swal.fire({
+                            icon: "success",
+                            title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Lugar Actualizado</h3>',
+                            html: '<p class="text-xs text-zinc-500 text-left">El lugar seguro ha sido modificado exitosamente.</p>',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            buttonsStyling: false,
+                            customClass: {
+                                popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                            },
+                        });
+                    } catch (e) {
+                        console.error("Error actualizando zona:", e);
+                        Swal.fire('Error', 'No se pudo actualizar el lugar en la base de datos.', 'error');
+                    }
                 });
             }
         });
@@ -158,25 +175,32 @@ export function attachLugarActions() {
                     cancelButton:
                         "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold px-3 py-1.5 rounded transition-colors",
                 },
-            }).then((result) => {
+            }).then(async (result) => {
                 if (result.isConfirmed) {
-                    const index = listLugares.findIndex((l) => l.id === id);
-                    if (index > -1) {
-                        listLugares.splice(index, 1);
-                    }
-                    renderLugaresTable();
+                    try {
+                        await deleteZone(id);
+                        
+                        const index = listLugares.findIndex((l) => l.id === id);
+                        if (index > -1) {
+                            listLugares.splice(index, 1);
+                        }
+                        renderLugaresTable();
 
-                    Swal.fire({
-                        icon: "success",
-                        title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Lugar Eliminado</h3>',
-                        html: '<p class="text-xs text-zinc-500 text-left">El lugar seguro ha sido removido con éxito.</p>',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        buttonsStyling: false,
-                        customClass: {
-                            popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
-                        },
-                    });
+                        Swal.fire({
+                            icon: "success",
+                            title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Lugar Eliminado</h3>',
+                            html: '<p class="text-xs text-zinc-500 text-left">El lugar seguro ha sido removido con éxito.</p>',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            buttonsStyling: false,
+                            customClass: {
+                                popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                            },
+                        });
+                    } catch (e) {
+                        console.error("Error eliminando zona:", e);
+                        Swal.fire('Error', 'No se pudo eliminar el lugar seguro de la base de datos.', 'error');
+                    }
                 }
             });
         });
