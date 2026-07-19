@@ -40,6 +40,19 @@ export async function initMap(containerId = "map") {
     state.map = renderMap(coords, containerId);
     state.currentMarker = pointer(state.map, coords);
 
+    // Observer para forzar la actualización del canvas cuando la pantalla o la pestaña cambia
+    const mapDiv = document.getElementById(containerId);
+    if (mapDiv) {
+        const resizeObserver = new ResizeObserver(() => {
+            if (state.map) {
+                state.map.resize();
+            }
+        });
+        resizeObserver.observe(mapDiv);
+        // Guardamos el observer si queremos limpiarlo después (opcional, pero buena práctica)
+        state.resizeObserver = resizeObserver;
+    }
+
     state.map.doubleClickZoom.disable();
 
     state.map.on("dblclick", ({ lngLat }) => {
@@ -88,6 +101,11 @@ export function cleanupMap() {
     }
 
     destroyMapInstance(state.map, state.currentMarker);
+
+    if (state.resizeObserver) {
+        state.resizeObserver.disconnect();
+        state.resizeObserver = null;
+    }
 
     state.map = null;
     state.currentMarker = null;

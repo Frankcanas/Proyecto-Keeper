@@ -272,30 +272,7 @@ export function renderFeed() {
               <!-- Map Container -->
               <div id="map" class="relative w-full h-[600px] rounded-lg border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
                 
-                <div id="feed-map-container" class="absolute inset-0 z-0">
-                  <!-- Imagen SVG elegante de calles como placeholder de fondo de mapa -->
-                  <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_#27272a_1px,_transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
-                  
-                  <svg viewBox="0 0 800 500" class="w-full h-full stroke-orange-500/10 fill-none pointer-events-none" stroke-width="1.5">
-                    <!-- Calles ficticias -->
-                    <path d="M 50,0 Q 200,150 400,200 T 750,500" stroke-width="8" stroke="rgba(234, 88, 12, 0.08)"/>
-                    <path d="M 0,100 C 300,50 500,450 800,400" stroke-width="6" stroke="rgba(234, 88, 12, 0.05)"/>
-                    <line x1="150" y1="0" x2="150" y2="500" stroke-width="3"/>
-                    <line x1="500" y1="0" x2="500" y2="500" stroke-width="4"/>
-                    <line x1="0" y1="250" x2="800" y2="250" stroke-width="4"/>
-                    <!-- Zonas circulares ficticias -->
-                    <circle cx="350" cy="220" r="80" stroke="#ea580c" stroke-width="1" stroke-dasharray="4 4" fill="rgba(234, 88, 12, 0.02)"/>
-                    <circle cx="150" cy="120" r="50" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4 4" fill="rgba(59, 130, 246, 0.02)"/>
-                  </svg>
-                  
-                  <!-- Mensaje para el desarrollador -->
-                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div class="bg-zinc-900/90 border border-zinc-800 rounded p-4 text-center max-w-sm">
-                      <p class="text-xs font-bold text-white uppercase tracking-wider mb-1">Área para Mapa Interactivo</p>
-                      <p class="text-[10px] text-zinc-400">Contenedor listo con ID <code class="text-orange-400">#feed-map-container</code>. Puedes montar Leaflet, Google Maps o Mapbox aquí.</p>
-                    </div>
-                  </div>
-                </div>
+                <div id="feed-map-container" class="absolute inset-0 z-0 w-full h-full bg-zinc-950"></div>
 
                 <!-- Barra de búsqueda superior flotante -->
                 <div class="absolute top-4 left-4 right-4 md:left-6 md:right-auto md:w-96 z-10 flex gap-2">
@@ -307,20 +284,6 @@ export function renderFeed() {
                   </div>
                 </div>
 
-                  <div class="border-t border-zinc-800 pt-3">
-                    <h3 class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Métricas Rápidas</h3>
-                    <div class="grid grid-cols-2 gap-2 text-center text-xs">
-                      <div class="bg-zinc-950 p-2 rounded border border-zinc-800">
-                        <div class="text-[9px] text-zinc-500 uppercase">Cámaras</div>
-                        <div class="text-xs font-bold text-emerald-400">12/12</div>
-                      </div>
-                      <div class="bg-zinc-950 p-2 rounded border border-zinc-800">
-                        <div class="text-[9px] text-zinc-500 uppercase">Patrullas</div>
-                        <div class="text-xs font-bold text-orange-400">4 Activas</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
                 <!-- Indicador de señal / Estado de conexión en la parte inferior izquierda -->
                 <div class="absolute bottom-4 left-4 z-10 bg-zinc-950/90 border border-zinc-800 rounded px-2.5 py-1 flex items-center gap-2 text-white shadow-lg backdrop-blur-sm">

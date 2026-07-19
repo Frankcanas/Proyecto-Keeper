@@ -4,7 +4,7 @@ import { findAddress } from "../../services/findAddress.js";
 import { inicializarMapaVea, actualizarMarcadoresEnMapa, mapMarkers } from "../../controllers/mapReport.controller.js";
 import { getMap } from "../../controllers/mapManager.controller.js";
 
-import { getAllReports } from "../../services/endpoints/reports.js";
+import { getAllReports, updateReport } from "../../services/endpoints/reports.js";
 let BOMBERO_LOGUEADO = { nombre: "Bombero", rango: "Activo" };
 
 let reportes = [];
@@ -13,14 +13,22 @@ let bomberoLogueado = BOMBERO_LOGUEADO;
 async function cargarReportesDesdeAPI() {
     try {
         const data = await getAllReports();
-        reportes = (data || []).map((r) => ({
-            ...r,
-            fecha: new Date(r.fecha_hora_creacion || r.fecha || Date.now()),
-            kpId: r.id,
-            ubicacion: r.ubicacion_geografica || "Desconocida",
-            estadoCaso: r.estado || "Pendiente",
-            gravedad: r.gravedad || "Baja"
-        }));
+        reportes = (data || [])
+            .filter((r) => [4, 5].includes(r.id_categoria))
+            .map((r) => ({
+                ...r,
+                id: r.id_reporte || r.id,
+                kpId: r.id_reporte || r.id,
+                tipo: r.categoria_nombre || r.tipo || "General",
+                descripcion: r.descripcion,
+                fecha: new Date(r.fecha_reporte || r.fecha_hora_creacion || r.fecha || Date.now()),
+                ubicacion: (r.titulo || r.ubicacion_geografica || "Desconocida").replace(/.*? en /, ''),
+                estadoCaso: r.nombre_estado || r.estado || "Pendiente",
+                gravedad: r.gravedad || "Media",
+                lat: parseFloat(r.latitud || r.lat) || 0,
+                lng: parseFloat(r.longitud || r.lng) || 0,
+                reportadoPor: r.usuario_nombre || "Desconocido"
+            }));
     } catch (e) {
         console.error("Error cargando reportes reales:", e);
         reportes = [];
@@ -47,9 +55,9 @@ export async function inicializarDashboard() {
     if (sessionUser) {
         bomberoLogueado = {
             nombre: `${sessionUser.nombres} ${sessionUser.apellidos || ''}`.trim(),
-            rango: "Sargento de Estación",
-            placa: sessionUser.cedula || "B-7722",
-            foto: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=120"
+            rango: sessionUser.rol || "Bombero",
+            placa: sessionUser.cedula || "N/A",
+            foto: `https://ui-avatars.com/api/?name=${encodeURIComponent(sessionUser.nombres)}&background=dc2626&color=fff`
         };
     }
 
@@ -74,26 +82,27 @@ function actualizarEstadisticasVisuales() {
     if (!activeValEl) return;
 
     const activosTotales = reportes.filter(
-        (r) => r.estadoCaso !== "Caso cerrado",
+        (r) => r.estadoCaso !== "Caso cerrado" && r.estadoCaso !== "Completado"
     ).length;
-    activeValEl.textContent = `${activosTotales + 23}`;
+    activeValEl.textContent = `${activosTotales}`;
 
-    let factor = 1.0;
-    if (filtroEstadisticasTiempo === "semana") {
-        factor = 2.4;
-    } else if (filtroEstadisticasTiempo === "mes") {
-        factor = 6.2;
-    }
+    const ahora = new Date();
+    const reportesFiltrados = reportes.filter(r => {
+        const msDiferencia = ahora - r.fecha;
+        const diasTranscurridos = msDiferencia / (1000 * 60 * 60 * 24);
+        if (filtroEstadisticasTiempo === "semana") return diasTranscurridos <= 7;
+        if (filtroEstadisticasTiempo === "mes") return diasTranscurridos <= 30;
+        return diasTranscurridos <= 3;
+    });
 
-    const valoresDias = {
-        lun: Math.round(32 * factor),
-        mar: Math.round(48 * factor),
-        mie: Math.round(22 * factor),
-        jue: Math.round(61 * factor),
-        vie: Math.round(39 * factor),
-        sab: Math.round(72 * factor),
-        dom: Math.round(85 * factor),
-    };
+    const valoresDias = { lun: 0, mar: 0, mie: 0, jue: 0, vie: 0, sab: 0, dom: 0 };
+    const mapaDias = ['dom', 'lun', 'mar', 'mie', 'jue', 'vie', 'sab'];
+    reportesFiltrados.forEach(r => {
+        if (r.fecha) {
+            const diaStr = mapaDias[r.fecha.getDay()];
+            valoresDias[diaStr]++;
+        }
+    });
 
     const maxVal = Math.max(...Object.values(valoresDias));
 
@@ -108,9 +117,17 @@ function actualizarEstadisticasVisuales() {
         }
     });
 
-    const secNorte = Math.round(42 * (factor * 0.85));
-    const secCentral = Math.round(29 * (factor * 0.9));
-    const secIndustrial = Math.round(64 * (factor * 0.75));
+    let secNorte = 0, secCentral = 0, secIndustrial = 0;
+    reportesFiltrados.forEach(r => {
+        const ubi = (r.ubicacion || "").toLowerCase() + " " + (r.barrio || "").toLowerCase();
+        if (ubi.includes('norte')) {
+            secNorte++;
+        } else if (ubi.includes('industrial') || ubi.includes('zona i')) {
+            secIndustrial++;
+        } else {
+            secCentral++;
+        }
+    });
 
     const totalSectores = secNorte + secCentral + secIndustrial;
 
@@ -118,21 +135,21 @@ function actualizarEstadisticasVisuales() {
     const nBar = document.getElementById("sector-norte-bar");
     if (nEl && nBar) {
         nEl.textContent = secNorte;
-        nBar.style.width = `${totalSectores > 0 ? (secNorte / totalSectores) * 100 : 42}%`;
+        nBar.style.width = `${totalSectores > 0 ? (secNorte / totalSectores) * 100 : 0}%`;
     }
 
     const cEl = document.getElementById("sector-central-val");
     const cBar = document.getElementById("sector-central-bar");
     if (cEl && cBar) {
         cEl.textContent = secCentral;
-        cBar.style.width = `${totalSectores > 0 ? (secCentral / totalSectores) * 100 : 29}%`;
+        cBar.style.width = `${totalSectores > 0 ? (secCentral / totalSectores) * 100 : 0}%`;
     }
 
     const iEl = document.getElementById("sector-industrial-val");
     const iBar = document.getElementById("sector-industrial-bar");
     if (iEl && iBar) {
         iEl.textContent = secIndustrial;
-        iBar.style.width = `${totalSectores > 0 ? (secIndustrial / totalSectores) * 100 : 64}%`;
+        iBar.style.width = `${totalSectores > 0 ? (secIndustrial / totalSectores) * 100 : 0}%`;
     }
 }
 
@@ -481,36 +498,66 @@ function obtenerReportesHistorialFiltrados() {
         });
 }
 
-function actualizarEstadoCasoDirecto(id, nuevoEstado) {
+async function actualizarEstadoCasoDirecto(id, nuevoEstado) {
     const caso = reportes.find((r) => r.id === id);
     if (!caso) return;
 
-    caso.estadoCaso = nuevoEstado;
+    let id_estado = 1;
+    if (nuevoEstado.toLowerCase() === "visto") id_estado = 2;
+    if (nuevoEstado === "En revisión") id_estado = 3;
+    if (nuevoEstado === "Caso cerrado" || nuevoEstado === "Completado") id_estado = 4;
 
-    if (nuevoEstado !== "Pendiente") {
-        caso.accionPolicia = bomberoLogueado.nombre;
-    } else {
-        caso.accionPolicia = "—";
+    const nombre = bomberoLogueado ? bomberoLogueado.nombre : "Bombero";
+    let nuevaDesc = caso.descripcion || "";
+
+    if (id_estado === 4) {
+        if (!nuevaDesc.includes(`[Completado por:`)) {
+            nuevaDesc += `\n\n[Completado por: ${nombre}]`;
+        }
+    } else if (id_estado === 3) {
+        if (!nuevaDesc.includes(`[En revisión por:`)) {
+            nuevaDesc += `\n\n[En revisión por: ${nombre}]`;
+        }
     }
 
-    Swal.fire({
-        title: "¡Estado Actualizado!",
-        text: `El caso ${caso.kpId} ha sido modificado a "${nuevoEstado}" por el bombero ${bomberoLogueado.nombre}.`,
-        icon: "success",
-        confirmButtonText: "Aceptar",
-        confirmButtonColor: "#dc2626",
-        background: "#ffffff",
-        color: "#09090b",
-        customClass: {
-            popup: "border border-zinc-200 rounded-md shadow-none",
-        },
-    });
+    try {
+        const numericId = typeof caso.id === 'string' ? parseInt(caso.id.replace("KP-", ""), 10) : caso.id;
+        await updateReport(numericId, {
+            id_estado: id_estado,
+            descripcion: nuevaDesc
+        });
 
-    renderizarTablaHistorial();
-    renderizarTablaModeracion();
-    renderizarAlertasRecientes();
-    actualizarEstadisticasVisuales();
-    actualizarMarcadoresEnMapa(reportes);
+        caso.estadoCaso = nuevoEstado;
+        caso.descripcion = nuevaDesc;
+
+        if (nuevoEstado !== "Pendiente") {
+            caso.accionPolicia = nombre;
+        } else {
+            caso.accionPolicia = "—";
+        }
+
+        Swal.fire({
+            title: "¡Estado Actualizado!",
+            text: `El caso ${caso.kpId} ha sido modificado a "${nuevoEstado}" en la base de datos.`,
+            icon: "success",
+            confirmButtonText: "Aceptar",
+            confirmButtonColor: "#dc2626",
+            background: "#ffffff",
+            color: "#09090b",
+            customClass: {
+                popup: "border border-zinc-200 rounded-md shadow-none",
+            },
+        });
+
+        renderizarTablaHistorial();
+        renderizarTablaModeracion();
+        renderizarAlertasRecientes();
+        actualizarEstadisticasVisuales();
+        actualizarMarcadoresEnMapa(reportes);
+    } catch(e) {
+        console.error("Error al actualizar estado en bd:", e);
+        Swal.fire("Error", "No se pudo actualizar el estado en el servidor", "error");
+    }
 }
 
 function abrirModalEvidencia(id) {

@@ -12,14 +12,14 @@ def login(credenciales: LoginSchema, response: Response):
     token = resultado["access_token"]
     
 
-    #el token en la cookie con expiración de 15 minutos (900 segundos)
+    #el token en la cookie con expiración de 7 días (604800 segundos)
     response.set_cookie(
         key="auth_token",         # Nombre de la cookie
         value=token,              # El JWT string
         httponly=True,            # Seguridad: impide que JavaScript lea el token
         secure=False,             # False para desarrollo local (localhost). Cambiar a True en producción (HTTPS).
         samesite="lax",           # Permite que el navegador envíe la cookie en las peticiones de tu SPA
-        max_age=900               # 15 minutos exactos de vida útil
+        max_age=604800            # 7 días de vida útil
     )
     
     #Retornamos la respuesta al frontend.
