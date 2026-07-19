@@ -30,3 +30,5 @@ def update_reporte(id_reporte: int, reporte: ReporteUpdate, payload: dict = Depe
 @router.delete("/{id_reporte}")
 def delete_reporte(id_reporte: int, payload: dict = Depends(verify_token)):
     return ReporteController.delete(id_reporte)
+
+

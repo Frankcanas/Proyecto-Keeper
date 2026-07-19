@@ -21,13 +21,19 @@ export let listContactos = [];
 export async function cargarContactosHomepage() {
     try {
         const data = await getAllContacts();
-        const adapted = (data || []).map(c => ({
-            id: c.id_contacto,
-            nombre: c.nombre,
-            email: c.correo,
-            telefono: c.telefono,
-            parentesco: c.parentesco
-        }));
+        const adapted = (data || []).map(r => ({
+        id: `KP-${r.id_reporte || r.id}`,
+        tipo: r.categoria_nombre || r.tipo || "General",
+        descripcion: r.descripcion,
+        evidencias: r.evidencias || [],
+        ubicacion: (r.titulo || r.ubicacion_geografica || "").replace(/.*? en /, '') || "Desconocida",
+        fecha: new Date(r.fecha_hora_creacion || r.fecha_reporte || r.fecha || Date.now()),
+        estado: r.nombre_estado || r.estado || "Pendiente",
+        lat: parseFloat(r.latitud || r.lat) || 0,
+        lng: parseFloat(r.longitud || r.lng) || 0,
+        reportadoPor: r.usuario_nombre || "Desconocido",
+        gravedad: "Media"
+    }));
         listContactos.splice(0, listContactos.length, ...adapted);
     } catch(e) {
         console.error("Error cargando contactos:", e);
@@ -249,9 +255,9 @@ export function renderHomepage() {
             <div id="homepage-content-reportes" class="hidden p-6 sm:p-8 space-y-6 flex-1 bg-[#f9fafb]">
               <!-- Header Section -->
               <div class="mb-2">
-                <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-400">Comunidad</p>
-                <h1 class="text-xl font-bold text-zinc-900 mt-1">Incidentes Reportados</h1>
-                <p class="text-xs text-zinc-500 mt-1">Listado completo de reportes enviados por miembros del vecindario.</p>
+                <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-400">propios</p>
+                <h1 class="text-xl font-bold text-zinc-900 mt-1">Mis reportes</h1>
+                <p class="text-xs text-zinc-500 mt-1">Listado completo de tus reportes</p>
               </div>
 
               <!-- Reports Table Card -->
@@ -275,6 +281,12 @@ export function renderHomepage() {
                 </div>
               </div>
             </div>
+
+
+
+<div id="homepage-content-all-reportes" class="hidden p-6 sm:p-8 space-y-6 flex-1 bg-[#f9fafb]">
+
+</div>
 
             <!-- CONTENIDO TAB: PERSONAS DE CONFIANZA (CRUD completo) -->
             <div id="homepage-content-contactos" class="hidden p-6 sm:p-8 space-y-6 flex-1 bg-[#f9fafb]">
@@ -659,6 +671,115 @@ export function renderAlertasRecientes() {
     }).join('');
 }
 
+function renderAllReportesTable(reportes) {
+
+    const container = document.getElementById(
+        "homepage-content-all-reportes"
+    );
+
+    if (!container) return;
+
+
+    if (!Array.isArray(reportes)) {
+        console.error("Formato incorrecto de reportes:", reportes);
+        container.innerHTML = `
+            <p class="text-sm text-red-500">
+                Error cargando reportes
+            </p>
+        `;
+        return;
+    }
+
+
+    container.innerHTML = `
+
+    <div class="mb-5">
+
+        <h2 class="text-xl font-semibold text-zinc-900">
+            Todos los reportes
+        </h2>
+
+        <p class="text-sm text-zinc-500">
+            Revisa los reportes realizados por la comunidad.
+        </p>
+
+    </div>
+
+
+    <div class="
+        grid
+        grid-cols-1
+        md:grid-cols-2
+        xl:grid-cols-3
+        gap-5
+    ">
+
+    ${
+        reportes.map(reporte => `
+
+        <article class="
+            bg-white
+            rounded-xl
+            border
+            border-zinc-200
+            overflow-hidden
+            shadow-sm
+        ">
+        ${
+            reporte.evidencias?.length > 0
+            ?
+            `
+            <img
+                src="${reporte.evidencias[0].url}"
+                class="w-full h-44 object-cover"
+            >
+            `
+            :
+            `
+            <div class="
+                h-44
+                flex
+                items-center
+                justify-center
+                bg-zinc-100
+                text-zinc-400
+                text-sm
+            ">
+                Sin imagen
+            </div>
+            `
+        }
+
+
+            <div class="p-4">
+
+            <h3 class="font-semibold text-zinc-900">
+              ${reporte.tipo || "Reporte"}
+            </h3>
+
+
+                <p class="
+                    text-sm
+                    text-zinc-500
+                    mt-2
+                ">
+                    ${reporte.descripcion ?? "Sin descripción"}
+                </p>
+
+
+            </div>
+
+        </article>
+
+        `).join("")
+    }
+
+    </div>
+
+    `;
+}
+
+
 export function renderConfianzaVecinal() {
     const pctEl = document.getElementById("homepage-confianza-percentage");
     const barEl = document.getElementById("homepage-confianza-bar");
@@ -699,20 +820,17 @@ export function renderConfianzaVecinal() {
 // CONTROLADOR DE PESTAÑAS (HOMEPAGE)
 // -------------------------------------------------------------
 export function initHomepage() {
-    const btnInicio = document.getElementById("homepage-btn-inicio");
-    const btnLugares = document.getElementById("homepage-btn-rutas");
-    const btnReportes = document.getElementById("homepage-btn-reportes");
-    const btnContactos = document.getElementById("homepage-btn-contactos");
+const btnInicio = document.getElementById("homepage-btn-inicio");
+const btnLugares = document.getElementById("homepage-btn-rutas");
+const btnReportes = document.getElementById("homepage-btn-reportes");
+const btnAllReportes = document.getElementById("homepage-btn-all-reportes");
+const btnContactos = document.getElementById("homepage-btn-contactos");
 
-    const contentInicio = document.getElementById("homepage-content-inicio");
-    const contentLugares = document.getElementById("homepage-content-lugares");
-    const contentReportes = document.getElementById(
-        "homepage-content-reportes",
-    );
-    const contentContactos = document.getElementById(
-        "homepage-content-contactos",
-    );
-    const map = document.getElementById("map");
+const contentInicio = document.getElementById("homepage-content-inicio");
+const contentLugares = document.getElementById("homepage-content-lugares");
+const contentReportes = document.getElementById("homepage-content-reportes");
+const contentAllReportes = document.getElementById("homepage-content-all-reportes");
+const contentContactos = document.getElementById("homepage-content-contactos");
 
     // Inicializar renderizado de tablas
     cargarContactosHomepage().then(() => renderContactosTable());
@@ -767,13 +885,14 @@ export function initHomepage() {
             });
         });
     }
-
-    const buttons = [
-        { btn: btnInicio, tab: contentInicio },
-        { btn: btnLugares, tab: contentLugares },
-        { btn: btnReportes, tab: contentReportes },
-        { btn: btnContactos, tab: contentContactos },
-    ];
+    
+const buttons = [
+    { btn: btnInicio, tab: contentInicio },
+    { btn: btnLugares, tab: contentLugares },
+    { btn: btnReportes, tab: contentReportes }, // Mis reportes
+    { btn: btnAllReportes, tab: contentAllReportes }, // Todos
+    { btn: btnContactos, tab: contentContactos },
+];
 
     function switchTab(activeBtn, activeTab) {
         buttons.forEach((item) => {
@@ -819,6 +938,25 @@ export function initHomepage() {
         btnContactos.addEventListener("click", () =>
             switchTab(btnContactos, contentContactos),
         );
+    if (btnAllReportes) {
+        btnAllReportes.addEventListener("click", async () => {
+
+            try {
+                const reportes = await getAllReports();
+
+                console.log("REPORTES COMPLETOS:", reportes);
+                console.log("PRIMER REPORTE:", reportes[0]);
+
+                switchTab(btnAllReportes, contentAllReportes);
+
+                renderAllReportesTable(reportes);
+
+            } catch(error) {
+                console.error(error);
+            }
+
+        });
+    }
 
     // Buscador de direcciones Nominatim
     const mapSearchInput = document.getElementById("map-search-input");

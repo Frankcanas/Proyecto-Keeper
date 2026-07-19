@@ -2,6 +2,7 @@
     import "./style.css";
     import Swal from "sweetalert2";
 
+
     // Importamos los componentes modales
     import { initRegisterModal } from "./src/components/modalComponent/registermodal.js";
     import { initLoginModal } from "./src/components/modalComponent/loginmodal.js";

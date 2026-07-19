@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-
+from fastapi.staticfiles import StaticFiles 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.config.db_config import get_db_connection
@@ -34,6 +34,12 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads"
 )
 
 @app.get("/")
