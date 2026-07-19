@@ -32,174 +32,201 @@ import { getRoleById } from "./src/services/endpoints/roles.js";
 import { inicializarMapaVea } from "./src/controllers/mapReport.controller.js";
 import { feedState } from "./src/views/feed/feedState.js";
 
+// IMPORTACIONES DEL ROUTER
+import { registerRoutes, navigateTo, renderCurrentRoute } from "./src/router/router.js";
+
+const APP_SELECTOR = "#app";
 
 function renderLandingPage() {
     const app = document.querySelector("#app");
     app.innerHTML = landingPage;
 }
 
-// Enrutador de Login Unificado
+// Enrutador de Login Unificado modificado para usar navigateTo
 async function handleLoginSuccess(loginData) {
     sessionStorage.setItem("usuarioLogueado", JSON.stringify(loginData));
     let nombre = loginData.nombres;
     let rol = loginData.id_rol;
     let rol_name = await getRoleById(rol);
+    
     if (rol_name.nombre === "Policía") {
-        cargarDashboardPolicia();
+        navigateTo("/policia");
     } else if (rol_name.nombre === "Bomberos") {
-        cargarDashboardBomberos();
+        navigateTo("/bombero");
     } else if (rol_name.nombre === "Ambulancia") {
-        cargarDashboardAmbulancia();
+        navigateTo("/ambulancia");
     } else if (rol_name.nombre === "Administrador") {
-        renderFeedPage();
+        navigateTo("/admin");
     } else if (rol_name.nombre === "Ciudadano") {
-        renderHomepagePage();
+        navigateTo("/usuario");
     }
 }
 
 async function renderFeedPage() {
-    const app = document.querySelector("#app");
-    app.innerHTML = renderFeed();
-    await initFeed();
-    await initSOSModal("btn-sos");
-    // Conectar botón Salir del panel
-    document
-        .getElementById("feed-btn-logout")
-        ?.addEventListener("click", async () => {
-            Swal.fire({
-                title: "¿Confirmar Salida?",
-                text: "¿Estás seguro que deseas cerrar sesión?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Sí, salir",
-                cancelButtonText: "Cancelar",
-                confirmButtonColor: "#ea580c",
-                cancelButtonColor: "#71717a",
-                customClass: {
-                    popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs",
-                },
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    await cleanupMap();
-                    window.location.reload();
-                }
+    // Postponemos la inicialización pesada para después de que el HTML esté en el DOM
+    setTimeout(async () => {
+        await initFeed();
+        await initSOSModal("btn-sos");
+        
+        // Conectar botón Salir del panel
+        document
+            .getElementById("feed-btn-logout")
+            ?.addEventListener("click", async () => {
+                Swal.fire({
+                    title: "¿Confirmar Salida?",
+                    text: "¿Estás seguro que deseas cerrar sesión?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, salir",
+                    cancelButtonText: "Cancelar",
+                    confirmButtonColor: "#ea580c",
+                    cancelButtonColor: "#71717a",
+                    customClass: {
+                        popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs",
+                    },
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        await cleanupMap();
+                        sessionStorage.removeItem("usuarioLogueado");
+                        navigateTo("/");
+                    }
+                });
             });
-        });
-    //Integracion del mapa
-    await inicializarMapaVea(feedState.listHistorialReportes, "feed-map-container");
-    startRealTimeTracking();
+            
+        // Integracion del mapa
+        await inicializarMapaVea(feedState.listHistorialReportes, "feed-map-container");
+        startRealTimeTracking();
+    }, 0);
+
+    // Retornamos el string HTML puro que exige tu router
+    return renderFeed();
 }
 
 async function renderHomepagePage() {
-    const app = document.querySelector("#app");
+    // Mantenemos las peticiones de datos antes de pintar la interfaz
     await cargarReportesHomepage();
     await cargarLugaresHomepage();
-    app.innerHTML = renderHomepage();
-    initHomepage();
-    initReportModal("homepage-report-btn", (report) => {
-        addHomepageReport(report);
-        addFeedReport(report);
-    });
-    await initSOSModal("homepage-sos-btn", (report) => {
-        addHomepageReport(report);
-        addFeedReport(report);
-    });
-    //Integracion del mapa
-    await inicializarMapaVea(listReportes);
-    startRealTimeTracking();
-    // Conectar botón Salir del panel
-    document
-        .getElementById("homepage-btn-logout")
-        ?.addEventListener("click", async () => {
-            Swal.fire({
-                title: "¿Confirmar Salida?",
-                text: "¿Estás seguro que deseas cerrar sesión?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Sí, salir",
-                cancelButtonText: "Cancelar",
-                confirmButtonColor: "#ea580c",
-                cancelButtonColor: "#71717a",
-                customClass: {
-                    popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs",
-                },
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    await cleanupMap();
-                    window.location.reload();
-                }
-            });
+
+    setTimeout(async () => {
+        initHomepage();
+        initReportModal("homepage-report-btn", (report) => {
+            addHomepageReport(report);
+            addFeedReport(report);
         });
+        await initSOSModal("homepage-sos-btn", (report) => {
+            addHomepageReport(report);
+            addFeedReport(report);
+        });
+        
+        // Integracion del mapa
+        await inicializarMapaVea(listReportes);
+        startRealTimeTracking();
+        
+        // Conectar botón Salir del panel
+        document
+            .getElementById("homepage-btn-logout")
+            ?.addEventListener("click", async () => {
+                Swal.fire({
+                    title: "¿Confirmar Salida?",
+                    text: "¿Estás seguro que deseas cerrar sesión?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, salir",
+                    cancelButtonText: "Cancelar",
+                    confirmButtonColor: "#ea580c",
+                    cancelButtonColor: "#71717a",
+                    customClass: {
+                        popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-sm w-full font-sans text-xs",
+                    },
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        await cleanupMap();
+                        sessionStorage.removeItem("usuarioLogueado");
+                        navigateTo("/");
+                    }
+                });
+            });
+    }, 0);
+
+    return renderHomepage();
 }
 
 async function renderLandingPagePage() {
     // Asegurar clases del body para el Landing Page
     document.body.className =
         "bg-slate-50 text-slate-900 font-sans antialiased selection:bg-orange-500 selection:text-white";
-    renderLandingPage();
 
-    // Conectamos los botones de la interfaz con sus respectivos modales
-    initRegisterModal("btn-unirme");
-    initLoginModal("btn-login", handleLoginSuccess);
-    initLoginModal("btn-login-mobile", (loginData) => {
-        document.getElementById("mobile-menu")?.classList.add("hidden");
-        handleLoginSuccess(loginData);
-    });
-
-    // Hamburguer menu toggle logic
-    const toggleBtn = document.getElementById("btn-menu-toggle");
-    const mobileMenu = document.getElementById("mobile-menu");
-    if (toggleBtn && mobileMenu) {
-        toggleBtn.addEventListener("click", () => {
-            mobileMenu.classList.toggle("hidden");
+    setTimeout(() => {
+        // Conectamos los botones de la interfaz con sus respectivos modales
+        initRegisterModal("btn-unirme");
+        initLoginModal("btn-login", handleLoginSuccess);
+        initLoginModal("btn-login-mobile", (loginData) => {
+            document.getElementById("mobile-menu")?.classList.add("hidden");
+            handleLoginSuccess(loginData);
         });
 
-        // Close menu when clicking on any link
-        mobileMenu.querySelectorAll(".mobile-menu-link").forEach((link) => {
-            link.addEventListener("click", () => {
-                mobileMenu.classList.add("hidden");
+        // Hamburguer menu toggle logic
+        const toggleBtn = document.getElementById("btn-menu-toggle");
+        const mobileMenu = document.getElementById("mobile-menu");
+        if (toggleBtn && mobileMenu) {
+            toggleBtn.addEventListener("click", () => {
+                mobileMenu.classList.toggle("hidden");
             });
-        });
-    }
+
+            // Close menu when clicking on any link
+            mobileMenu.querySelectorAll(".mobile-menu-link").forEach((link) => {
+                link.addEventListener("click", () => {
+                    mobileMenu.classList.add("hidden");
+                });
+            });
+        }
+    }, 0);
+
+    return landingPage;
 }
 
 // Funciones para cargar los dashboards del perfil de Victoria
 function cargarDashboardPolicia() {
     document.body.className =
         "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#ff5d00] selection:text-white";
-    const app = document.getElementById("app");
-    if (app) app.innerHTML = "";
 
-    initPolicia();
-    sobreescribirBotonSalir();
+    setTimeout(() => {
+        initPolicia();
+        sobreescribirBotonSalir();
+    }, 0);
+
+    return "";
 }
 
 function cargarDashboardBomberos() {
     document.body.className =
         "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#dc2626] selection:text-white";
-    const app = document.getElementById("app");
-    if (app) app.innerHTML = "";
 
-    initBomberos();
-    sobreescribirBotonSalir();
+    setTimeout(() => {
+        initBomberos();
+        sobreescribirBotonSalir();
+    }, 0);
+
+    return "";
 }
 
 function cargarDashboardAmbulancia() {
     document.body.className =
         "bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#3b82f6] selection:text-white";
-    const app = document.getElementById("app");
-    if (app) app.innerHTML = "";
 
-    initAmbulancia();
-    sobreescribirBotonSalir();
+    setTimeout(() => {
+        initAmbulancia();
+        sobreescribirBotonSalir();
+    }, 0);
+
+    return "";
 }
 
 function sobreescribirBotonSalir() {
     window.salirAlLogin = () => {
-        // Limpiamos mapa en caso de que esté inicializado (seguridad)
         cleanupMap();
-        // Recargamos al estado inicial (Landing Page)
-        window.location.reload();
+        sessionStorage.removeItem("usuarioLogueado");
+        navigateTo("/"); // Redirección limpia mediante SPA en lugar de un reload forzado
     };
 
     const btnSalir = document.getElementById("btn-salir");
@@ -231,10 +258,22 @@ function sobreescribirBotonSalir() {
     }
 }
 
-// Inicializamos la aplicación y conectamos los eventos
-document.addEventListener("DOMContentLoaded", async() => {
-    await renderLandingPagePage();
-});
+// ==========================================
+// CONFIGURACIÓN Y ASIGNACIÓN DE RUTAS
+// ==========================================
+const misRutas = registerRoutes(
+    renderLandingPagePage,    // /
+    renderLandingPagePage,    // /login
+    renderHomepagePage,       // /usuario (Ciudadano)
+    renderFeedPage,           // /admin   (Administrador)
+    cargarDashboardPolicia,   // /policia
+    cargarDashboardBomberos,  // /bombero
+    cargarDashboardAmbulancia // /ambulancia
+);
+
+// Inicializamos la aplicación escuchando al router
+window.addEventListener("popstate", () => renderCurrentRoute(misRutas, APP_SELECTOR));
+window.addEventListener("DOMContentLoaded", () => renderCurrentRoute(misRutas, APP_SELECTOR));
 
 // Listener global para toggles del sidebar (menú hamburguesa móvil) en todos los perfiles
 document.addEventListener("click", (e) => {
