@@ -3,6 +3,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.config.db_config import get_db_connection
+from fastapi.staticfiles import StaticFiles
+import os
+
 
 app = FastAPI(
     title="KeepeR API",
@@ -36,6 +39,14 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"mensaje": "Bienvenido a la API de KeepeR. Todo está funcionando correctamente."}
+
+os.makedirs("uploads", exist_ok=True)
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads"
+)
 
 from app.router.rol_router import router as rol_router
 app.include_router(rol_router)

@@ -14,10 +14,10 @@ class ReporteController:
                 # Usamos JOIN para traer información útil (nombre de categoría, estado y usuario)
                 cur.execute('''
                     SELECT r.id_reporte, r.titulo, r.descripcion, r.latitud, r.longitud, 
-                           r.fecha_reporte, r.hora_reporte, r.created_at,
-                           u.id_usuario, u.nombres AS usuario_nombre,
-                           c.id_categoria, c.nombre AS categoria_nombre,
-                           e.id_estado, e.nombre_estado
+                            r.fecha_reporte, r.hora_reporte, r.created_at,
+                            u.id_usuario, u.nombres AS usuario_nombre,
+                            c.id_categoria, c.nombre AS categoria_nombre,
+                            e.id_estado, e.nombre_estado
                     FROM reporte r
                     JOIN usuario u ON r.id_usuario = u.id_usuario
                     JOIN categoria c ON r.id_categoria = c.id_categoria
