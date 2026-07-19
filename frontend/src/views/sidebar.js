@@ -1,6 +1,6 @@
 export function renderSidebar() {
-  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Luis", apellidos: "Morales" };
-  const nombreCompleto = `${usuario.nombres || 'Luis'} ${usuario.apellidos || 'Morales'}`.trim();
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Usuario", apellidos: "" };
+  const nombreCompleto = `${usuario.nombres || 'Usuario'} ${usuario.apellidos || ''}`.trim();
   return `
     <aside id="sidebar-aside" class="fixed inset-y-0 left-0 w-72 bg-[#09090b] text-zinc-150 flex flex-col justify-between border-r border-zinc-850 z-50 transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static lg:flex shrink-0 select-none font-sans px-6 py-8">
       <!-- Botón cerrar móvil -->
@@ -79,8 +79,8 @@ export function renderSidebar() {
 }
 
 export function renderFeedSidebar() {
-  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Luis", apellidos: "Morales" };
-  const nombreCompleto = `${usuario.nombres || 'Luis'} ${usuario.apellidos || 'Morales'}`.trim();
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Usuario", apellidos: "" };
+  const nombreCompleto = `${usuario.nombres || 'Usuario'} ${usuario.apellidos || ''}`.trim();
   return `
     <aside id="sidebar-aside" class="fixed inset-y-0 left-0 w-72 bg-[#09090b] text-zinc-150 flex flex-col justify-between border-r border-zinc-850 z-50 transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static lg:flex shrink-0 select-none font-sans px-6 py-8">
       <!-- Botón cerrar móvil -->
