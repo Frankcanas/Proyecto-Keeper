@@ -577,34 +577,67 @@ export function renderReportesTable() {
         return;
     }
 
-    tbody.innerHTML = misReportes
-        .map(
-            (report) => `
-    <tr class="hover:bg-zinc-50/50 transition-colors">
-      <td class="py-4 pr-4 font-semibold text-zinc-900 font-mono">${report.id}</td>
-      <td class="py-4 pr-4">
-        <span class="inline-flex items-center gap-1.5 rounded bg-zinc-100 px-2.5 py-0.5 text-[10px] font-semibold text-zinc-755 border border-zinc-200">
-          ${report.tipo}
-        </span>
-      </td>
-      <td class="py-4 pr-4 text-zinc-650 max-w-xs truncate">${report.descripcion}</td>
-      <td class="py-4 pr-4 text-zinc-500">${report.ubicacion}</td>
-      <td class="py-4 pr-4 text-zinc-500">${report.fecha}</td>
-      <td class="py-4 text-right whitespace-nowrap">
-        <button data-id="${report.id}" class="btn-report-edit inline-flex items-center gap-1 rounded border border-zinc-200 hover:bg-zinc-50 text-zinc-700 px-2.5 py-1 text-[10px] font-bold transition-colors">
-          <svg class="h-3 w-3 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
-          <span>Actualizar</span>
-        </button>
-      </td>
-    </tr>
-  `,
-        )
-        .join("");
+  tbody.innerHTML = misReportes
+    .map(
+      (report) => `
+      <tr class="hover:bg-zinc-50/50 transition-colors">
+        <td class="py-4 pr-4 font-semibold text-zinc-900 font-mono">${report.id}</td>
+
+        <td class="py-4 pr-4">
+          <span class="inline-flex items-center gap-1.5 rounded bg-zinc-100 px-2.5 py-0.5 text-[10px] font-semibold text-zinc-700 border border-zinc-200">
+            ${report.tipo}
+          </span>
+        </td>
+
+        <td class="py-4 pr-4 text-zinc-600 max-w-xs truncate">
+          ${report.descripcion}
+        </td>
+
+        <td class="py-4 pr-4 text-zinc-500">
+          ${report.ubicacion}
+        </td>
+
+        <td class="py-4 pr-4 text-zinc-500">
+          ${report.fecha}
+        </td>
+
+        <td class="py-4 text-right whitespace-nowrap">
+          <div class="flex justify-end gap-2">
+
+            <!-- Botón Actualizar -->
+            <button
+              data-id="${report.id}"
+             class="btn-report-edit inline-flex items-center gap-1 rounded border border-yellow-300 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-2.5 py-1 text-[10px] font-bold transition-colors"
+            >
+              <svg class="h-3 w-3 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+              <span>Actualizar</span>
+            </button>
+
+            <!-- Botón Eliminar -->
+            <button
+              data-id="${report.id}"
+              class="btn-report-delete inline-flex items-center gap-1 rounded border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 px-2.5 py-1 text-[10px] font-bold transition-colors"
+            >
+              <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19 7L18.133 19.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h8" />
+              </svg>
+              <span>Eliminar</span>
+            </button>
+
+          </div>
+        </td>
+      </tr>
+    `
+    )
+    .join("");
 
     attachReportActions();
 }
+
+
 
 export function renderAlertasRecientes() {
     const container = document.getElementById("homepage-recent-alerts-list");

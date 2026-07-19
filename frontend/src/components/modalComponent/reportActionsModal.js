@@ -3,6 +3,7 @@ import { openLugarFormModal } from "./lugaresmodal.js";
 import { deleteZone, updateZone } from "../../services/endpoints/zones.js";
 import { deleteContact } from "../../services/endpoints/contacts.js";
 import { updateReport, deleteReport } from "../../services/endpoints/reports.js";
+
 import {
     listReportes,
     listLugares,
@@ -103,7 +104,6 @@ export function attachReportActions() {
                             
                             await updateReport(numericId, apiData);
                             await cargarReportesHomepage();
-
                             renderReportesTable();
                             renderAlertasRecientes();
                             renderConfianzaVecinal();
@@ -129,8 +129,59 @@ export function attachReportActions() {
                     });
                 },
             });
+
         });
     });
+    // ================= ELIMINAR REPORTE =================
+document.querySelectorAll(".btn-report-delete").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+        const id = btn.dataset.id;
+
+        const result = await Swal.fire({
+            title: "¿Eliminar reporte?",
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+            confirmButtonColor: "#dc2626",
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            // Convierte "KP-1" en 1
+            const numericId = parseInt(id.replace("KP-", ""), 10);
+
+            await deleteReport(numericId);
+
+            // Recarga los reportes desde la API
+            await cargarReportesHomepage();
+
+            // Vuelve a pintar la interfaz
+            renderReportesTable();
+            renderAlertasRecientes();
+            renderConfianzaVecinal();
+
+            Swal.fire({
+                icon: "success",
+                title: "Reporte eliminado",
+                text: "El reporte fue eliminado correctamente.",
+                timer: 1800,
+                showConfirmButton: false,
+            });
+
+        } catch (error) {
+            console.error(error);
+
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No fue posible eliminar el reporte.",
+            });
+        }
+    });
+});
 }
 
 export function attachLugarActions() {
