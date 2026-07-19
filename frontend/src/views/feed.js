@@ -8,6 +8,9 @@ import Swal from 'sweetalert2';
 import { actualizarMarcadoresEnMapa } from '../controllers/mapReport.controller.js';
 import { getAllReports } from '../services/endpoints/reports.js';
 import { getAllUsers } from '../services/endpoints/user.js';
+import Chart from 'chart.js/auto';
+
+let confianzaChartInstance = null;
 
 export { renderFeed };
 
@@ -42,8 +45,31 @@ export async function initFeed() {
           accion: '?'
       }));
       
+      // Calcular métricas reales
+      const reportCounts30 = [0, 0, 0, 0, 0, 0, 0];
+      const reportCounts3 = [0, 0, 0, 0, 0, 0, 0];
+      const now = new Date();
+      (data || []).forEach(r => {
+          const d = new Date(r.fecha_hora_creacion || r.fecha_reporte || r.fecha || Date.now());
+          const diffDays = Math.ceil(Math.abs(now - d) / (1000 * 60 * 60 * 24));
+          let dayIdx = d.getDay() - 1;
+          if (dayIdx === -1) dayIdx = 6;
+          
+          if (diffDays <= 30) reportCounts30[dayIdx]++;
+          if (diffDays <= 3) reportCounts3[dayIdx]++;
+      });
+      
+      feedState.data30Days.bars = reportCounts30.map(count => Math.max(20, 100 - (count * 6)));
+      feedState.data3Days.bars = reportCounts3.map(count => Math.max(20, 100 - (count * 6)));
+      
+      const activosCount = (data || []).filter(r => String(r.id_estado) === "1" || String(r.estado).toLowerCase() === "pendiente").length;
+      feedState.data30Days.active = activosCount.toString();
+      feedState.data3Days.active = activosCount.toString();
+
       feedState.listHistorialReportes = [...adapted];
       feedState.listReportesFeed = adapted.slice(0, 5); // top 5 recent
+      feedState.data30Days.reports = adapted.slice(0, 5);
+      feedState.data3Days.reports = adapted.slice(0, 5);
   } catch (e) {
       console.error("Error cargando reportes en admin feed:", e);
   }
@@ -77,6 +103,44 @@ export async function initFeed() {
   renderUsersTable();
   renderReportesFeedTable();
   renderHistorialReportesTable();
+
+  // Inicializar Chart.js
+  const ctx = document.getElementById('confianzaChart');
+  if (ctx && !confianzaChartInstance) {
+    const initialData = feedState.showingThreeDays ? feedState.data3Days.bars : feedState.data30Days.bars;
+    const numericData = initialData.map(val => parseInt(val, 10));
+    confianzaChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+        datasets: [{
+          label: 'Índice de Confianza (%)',
+          data: numericData,
+          backgroundColor: '#ea580c',
+          borderRadius: 4,
+          hoverBackgroundColor: '#c2410c'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            grid: { color: '#f4f4f5' },
+            border: { dash: [4, 4] }
+          },
+          x: {
+            grid: { display: false }
+          }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  }
 
   // Conectar botones de creación de cabeceras
   const createBtn = document.getElementById('btn-create-user');
@@ -112,12 +176,11 @@ export async function initFeed() {
     const responseEl = document.getElementById('stats-response-time');
     if (responseEl) responseEl.textContent = currentData.responseTime;
     
-    // Actualizar barras del gráfico semanal
-    const barIds = ['stats-bar-lun', 'stats-bar-mar', 'stats-bar-mie', 'stats-bar-jue', 'stats-bar-vie', 'stats-bar-sab', 'stats-bar-dom'];
-    barIds.forEach((id, i) => {
-      const el = document.getElementById(id);
-      if (el) el.style.height = currentData.bars[i];
-    });
+    // Actualizar barras del gráfico semanal con Chart.js
+    if (confianzaChartInstance) {
+      confianzaChartInstance.data.datasets[0].data = currentData.bars.map(val => parseInt(val, 10));
+      confianzaChartInstance.update();
+    }
     
     // Actualizar sectores
     const norteCount = document.getElementById('stats-sector-norte-count');
