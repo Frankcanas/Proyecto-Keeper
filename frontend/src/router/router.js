@@ -1,44 +1,41 @@
-// Router
+export const registerRoutes = (
+    inicio,
+    login,
+    usuario,
+    admin,
+    policia,
+    bombero,
+    ambulancia
+) => ({
+    "/": inicio,
+    "/login": login,
+    "/usuario": usuario,
+    "/admin": admin,
+    "/policia": policia,
+    "/bombero": bombero,
+    "/ambulancia": ambulancia,
+});
 
-const routes = (inicio, login, usuario, admin, policia, bombero, ambulancia) => {
-    return {
-        "/": inicio,
-        "/login": login,
-        "/usuario": usuario,
-        "/admin": admin,
-        "/policia": policia,
-        "/bombero": bombero,
-        "/ambulancia": ambulancia
-    }
-};
+export async function navigateTo(path, event, callback) {
+    event?.preventDefault();
 
-async async function routerGenerator(path, event, callback) {
-    event.preventDefault();
     window.history.pushState({}, "", path);
-    if (callback) {
+
+    if (typeof callback === "function") {
         await callback();
     }
-    window.dispatchEvent(new Event("popstate"));
-    return path;
+
+    window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
-export async function router(routers, element) {
+export async function renderCurrentRoute(routeMap, element) {
     const currentPath = window.location.pathname;
-    const appContainer = document.querySelector(element);
+    const container = document.querySelector(element);
 
-    const view = routers(
-        routers.inicio, 
-        routers.login, 
-        routers.usuario, 
-        routers.admin, 
-        routers.policia, 
-        routers.bombero, 
-        routers.ambulancia
-    )[currentPath] || routers.inicio;
+    const view = routeMap[currentPath] || routeMap["/"];
 
-    if(typeof view === "function") {
-        appContainer.innerHTML = await view();
-    } else {
-        appContainer.innerHTML = view;
-    }   
+    container.innerHTML =
+        typeof view === "function"
+            ? await view()
+            : view;
 }
