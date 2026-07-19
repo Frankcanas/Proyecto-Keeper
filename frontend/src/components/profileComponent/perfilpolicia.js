@@ -1,3 +1,4 @@
+import Chart from 'chart.js/auto';
 import Swal from "sweetalert2";
 import { getDashboardTemplate } from "../../ui/templatePolicia.js";
 import { formatearFechaHumana } from "../../utils/helpers.js";
@@ -35,6 +36,7 @@ async function cargarReportesDesdeAPI() {
     }
 }
 
+let incidentesChartInstance = null;
 let tabActivo = "Estadisticas";
 
 let filtroHistorialTiempo = "todo";
@@ -104,17 +106,49 @@ function actualizarEstadisticasVisuales() {
         }
     });
 
-    const maxVal = Math.max(...Object.values(valoresDias));
-
-    Object.keys(valoresDias).forEach((dia) => {
-        const barEl = document.getElementById(`chart-bar-${dia}`);
-        const valEl = document.getElementById(`chart-val-${dia}`);
-        if (barEl && valEl) {
-            const porcentaje = maxVal > 0 ? (valoresDias[dia] / maxVal) * 85 + 10 : 10;
-            barEl.style.height = `${porcentaje}%`;
-            valEl.textContent = valoresDias[dia];
+    const numericData = [
+        valoresDias.lun, valoresDias.mar, valoresDias.mie,
+        valoresDias.jue, valoresDias.vie, valoresDias.sab, valoresDias.dom
+    ];
+    
+    const ctx = document.getElementById('incidentesChart');
+    if (ctx) {
+        if (!incidentesChartInstance) {
+            incidentesChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Incidentes',
+                        data: numericData,
+                        backgroundColor: '#ff5d00',
+                        borderRadius: 4,
+                        hoverBackgroundColor: '#c2410c'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f4f4f5' },
+                            border: { dash: [4, 4] }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        } else {
+            incidentesChartInstance.data.datasets[0].data = numericData;
+            incidentesChartInstance.update();
         }
-    });
+    }
 
     let secNorte = 0, secCentral = 0, secIndustrial = 0;
     reportesFiltrados.forEach(r => {

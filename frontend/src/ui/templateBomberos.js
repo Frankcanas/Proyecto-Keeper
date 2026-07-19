@@ -117,64 +117,9 @@ export function getDashboardTemplate(usuario) {
                 </span>
               </div>
 
-              <!-- Gráfico Ficticio en HTML/CSS Puro (Rojo Bomberos) -->
-              <div class="relative flex-1 mt-6 flex flex-col justify-end">
-                
-                <div class="absolute inset-x-0 top-0 bottom-8 flex flex-col justify-between pointer-events-none">
-                  <div class="border-b border-zinc-100 w-full"></div>
-                  <div class="border-b border-zinc-100 w-full"></div>
-                  <div class="border-b border-zinc-100 w-full"></div>
-                  <div class="border-b border-zinc-100 w-full"></div>
-                </div>
-
-                <div class="relative z-10 flex justify-around items-end h-40 px-4">
-                  <!-- LUN -->
-                  <div class="flex flex-col items-center gap-2 group w-12">
-                    <div class="text-[9px] font-bold text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150" id="chart-val-lun">32</div>
-                    <div class="bg-[#dc2626] w-6 rounded-t-sm transition-all duration-350" style="height: 45%" id="chart-bar-lun"></div>
-                  </div>
-                  <!-- MAR -->
-                  <div class="flex flex-col items-center gap-2 group w-12">
-                    <div class="text-[9px] font-bold text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150" id="chart-val-mar">48</div>
-                    <div class="bg-[#dc2626] w-6 rounded-t-sm transition-all duration-350" style="height: 60%" id="chart-bar-mar"></div>
-                  </div>
-                  <!-- MIÉ -->
-                  <div class="flex flex-col items-center gap-2 group w-12">
-                    <div class="text-[9px] font-bold text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150" id="chart-val-mie">22</div>
-                    <div class="bg-[#dc2626] w-6 rounded-t-sm transition-all duration-350" style="height: 30%" id="chart-bar-mie"></div>
-                  </div>
-                  <!-- JUE -->
-                  <div class="flex flex-col items-center gap-2 group w-12">
-                    <div class="text-[9px] font-bold text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150" id="chart-val-jue">61</div>
-                    <div class="bg-[#dc2626] w-6 rounded-t-sm transition-all duration-350" style="height: 75%" id="chart-bar-jue"></div>
-                  </div>
-                  <!-- VIE -->
-                  <div class="flex flex-col items-center gap-2 group w-12">
-                    <div class="text-[9px] font-bold text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150" id="chart-val-vie">39</div>
-                    <div class="bg-[#dc2626] w-6 rounded-t-sm transition-all duration-350" style="height: 50%" id="chart-bar-vie"></div>
-                  </div>
-                  <!-- SÁB -->
-                  <div class="flex flex-col items-center gap-2 group w-12">
-                    <div class="text-[9px] font-bold text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150" id="chart-val-sab">72</div>
-                    <div class="bg-[#dc2626] w-6 rounded-t-sm transition-all duration-350" style="height: 85%" id="chart-bar-sab"></div>
-                  </div>
-                  <!-- DOM -->
-                  <div class="flex flex-col items-center gap-2 group w-12">
-                    <div class="text-[9px] font-bold text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150" id="chart-val-dom">85</div>
-                    <div class="bg-[#dc2626] w-6 rounded-t-sm transition-all duration-350" style="height: 95%" id="chart-bar-dom"></div>
-                  </div>
-                </div>
-
-                <div class="flex justify-around pt-3 border-t border-zinc-200 mt-2 text-[9px] font-bold text-zinc-400 uppercase font-mono">
-                  <span class="w-12 text-center">LUN</span>
-                  <span class="w-12 text-center">MAR</span>
-                  <span class="w-12 text-center">MIÉ</span>
-                  <span class="w-12 text-center">JUE</span>
-                  <span class="w-12 text-center">VIE</span>
-                  <span class="w-12 text-center">SÁB</span>
-                  <span class="w-12 text-center">DOM</span>
-                </div>
-
+              <!-- Gráfico Ficticio en HTML/CSS Puro (Rojo Bomberos) -> Reemplazado por Chart.js -->
+              <div class="relative flex-1 mt-6 h-40 w-full pt-4">
+                <canvas id="incidentesChart" class="w-full h-full"></canvas>
               </div>
 
             </div>
