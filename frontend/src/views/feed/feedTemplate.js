@@ -53,46 +53,8 @@ export function renderFeed() {
                     <span id="stats-trend-percent" class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">+12.4% vs mes anterior</span>
                   </div>
                   
-                  <div class="relative h-48 pt-4">
-                    <!-- Subtle background gridlines -->
-                    <div class="absolute inset-x-0 top-4 bottom-6 flex flex-col justify-between pointer-events-none">
-                      <div class="border-b border-zinc-100 w-full"></div>
-                      <div class="border-b border-zinc-100 w-full"></div>
-                      <div class="border-b border-zinc-100 w-full"></div>
-                      <div class="border-b border-zinc-100 w-full"></div>
-                    </div>
-
-                    <!-- Graphic Bars -->
-                    <div class="relative h-full flex items-end justify-between gap-3 z-10">
-                      <div class="flex-1 flex flex-col items-center gap-2">
-                        <div id="stats-bar-lun" class="w-full bg-zinc-200 rounded-t-sm hover:bg-zinc-300 transition-all duration-500" style="height: 60%"></div>
-                        <span class="text-[9px] uppercase font-medium text-zinc-455">Lun</span>
-                      </div>
-                      <div class="flex-1 flex flex-col items-center gap-2">
-                        <div id="stats-bar-mar" class="w-full bg-zinc-200 rounded-t-sm hover:bg-zinc-300 transition-all duration-500" style="height: 70%"></div>
-                        <span class="text-[9px] uppercase font-medium text-zinc-455">Mar</span>
-                      </div>
-                      <div class="flex-1 flex flex-col items-center gap-2">
-                        <div id="stats-bar-mie" class="w-full bg-zinc-200 rounded-t-sm hover:bg-zinc-300 transition-all duration-500" style="height: 50%"></div>
-                        <span class="text-[9px] uppercase font-medium text-zinc-455">Mié</span>
-                      </div>
-                      <div class="flex-1 flex flex-col items-center gap-2">
-                        <div id="stats-bar-jue" class="w-full bg-zinc-200 rounded-t-sm hover:bg-zinc-300 transition-all duration-500" style="height: 80%"></div>
-                        <span class="text-[9px] uppercase font-medium text-zinc-455">Jue</span>
-                      </div>
-                      <div class="flex-1 flex flex-col items-center gap-2">
-                        <div id="stats-bar-vie" class="w-full bg-zinc-900 rounded-t-sm hover:bg-zinc-950 transition-all duration-500" style="height: 90%"></div>
-                        <span class="text-[9px] uppercase font-medium text-zinc-455">Vie</span>
-                      </div>
-                      <div class="flex-1 flex flex-col items-center gap-2">
-                        <div id="stats-bar-sab" class="w-full bg-zinc-200 rounded-t-sm hover:bg-zinc-300 transition-all duration-500" style="height: 60%"></div>
-                        <span class="text-[9px] uppercase font-medium text-zinc-455">Sáb</span>
-                      </div>
-                      <div class="flex-1 flex flex-col items-center gap-2">
-                        <div id="stats-bar-dom" class="w-full bg-zinc-200 rounded-t-sm hover:bg-zinc-300 transition-all duration-500" style="height: 70%"></div>
-                        <span class="text-[9px] uppercase font-medium text-zinc-455">Dom</span>
-                      </div>
-                    </div>
+                  <div class="relative h-48 pt-4 w-full">
+                    <canvas id="confianzaChart" class="w-full h-full"></canvas>
                   </div>
                 </div>
 
@@ -100,10 +62,10 @@ export function renderFeed() {
                 <div class="flex flex-col gap-6">
                   
                   <!-- Dark Sidecard -->
-                  <div class="bg-zinc-955 border border-zinc-800 rounded-md p-6 text-white flex flex-col justify-between">
+                  <div class="bg-zinc-950 border border-zinc-800 rounded-md p-6 text-white flex flex-col justify-between">
                     <div class="flex items-start justify-between">
                       <div>
-                        <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-455">Incidentes Activos</p>
+                        <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-400">Incidentes Activos</p>
                         <p id="stats-active-incidents" class="text-4xl font-bold mt-2">28</p>
                       </div>
                       <span class="inline-flex items-center gap-1.5 rounded bg-orange-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
