@@ -132,7 +132,7 @@ async function renderHomepagePage() {
         });
 }
 
-function renderLandingPagePage() {
+async function renderLandingPagePage() {
     // Asegurar clases del body para el Landing Page
     document.body.className =
         "bg-slate-50 text-slate-900 font-sans antialiased selection:bg-orange-500 selection:text-white";
@@ -232,8 +232,8 @@ function sobreescribirBotonSalir() {
 }
 
 // Inicializamos la aplicación y conectamos los eventos
-document.addEventListener("DOMContentLoaded", () => {
-    renderLandingPagePage();
+document.addEventListener("DOMContentLoaded", async() => {
+    await renderLandingPagePage();
 });
 
 // Listener global para toggles del sidebar (menú hamburguesa móvil) en todos los perfiles

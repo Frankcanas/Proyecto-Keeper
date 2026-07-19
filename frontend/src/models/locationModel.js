@@ -11,7 +11,7 @@ const GEO_OPTIONS = {
     maximumAge: 90000,
 };
 
-export function get_location() {
+export const get_location = () => {
     if (!geolocator) {
         return Promise.reject(
             new Error("La geolocalización no está soportada por este navegador.")

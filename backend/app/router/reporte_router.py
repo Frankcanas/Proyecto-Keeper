@@ -17,7 +17,7 @@ def get_reporte(id_reporte: int):
 # Aquí protegemos la ruta: solo alguien logueado (con token válido) puede crear un reporte
 @router.post("/", status_code=201)
 def create_reporte(reporte: Reporte, payload: dict = Depends(verify_token)):
-    # Extraemos el id_usuario del token de seguridad (el campo 'sub')
+    # Extraemos el id_usuario del token de seguridadz (el campo 'sub')
     id_usuario = int(payload.get("sub"))
     return ReporteController.create(reporte, id_usuario)
 
