@@ -81,5 +81,20 @@ export const createCrudService = (apiClient) => {
             const response = await apiClient.delete(`${path}/${id}`);
             return response.data;
         },
+
+        uploadFile: async (path, formData) => {
+
+            const response = await apiClient.post(
+                path,
+                formData,
+                {
+                    headers:{
+                        "Content-Type":"multipart/form-data"
+                    }
+                }
+            );
+
+            return response.data;
+        }
     };
 };
