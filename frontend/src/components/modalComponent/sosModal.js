@@ -2,6 +2,8 @@ import Swal from 'sweetalert2';
 import { get_location } from '../../models/locationModel.js';
 import { findMailingAddress } from '../../services/findMailingAddress.js';
 import { createReport } from '../../services/endpoints/reports.js';
+import { createSos } from '../../services/endpoints/sos.js';
+import { getTargetLocation } from '../../controllers/mapManager.controller.js';
 
 export function initSOSModal(buttonId, onSOSCallback) {
   const btn = document.getElementById(buttonId);
@@ -124,6 +126,15 @@ export function initSOSModal(buttonId, onSOSCallback) {
               </label>
               <div id="sos-loc-status" class="text-[10px] text-zinc-400 font-medium max-w-[180px] text-right truncate">Obteniendo ubicación...</div>
             </div>
+
+            <!-- Opción 2: Punto Objetivo del Mapa -->
+            <div class="flex items-center justify-between">
+              <label id="sos-use-target-label" class="flex items-center gap-2 text-xs text-zinc-400 cursor-not-allowed select-none">
+                <input id="sos-use-target-location" type="checkbox" class="w-3.5 h-3.5 border-zinc-300 rounded text-zinc-900 focus:ring-0 disabled:opacity-50" disabled />
+                <span>Usar punto seleccionado en el mapa</span>
+              </label>
+              <div id="sos-target-status" class="text-[10px] text-zinc-400 font-medium max-w-[180px] text-right truncate"></div>
+            </div>
           </div>
 
           <!-- Boton SOS Principal Naranja -->
@@ -163,38 +174,81 @@ export function initSOSModal(buttonId, onSOSCallback) {
         // Lógica de geolocalización GPS
         const chkGPS = document.getElementById("sos-use-location");
         const locStatus = document.getElementById("sos-loc-status");
+        
+        const chkTarget = document.getElementById("sos-use-target-location");
+        const labelTarget = document.getElementById("sos-use-target-label");
+        const targetStatus = document.getElementById("sos-target-status");
+
         const addressHeader = document.getElementById("sos-current-address");
         let currentCoords = null;
+        let selectedTargetCoords = null;
+        
+        chkGPS.addEventListener("change", () => {
+            if (chkGPS.checked && chkTarget) chkTarget.checked = false;
+        });
+
+        if (chkTarget) {
+            chkTarget.addEventListener("change", () => {
+                if (chkTarget.checked && chkGPS) chkGPS.checked = false;
+            });
+        }
 
         const updateGPSLocation = async () => {
+          // Evaluar Target Coords primero
+          selectedTargetCoords = getTargetLocation();
+          if (selectedTargetCoords && chkTarget) {
+              chkTarget.removeAttribute("disabled");
+              labelTarget.className = "flex items-center gap-2 text-xs text-zinc-600 cursor-pointer";
+              targetStatus.textContent = "Buscando dirección...";
+              try {
+                  const lng = selectedTargetCoords.lon ?? selectedTargetCoords.lng;
+                  const addr = await findMailingAddress(selectedTargetCoords.lat, lng);
+                  targetStatus.textContent = addr;
+              } catch(e) {
+                  targetStatus.textContent = "No disponible";
+              }
+          }
+
           if (!chkGPS.checked) {
             locStatus.textContent = "Ubicación desactivada";
-            if (addressHeader) addressHeader.textContent = "Ubicación desactivada";
             currentCoords = null;
             return;
           }
 
           locStatus.textContent = "Obteniendo ubicación...";
-          if (addressHeader) addressHeader.textContent = "Obteniendo ubicación...";
           
           try {
             const coords = await get_location();
             currentCoords = coords;
             locStatus.textContent = "Buscando dirección...";
-            if (addressHeader) addressHeader.textContent = "Buscando dirección...";
 
             const address = await findMailingAddress(coords.lat, coords.lon);
             locStatus.textContent = address;
-            if (addressHeader) addressHeader.textContent = address;
+            if (addressHeader && !chkTarget?.checked) addressHeader.textContent = address;
           } catch (error) {
             console.error(error);
             locStatus.textContent = "Problemas obteniendo la dirección.";
-            if (addressHeader) addressHeader.textContent = "Ubicación no disponible";
+            if (addressHeader && !chkTarget?.checked) addressHeader.textContent = "Ubicación no disponible";
             currentCoords = null;
           }
         };
 
-        chkGPS.addEventListener("change", updateGPSLocation);
+        if (chkTarget) {
+            chkTarget.addEventListener('change', () => {
+                if (chkTarget.checked) {
+                    addressHeader.textContent = targetStatus.textContent;
+                } else {
+                    addressHeader.textContent = locStatus.textContent;
+                }
+            });
+        }
+
+        chkGPS.addEventListener("change", () => {
+            updateGPSLocation();
+            if (chkGPS.checked) {
+                addressHeader.textContent = locStatus.textContent;
+            }
+        });
         updateGPSLocation(); // Ejecución inicial al abrir
 
         const toggleService = (btn, serviceName) => {
@@ -248,23 +302,37 @@ export function initSOSModal(buttonId, onSOSCallback) {
 
         async function triggerAlert() {
           let address = 'Dirección no identificada';
-          const addressEl = document.getElementById('sos-current-address');
-          const chkGPS = document.getElementById('sos-use-location');
           
-          if (chkGPS && chkGPS.checked && !currentCoords) {
-              const btn = document.getElementById('sos-button');
-              if (btn) btn.innerHTML = 'Fijando ubicación...';
-              try {
-                  currentCoords = await get_location();
-                  address = await findMailingAddress(currentCoords.lat, currentCoords.lon);
-              } catch (e) {
-                  address = 'Ubicación no disponible';
+          let finalLat = null;
+          let finalLng = null;
+
+          if (chkGPS && chkGPS.checked) {
+              if (!currentCoords) {
+                  const btn = document.getElementById('sos-button');
+                  if (btn) btn.innerHTML = 'Fijando ubicación...';
+                  try {
+                      currentCoords = await get_location();
+                      address = await findMailingAddress(currentCoords.lat, currentCoords.lon);
+                  } catch (e) {
+                      address = 'Ubicación no disponible';
+                  }
+              } else {
+                  address = locStatus.textContent;
               }
-          } else if (addressEl) {
-              address = addressEl.textContent;
-              if (address === 'Obteniendo ubicación...' || address === 'Buscando dirección...') {
-                  address = 'Ubicación por GPS detectada';
+              if (currentCoords) {
+                  finalLat = currentCoords.lat;
+                  finalLng = currentCoords.lon;
               }
+          } else if (chkTarget && chkTarget.checked) {
+              address = targetStatus.textContent;
+              if (selectedTargetCoords) {
+                  finalLat = selectedTargetCoords.lat;
+                  finalLng = selectedTargetCoords.lon ?? selectedTargetCoords.lng;
+              }
+          }
+          
+          if (address === 'Obteniendo ubicación...' || address === 'Buscando dirección...') {
+              address = 'Ubicación detectada (Procesando)';
           }
           
           const servicesText = selectedServices.length > 0 ? selectedServices.join(', ') : 'Ninguno (Alerta General)';
@@ -280,8 +348,8 @@ export function initSOSModal(buttonId, onSOSCallback) {
             ubicacion: address,
             fecha: 'Hace un momento',
             estado: 'Pendiente',
-            lat: currentCoords ? currentCoords.lat : null,
-            lng: currentCoords ? currentCoords.lon : null,
+            lat: finalLat,
+            lng: finalLng,
             reportadoPor: nombreCompleto
           };
 
@@ -290,14 +358,55 @@ export function initSOSModal(buttonId, onSOSCallback) {
           }
 
           // Guardar en backend asíncronamente
-          const apiData = {
-              id_categoria: 5, // 5 = Ayuda Externa (Genérico para SOS)
-              titulo: reportType + ' en ' + address,
-              descripcion: reportData.descripcion,
-              latitud: currentCoords ? currentCoords.lat : 0,
-              longitud: currentCoords ? currentCoords.lon : 0
-          };
-          createReport(apiData).catch(e => console.error("Error guardando SOS en BD", e));
+          let categoriasAEnviar = [];
+          
+          if (selectedServices.length === 0) {
+              // Si no seleccionó nada (Alerta General), enviamos a los 3 perfiles
+              categoriasAEnviar = [3, 5, 7]; 
+          } else {
+              // 3 = Altercado / SOS Policía
+              // 5 = Ayuda Externa / SOS Bomberos
+              // 7 = Urgencia Médica / SOS Ambulancia
+              if (selectedServices.includes('Policía')) categoriasAEnviar.push(3);
+              if (selectedServices.includes('Bomberos')) categoriasAEnviar.push(5);
+              if (selectedServices.includes('Ambulancia')) categoriasAEnviar.push(7);
+          }
+
+          const promesasGuardado = categoriasAEnviar.map(catId => {
+              const apiData = {
+                  id_categoria: catId,
+                  titulo: reportType + ' en ' + address,
+                  descripcion: reportData.descripcion,
+                  latitud: finalLat || 0,
+                  longitud: finalLng || 0
+              };
+              return createReport(apiData).catch(e => console.error(`Error guardando SOS para cat ${catId}`, e));
+          });
+          
+          let serviciosAEnviar = [];
+          if (selectedServices.length === 0) {
+              serviciosAEnviar = [1, 2, 3];
+          } else {
+              if (selectedServices.includes('Policía')) serviciosAEnviar.push(1);
+              if (selectedServices.includes('Ambulancia')) serviciosAEnviar.push(2);
+              if (selectedServices.includes('Bomberos')) serviciosAEnviar.push(3);
+          }
+          
+          const promesasSOS = serviciosAEnviar.map(servId => {
+              const sosData = {
+                  id_servicio: servId,
+                  latitud: finalLat || 0,
+                  longitud: finalLng || 0,
+                  estado: 'realizado'
+              };
+              return createSos(sosData).catch(e => console.error(`Error guardando SOS en tabla sos para servicio ${servId}`, e));
+          });
+          
+          const todasLasPromesas = [...promesasGuardado, ...promesasSOS];
+          
+          Swal.fire({ title: 'Enviando...', text: 'Enviando alerta a centrales...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+          await Promise.all(todasLasPromesas);
 
           Swal.close();
           Swal.fire({

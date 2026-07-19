@@ -229,7 +229,7 @@ function renderizarAlertasRecientes() {
       <div data-id="${rep.id}" class="item-alerta p-3 rounded-md hover:bg-zinc-50 border border-zinc-150 transition-all duration-150 cursor-pointer flex justify-between items-start gap-4">
         <div>
           <h4 class="text-xs font-bold text-zinc-950">${rep.ubicacion}</h4>
-          <p class="text-[10px] text-zinc-500 mt-0.5 line-clamp-1">${rep.descripcion}</p>
+          <p class="text-[10px] text-zinc-500 mt-0.5 whitespace-normal break-words">${rep.descripcion}</p>
           <span class="text-[9px] text-zinc-400 font-mono mt-1 inline-block">${tiempoTexto} • <strong class="text-zinc-600 font-semibold uppercase font-mono text-[9px]">${rep.estadoCaso}</strong></span>
         </div>
         <div class="text-[9px] uppercase font-bold font-mono tracking-wider text-right shrink-0 ${colorEtiqueta}">
@@ -421,7 +421,7 @@ function renderizarTablaHistorial() {
           </span>
         </td>
 
-        <td class="px-4 py-3.5 text-xs text-zinc-650 font-normal max-w-[280px] truncate">${rep.descripcion}</td>
+        <td class="px-4 py-3.5 text-xs text-zinc-650 font-normal max-w-[280px] whitespace-normal break-words">${rep.descripcion}</td>
         <td class="px-4 py-3.5 text-xs text-zinc-650 font-medium">${rep.ubicacion} (${rep.barrio})</td>
         <td class="px-4 py-3.5 text-xs text-zinc-500 font-medium">${tiempoTexto}</td>
         
