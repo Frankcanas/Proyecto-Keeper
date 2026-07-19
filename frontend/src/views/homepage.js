@@ -541,16 +541,31 @@ export function renderReportesTable() {
     const tbody = document.getElementById("homepage-reportes-table-body");
     if (!tbody) return;
 
-    if (listReportes.length === 0) {
+    let sessionUser = { nombres: "Yo" };
+    try {
+        const stored = sessionStorage.getItem("usuarioLogueado");
+        if (stored && stored !== "undefined") {
+            sessionUser = JSON.parse(stored) || { nombres: "Yo" };
+        }
+    } catch(e) {
+        console.warn("Error parseando usuario en reportes:", e);
+    }
+    
+    const nombres = sessionUser.nombres || "";
+    const apellidos = sessionUser.apellidos || "";
+    const nombreCompleto = `${nombres} ${apellidos}`.trim();
+    const misReportes = listReportes.filter(rep => rep.reportadoPor === nombreCompleto);
+
+    if (misReportes.length === 0) {
         tbody.innerHTML = `
       <tr>
-        <td colspan="6" class="py-8 text-center text-zinc-400 font-medium">No hay incidentes reportados.</td>
+        <td colspan="6" class="py-8 text-center text-zinc-400 font-medium">No has reportado ningún incidente.</td>
       </tr>
     `;
         return;
     }
 
-    tbody.innerHTML = listReportes
+    tbody.innerHTML = misReportes
         .map(
             (report) => `
     <tr class="hover:bg-zinc-50/50 transition-colors">
@@ -583,8 +598,19 @@ export function renderAlertasRecientes() {
     const container = document.getElementById("homepage-recent-alerts-list");
     if (!container) return;
 
-    const sessionUser = JSON.parse(sessionStorage.getItem("usuarioLogueado")) || { nombres: "Yo" };
-    const nombreCompleto = `${sessionUser.nombres} ${sessionUser.apellidos || ''}`.trim();
+    let sessionUser = { nombres: "Yo" };
+    try {
+        const stored = sessionStorage.getItem("usuarioLogueado");
+        if (stored && stored !== "undefined") {
+            sessionUser = JSON.parse(stored) || { nombres: "Yo" };
+        }
+    } catch(e) {
+        console.warn("Error parseando usuario en alertas:", e);
+    }
+    
+    const nombres = sessionUser.nombres || "";
+    const apellidos = sessionUser.apellidos || "";
+    const nombreCompleto = `${nombres} ${apellidos}`.trim();
 
     // Excluir reportes hechos por el usuario activo
     const otrosReportes = listReportes.filter(rep => rep.reportadoPor !== nombreCompleto);
