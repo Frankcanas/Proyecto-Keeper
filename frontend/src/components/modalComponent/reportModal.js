@@ -4,6 +4,7 @@ import { getTargetLocation } from "../../controllers/mapManager.controller.js";
 import { geolocator } from "../../models/locationModel.js";
 import { findMailingAddress } from "../../services/findMailingAddress.js";
 import { get_location } from "../../models/locationModel.js";
+import { createEvidence } from "../../services/endpoints/evidence.js";
 
 export async function initReportModal(buttonId, onSubmitCallback) {
     const btn = document.getElementById(buttonId);
@@ -330,9 +331,30 @@ export async function initReportModal(buttonId, onSubmitCallback) {
 
                         Swal.fire({ title: 'Enviando...', text: 'Registrando reporte en la base de datos', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
-                        createReport(apiData).then((res) => {
+                        try {
+                                const res = await createReport(apiData);
+
+                                console.log("Respuesta createReport:", res);
+                                console.log("Archivos seleccionados:", files);
+
+                            if (files.length > 0) {
+                                const idReporte = res.id_reporte ?? res.id;
+                                console.log("ID del reporte:", idReporte);
+                                for (const file of files) {
+                                    console.log("Subiendo:", file.name);
+                                    const formData = new FormData();
+                                    formData.append("id_reporte", res.id_reporte);  
+                                    formData.append("descripcion", desc);
+                                    formData.append("archivo", file);
+                                    const respuesta = await createEvidence(formData);
+                                    console.log("Respuesta evidencia:", respuesta);
+
+                                }
+
+                            }
+
                             const reportData = {
-                                id: `KP-${res.id || Math.floor(1000 + Math.random() * 9000)}`,
+                                id: `KP-${res.id_reporte}`,
                                 tipo: selectedCat,
                                 descripcion: desc,
                                 ubicacion: finalLocation,
@@ -342,25 +364,40 @@ export async function initReportModal(buttonId, onSubmitCallback) {
                                 lng,
                                 reportadoPor: nombreCompleto,
                             };
+
                             if (onSubmitCallback) {
                                 onSubmitCallback(reportData);
                             }
+
                             Swal.close();
+
                             Swal.fire({
                                 icon: "success",
                                 title: '<h3 class="text-sm font-semibold text-zinc-900 text-left">Reporte enviado</h3>',
-                                html: '<p class="text-xs text-zinc-500 text-left">Su reporte ha sido registrado exitosamente en la base de datos real.</p>',
+                                html: '<p class="text-xs text-zinc-500 text-left">El reporte y las evidencias fueron registradas correctamente.</p>',
                                 timer: 2000,
                                 showConfirmButton: false,
                                 buttonsStyling: false,
                                 customClass: {
-                                    popup: "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
+                                    popup:
+                                        "rounded-md p-6 border border-zinc-200 bg-white max-w-xs w-full",
                                 },
                             });
-                        }).catch(err => {
-                            Swal.fire('Error', 'No se pudo crear el reporte en la base de datos. Verifique su sesión o conexión: ' + (err.response?.data?.detail || err.message), 'error');
-                        });
 
+                        }
+                        catch (err) {
+                            console.error("ERROR COMPLETO:", err);
+                            console.error("STATUS:", err.response?.status);
+                            console.error("DATA:", err.response?.data);
+
+                            Swal.close();
+
+                            Swal.fire(
+                                "Error",
+                                err.response?.data?.detail || err.message,
+                                "error"
+                            );
+                        }
                     });
             },
         });
