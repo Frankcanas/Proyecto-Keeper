@@ -107,7 +107,7 @@ export function renderHomepage() {
         ${renderSidebar()}
         
         <!-- Contenedor del contenido principal + Header Móvil -->
-        <div class="flex-1 flex flex-col min-w-0">
+        <div class="flex-1 flex flex-col min-w-0 lg:ml-72">
           <!-- Header Móvil -->
           <header class="w-full bg-[#09090b] text-white px-6 py-4 flex items-center justify-between lg:hidden border-b border-zinc-850 shrink-0 select-none">
             <div class="flex items-center gap-3">
@@ -121,7 +121,7 @@ export function renderHomepage() {
             </button>
           </header>
 
-          <main class="flex-1 p-3 sm:p-4 lg:p-6 overflow-y-auto">
+        <main class="flex-1 p-3 sm:p-4 lg:p-6">
           <div class="w-full flex h-full flex-col overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_30px_90px_-30px_rgba(15,23,42,0.45)]">
             
             <!-- CONTENIDO TAB: INICIO (El mapa y alertas de la página de inicio) -->
