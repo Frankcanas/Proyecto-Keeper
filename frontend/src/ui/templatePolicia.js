@@ -90,7 +90,7 @@ export function getDashboardTemplate(usuario) {
       <main class="flex-1 min-w-0 p-4 sm:p-6 md:p-8 overflow-y-auto space-y-6 w-full flex flex-col justify-start">
 
         <!-- BARRA SUPERIOR MÓVIL (botón para abrir el menú) -->
-        <div class="flex items-center justify-between md:hidden -mb-2">
+        <div class="flex items-center justify-between md:hidden">
           <button id="btn-abrir-sidebar" class="flex items-center gap-2 bg-white border border-zinc-200 rounded-md px-3 py-2 text-xs font-bold text-zinc-700 shadow-sm">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -414,16 +414,6 @@ export function getDashboardTemplate(usuario) {
   `;
 }
 
-/**
- * Lógica del menú responsive del sidebar.
- * Llama a esta función UNA SOLA VEZ en toda la vida de la página
- * (no hace falta que sea justo después de insertar el HTML, ni que
- * lo vuelvas a llamar si re-renderizas el dashboard).
- *
- * Usa delegación de eventos sobre document, por lo que sigue
- * funcionando aunque el sidebar se inserte, elimine o reemplace
- * dinámicamente después.
- */
 export function initSidebarResponsive() {
   // Evita registrar los listeners más de una vez si esta función
   // se llama por accidente varias veces (o ya se auto-inicializó abajo).
@@ -468,9 +458,4 @@ export function initSidebarResponsive() {
     }
   });
 }
-
-// Auto-inicialización: se ejecuta apenas se importa/carga este archivo,
-// sin que tengas que llamar initSidebarResponsive() manualmente en ningún lado.
-// Como usa delegación de eventos sobre document, funciona sin importar
-// si el sidebar ya existe en el DOM o se inserta después.
 initSidebarResponsive();
