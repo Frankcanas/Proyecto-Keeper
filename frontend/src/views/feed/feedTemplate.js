@@ -12,9 +12,9 @@ export function renderFeed() {
         <!-- Contenedor del contenido principal + Header Móvil -->
         <div class="flex-1 flex flex-col min-w-0">
           <!-- Header Móvil -->
-          <header class="w-full bg-[#09090b] text-white px-6 py-4 flex items-center justify-between lg:hidden border-b border-zinc-850 shrink-0 select-none">
+          <header class="w-full bg-[#09090b] text-white px-4 sm:px-6 py-4 flex items-center justify-between lg:hidden border-b border-zinc-850 shrink-0 select-none sticky top-0 z-30">
             <div class="flex items-center gap-3">
-              <div class="bg-[#ea580c] text-white p-1 rounded font-bold w-8 h-8 flex items-center justify-center text-sm">K</div>
+              <div class="bg-[#ea580c] text-white p-1 rounded font-bold w-8 h-8 flex items-center justify-center text-sm shrink-0">K</div>
               <span class="text-sm font-bold tracking-tight mt-0.5">keepeR</span>
             </div>
             <button id="btn-toggle-sidebar" class="p-1.5 hover:bg-zinc-900 rounded transition-colors text-zinc-400 hover:text-white focus:outline-none">
@@ -24,7 +24,7 @@ export function renderFeed() {
             </button>
           </header>
 
-          <main class="flex-1 p-6 lg:p-8 overflow-y-auto">
+          <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto min-w-0">
           <div class="w-full">
             
             <!-- CONTENIDO TAB: ESTADÍSTICAS (El feed que tenemos actualmente) -->
@@ -34,10 +34,10 @@ export function renderFeed() {
               <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-2">
                 <div>
                   <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-400">Monitoreo</p>
-                  <h1 class="text-xl font-bold text-zinc-900 mt-1">Resumen Estratégico</h1>
-                  <p class="text-xs text-zinc-500 mt-1">Seguimiento de incidentes en tiempo real and métricas de seguridad vecinal.</p>
+                  <h1 class="text-lg sm:text-xl font-bold text-zinc-900 mt-1">Resumen Estratégico</h1>
+                  <p class="text-xs text-zinc-500 mt-1">Seguimiento de incidentes en tiempo real y métricas de seguridad vecinal.</p>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                   <button id="btn-toggle-days" class="rounded border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 transition-colors">Últimos 3 días</button>
                   <button id="btn-export-report" class="rounded bg-zinc-950 px-3 py-1.5 text-xs font-semibold text-white hover:bg-zinc-800 transition-colors">Exportar reporte</button>
                 </div>
@@ -47,13 +47,13 @@ export function renderFeed() {
               <div class="grid gap-6 lg:grid-cols-3">
                 
                 <!-- Graph Card -->
-                <div class="lg:col-span-2 bg-white border border-zinc-200 rounded-md p-6">
-                  <div class="mb-6 flex items-center justify-between">
+                <div class="lg:col-span-2 bg-white border border-zinc-200 rounded-md p-4 sm:p-6">
+                  <div class="mb-6 flex flex-wrap items-center justify-between gap-2">
                     <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-400">Índice de Confianza Semanal</p>
                     <span id="stats-trend-percent" class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">+12.4% vs mes anterior</span>
                   </div>
                   
-                  <div class="relative h-48 pt-4 w-full">
+                  <div class="relative h-40 sm:h-48 pt-4 w-full">
                     <canvas id="confianzaChart" class="w-full h-full"></canvas>
                   </div>
                 </div>
@@ -62,13 +62,13 @@ export function renderFeed() {
                 <div class="flex flex-col gap-6">
                   
                   <!-- Dark Sidecard -->
-                  <div class="bg-zinc-950 border border-zinc-800 rounded-md p-6 text-white flex flex-col justify-between">
-                    <div class="flex items-start justify-between">
+                  <div class="bg-zinc-950 border border-zinc-800 rounded-md p-4 sm:p-6 text-white flex flex-col justify-between">
+                    <div class="flex items-start justify-between gap-2">
                       <div>
                         <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-400">Incidentes Activos</p>
-                        <p id="stats-active-incidents" class="text-4xl font-bold mt-2">28</p>
+                        <p id="stats-active-incidents" class="text-3xl sm:text-4xl font-bold mt-2">28</p>
                       </div>
-                      <span class="inline-flex items-center gap-1.5 rounded bg-orange-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                      <span class="inline-flex items-center gap-1.5 rounded bg-orange-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shrink-0">
                         <span class="relative flex h-1.5 w-1.5">
                           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                           <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
@@ -84,7 +84,7 @@ export function renderFeed() {
                   </div>
 
                   <!-- Sector List Sidecard -->
-                  <div class="bg-white border border-zinc-200 rounded-md p-6">
+                  <div class="bg-white border border-zinc-200 rounded-md p-4 sm:p-6">
                     <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-400 mb-4">Incidentes por Sector</p>
                     <div class="space-y-3">
                       <div>
@@ -121,7 +121,7 @@ export function renderFeed() {
               </div>
 
               <!-- Moderation Table Section -->
-              <div class="bg-white border border-zinc-200 rounded-md p-6">
+              <div class="bg-white border border-zinc-200 rounded-md p-4 sm:p-6">
                 <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
                     <h3 class="text-sm font-bold text-zinc-900">Cola de Moderación</h3>
@@ -131,7 +131,7 @@ export function renderFeed() {
                 </div>
 
                 <div class="overflow-x-auto">
-                  <table class="w-full text-left text-xs text-zinc-700 border-collapse">
+                  <table class="w-full min-w-[720px] text-left text-xs text-zinc-700 border-collapse">
                     <thead>
                       <tr class="border-b border-zinc-200 text-zinc-400 font-semibold uppercase tracking-wider text-[9px] pb-2">
                         <th class="pb-3 pr-4">ID</th>
@@ -158,7 +158,7 @@ export function renderFeed() {
               <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-2">
                 <div>
                   <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-400">Comunidad</p>
-                  <h1 class="text-xl font-bold text-zinc-900 mt-1">Gestión de Usuarios</h1>
+                  <h1 class="text-lg sm:text-xl font-bold text-zinc-900 mt-1">Gestión de Usuarios</h1>
                   <p class="text-xs text-zinc-500 mt-1">Administra los miembros de la red colaborativa de seguridad.</p>
                 </div>
                 <div>
@@ -167,9 +167,9 @@ export function renderFeed() {
               </div>
 
               <!-- Users Table Card -->
-              <div class="bg-white border border-zinc-200 rounded-md p-6">
+              <div class="bg-white border border-zinc-200 rounded-md p-4 sm:p-6">
                 <div class="overflow-x-auto">
-                  <table class="w-full text-left text-xs text-zinc-700 border-collapse">
+                  <table class="w-full min-w-[820px] text-left text-xs text-zinc-700 border-collapse">
                     <thead>
                       <tr class="border-b border-zinc-200 text-zinc-400 font-semibold uppercase tracking-wider text-[9px] pb-2">
                         <th class="pb-3 pr-4">Nombre y Apellido</th>
@@ -194,14 +194,14 @@ export function renderFeed() {
               <!-- Header Section -->
               <div class="mb-2">
                 <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-400">Seguridad</p>
-                <h1 class="text-xl font-bold text-zinc-900 mt-1">Historial de Reportes</h1>
+                <h1 class="text-lg sm:text-xl font-bold text-zinc-900 mt-1">Historial de Reportes</h1>
                 <p class="text-xs text-zinc-500 mt-1">Listado completo de incidentes y problemas informados en el sector.</p>
               </div>
 
               <!-- Reports Table Card -->
-              <div class="bg-white border border-zinc-200 rounded-md p-6">
+              <div class="bg-white border border-zinc-200 rounded-md p-4 sm:p-6">
                 <div class="overflow-x-auto">
-                  <table class="w-full text-left text-xs text-zinc-700 border-collapse">
+                  <table class="w-full min-w-[900px] text-left text-xs text-zinc-700 border-collapse">
                     <thead>
                       <tr class="border-b border-zinc-200 text-zinc-400 font-semibold uppercase tracking-wider text-[9px] pb-2">
                         <th class="pb-3 pr-4">ID</th>
@@ -227,12 +227,12 @@ export function renderFeed() {
               <!-- Header Section -->
               <div class="mb-2">
                 <p class="text-[9px] font-semibold uppercase tracking-wider text-zinc-400">Seguridad Vecinal</p>
-                <h1 class="text-xl font-bold text-zinc-900 mt-1">Centro de Control y Monitoreo</h1>
+                <h1 class="text-lg sm:text-xl font-bold text-zinc-900 mt-1">Centro de Control y Monitoreo</h1>
                 <p class="text-xs text-zinc-500 mt-1">Visualiza patrullas, reportes y geocercas en tiempo real sobre el mapa del sector.</p>
               </div>
 
               <!-- Map Container -->
-              <div id="map" class="relative w-full h-[600px] rounded-lg border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
+              <div id="map" class="relative w-full h-[380px] sm:h-[480px] lg:h-[600px] rounded-lg border border-zinc-200 bg-zinc-950 overflow-hidden shadow-sm">
                 
                 <div id="feed-map-container" class="absolute inset-0 z-0 w-full h-full bg-zinc-950"></div>
 
@@ -248,12 +248,12 @@ export function renderFeed() {
 
 
                 <!-- Indicador de señal / Estado de conexión en la parte inferior izquierda -->
-                <div class="absolute bottom-4 left-4 z-10 bg-zinc-950/90 border border-zinc-800 rounded px-2.5 py-1 flex items-center gap-2 text-white shadow-lg backdrop-blur-sm">
-                  <span class="relative flex h-2 w-2">
+                <div class="absolute bottom-4 left-4 right-4 sm:right-auto z-10 bg-zinc-950/90 border border-zinc-800 rounded px-2.5 py-1 flex items-center gap-2 text-white shadow-lg backdrop-blur-sm w-fit">
+                  <span class="relative flex h-2 w-2 shrink-0">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  <span class="text-[9px] font-bold tracking-wide uppercase text-zinc-300">Conexión Live: GPS Activo</span>
+                  <span class="text-[9px] font-bold tracking-wide uppercase text-zinc-300 truncate">Conexión Live: GPS Activo</span>
                 </div>
 
               </div>
