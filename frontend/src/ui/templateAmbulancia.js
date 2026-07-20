@@ -1,31 +1,40 @@
 export function getDashboardTemplate(usuario) {
   return `  
     <div class="flex min-h-screen bg-[#f4f4f5] text-zinc-950 font-sans selection:bg-[#3b82f6] selection:text-white">
-      
+
+      <!-- OVERLAY MÓVIL (se muestra cuando el sidebar está abierto en pantallas pequeñas) -->
+      <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+
       <!-- BARRA LATERAL (Negro Sólido, Sin Degradados, Bordes de 1px) -->
-      <aside class="w-72 bg-[#000000] text-zinc-300 flex flex-col justify-between border-r border-zinc-800 shrink-0 select-none">
-        <div>
+      <aside id="sidebar" class="w-72 max-w-[85vw] bg-[#000000] text-zinc-300 flex flex-col justify-between border-r border-zinc-800 shrink-0 select-none fixed md:sticky top-0 left-0 h-screen z-40 -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
+
+        <div class="flex-1 overflow-y-auto">
           <!-- Logo de la Aplicación (keeperR) -->
-          <div class="p-6 flex items-center gap-3 border-b border-zinc-800">
-            <div class="bg-[#3b82f6] text-white p-2 rounded-md font-bold w-9 h-9 flex items-center justify-center text-lg tracking-wider">
-              K
+          <div class="p-6 flex items-center justify-between gap-3 border-b border-zinc-800">
+            <div class="flex items-center gap-3">
+              <div class="bg-[#3b82f6] text-white p-2 rounded-md font-bold w-9 h-9 flex items-center justify-center text-lg tracking-wider">
+                K
+              </div>
+              <div>
+                <div class="text-[9px] uppercase font-mono tracking-widest text-zinc-550 leading-none">PANEL</div>
+                <div class="text-lg font-bold text-white tracking-tight mt-0.5">keeperR</div>
+              </div>
             </div>
-            <div>
-              <div class="text-[9px] uppercase font-mono tracking-widest text-zinc-550 leading-none">PANEL</div>
-              <div class="text-lg font-bold text-white tracking-tight mt-0.5">keeperR</div>
-            </div>
+
+            <!-- Botón cerrar menú (solo móvil) -->
+            <button id="btn-cerrar-sidebar" class="md:hidden text-zinc-400 hover:text-white transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
           </div>
 
           <!-- PERFIL DEL PARAMÉDICO LOGUEADO (Azul Sólido Minimalista, Bordes de 6px/8px, Sin Degradados) -->
           <div class="m-4 p-4 rounded-md bg-[#09152b] border border-[#3b82f6]/25 relative overflow-hidden">
             <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3b82f6] to-[#1d4ed8]"></div>
-            
+
             <div class="flex items-center justify-between">
-              <div class="relative">
-                <img src="${usuario.fotoUrl}" alt="Oficial" class="w-11 h-11 object-cover rounded-full border border-[#3b82f6]/40">
-                <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#3b82f6] border-2 border-[#09152b]"></span>
-              </div>
-              <div class="min-w-0 flex-1 ml-3">
+              <div class="min-w-0 flex-1">
                 <div class="text-[8px] uppercase tracking-widest text-[#3b82f6] font-bold font-mono">USUARIO</div>
                 <div class="text-xs font-semibold text-zinc-100 truncate">${usuario.nombre}</div>
                 <div class="text-[9px] text-zinc-400 font-mono mt-0.5">Despacho activo</div>
@@ -41,7 +50,7 @@ export function getDashboardTemplate(usuario) {
             
             <button data-tab="Estadisticas" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-semibold transition-all text-white bg-[#1a1a1a] border border-zinc-800">
               <!-- Icono Estadísticas -->
-              <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"></path>
               </svg>
               Estadísticas
@@ -49,7 +58,7 @@ export function getDashboardTemplate(usuario) {
             
             <button data-tab="Historial" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-semibold transition-all text-zinc-400 hover:text-zinc-200 hover:bg-[#18181b]/50">
               <!-- Icono Historial -->
-              <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
               Historial
@@ -57,7 +66,7 @@ export function getDashboardTemplate(usuario) {
 
             <button data-tab="Mapa" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-semibold transition-all text-zinc-400 hover:text-zinc-200 hover:bg-[#18181b]/50">
               <!-- Icono Mapa -->
-              <svg class="w-4 h-4 text-emerald-555" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-emerald-555 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
               </svg>
               Mapa
@@ -67,7 +76,7 @@ export function getDashboardTemplate(usuario) {
         </div>
 
         <!-- Botón Salir -->
-        <div class="p-4 border-t border-zinc-900">
+        <div class="p-4 border-t border-zinc-900 shrink-0">
           <button id="btn-salir" class="w-full flex items-center justify-center gap-2 border border-zinc-800 hover:border-red-500/35 hover:bg-red-500/5 text-red-500 px-4 py-2 rounded-md text-sm font-semibold transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
@@ -78,7 +87,18 @@ export function getDashboardTemplate(usuario) {
       </aside>
 
       <!-- CONTENIDO PRINCIPAL -->
-      <main class="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full flex flex-col justify-start">
+      <main class="flex-1 min-w-0 p-4 sm:p-6 md:p-8 overflow-y-auto space-y-6 w-full flex flex-col justify-start">
+
+        <!-- BARRA SUPERIOR MÓVIL (botón para abrir el menú) -->
+        <div class="flex items-center justify-between md:hidden">
+          <button id="btn-abrir-sidebar" class="flex items-center gap-2 bg-white border border-zinc-200 rounded-md px-3 py-2 text-xs font-bold text-zinc-700 shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            Menú
+          </button>
+          <div class="bg-[#3b82f6] text-white w-8 h-8 rounded-md font-bold flex items-center justify-center text-sm">K</div>
+        </div>
         
         <!-- ======================================================= -->
         <!-- VISTA DE ESTADÍSTICAS (RESUMEN ESTRATÉGICO)             -->
@@ -88,11 +108,11 @@ export function getDashboardTemplate(usuario) {
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <span class="text-[9px] uppercase font-mono tracking-widest text-zinc-400 font-bold leading-none">MONITOREO MÉDICO</span>
-              <h2 class="text-xl font-bold text-zinc-900 tracking-tight mt-1">Resumen Estratégico</h2>
+              <h2 class="text-lg sm:text-xl font-bold text-zinc-900 tracking-tight mt-1">Resumen Estratégico</h2>
               <p class="text-xs text-zinc-555 mt-0.5">Seguimiento de incidentes en tiempo real y métricas de despacho de ambulancias.</p>
             </div>
             
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
               <select id="est-filtro-tiempo" class="bg-white border border-zinc-200 text-zinc-700 font-bold text-[10px] px-3 py-1.5 rounded-md focus:outline-none cursor-pointer transition-all">
                 <option value="3dias">Últimos 3 días</option>
                 <option value="semana">Última semana</option>
@@ -108,9 +128,9 @@ export function getDashboardTemplate(usuario) {
           <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
             
             <!-- TARJETA DEL GRÁFICO (Col-span 8) -->
-            <div class="xl:col-span-8 bg-white rounded-lg p-6 border border-zinc-200 flex flex-col justify-between min-h-[300px]">
+            <div class="xl:col-span-8 bg-white rounded-lg p-4 sm:p-6 border border-zinc-200 flex flex-col justify-between min-h-[280px] sm:min-h-[300px]">
               
-              <div class="flex items-center justify-between pb-4 border-b border-zinc-100">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-zinc-100">
                 <span class="text-[9px] uppercase font-mono tracking-widest text-zinc-400 font-bold">DESPACHO DE EMERGENCIAS SEMANAL</span>
                 <span class="inline-flex items-center bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-md text-[9px] font-bold">
                   +15.2% vs mes anterior
@@ -128,14 +148,14 @@ export function getDashboardTemplate(usuario) {
             <div class="xl:col-span-4 flex flex-col gap-6 justify-between">
               
               <!-- CARD: SERVICIOS MEDICOS ACTIVOS -->
-              <div class="bg-white rounded-lg p-6 border border-zinc-200 flex flex-col justify-between h-[138px]">
-                <div class="flex justify-between items-start">
+              <div class="bg-white rounded-lg p-4 sm:p-6 border border-zinc-200 flex flex-col justify-between min-h-[138px]">
+                <div class="flex justify-between items-start gap-2">
                   <span class="text-[9px] uppercase font-mono tracking-widest text-zinc-400 font-bold">Servicios Médicos Activos</span>
-                  <span class="inline-flex items-center gap-1 bg-blue-50 border border-blue-200 text-[#3b82f6] text-[8px] font-bold uppercase font-mono px-2 py-0.5 rounded-md animate-pulse">
+                  <span class="inline-flex items-center gap-1 bg-blue-50 border border-blue-200 text-[#3b82f6] text-[8px] font-bold uppercase font-mono px-2 py-0.5 rounded-md animate-pulse shrink-0">
                     ● En vivo
                   </span>
                 </div>
-                <div class="text-4xl font-extrabold text-zinc-950 mt-2" id="val-incidentes-activos">18</div>
+                <div class="text-3xl sm:text-4xl font-extrabold text-zinc-950 mt-2" id="val-incidentes-activos">18</div>
                 
                 <div class="border-t border-zinc-100 pt-2 flex items-center justify-between text-[9px] font-mono text-zinc-400">
                   <span>TIEMPO MEDIO DE ARRIBO</span>
@@ -144,7 +164,7 @@ export function getDashboardTemplate(usuario) {
               </div>
 
               <!-- CARD: INCIDENTES POR SECTOR -->
-              <div class="bg-white rounded-lg p-6 border border-zinc-200 flex flex-col justify-between h-[138px]">
+              <div class="bg-white rounded-lg p-4 sm:p-6 border border-zinc-200 flex flex-col justify-between min-h-[138px]">
                 <span class="text-[9px] uppercase font-mono tracking-widest text-zinc-400 font-bold block mb-2">REPORTES POR SECTOR</span>
                 
                 <div class="space-y-2 text-[10px] font-medium text-zinc-700">
@@ -185,9 +205,9 @@ export function getDashboardTemplate(usuario) {
           </div>
 
           <!-- TARJETA: COLA DE MODERACIÓN -->
-          <div class="bg-white rounded-lg p-6 border border-zinc-200 w-full space-y-4">
+          <div class="bg-white rounded-lg p-4 sm:p-6 border border-zinc-200 w-full space-y-4">
             
-            <div class="flex justify-between items-center pb-2 border-b border-zinc-100">
+            <div class="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-100">
               <div>
                 <h3 class="text-sm font-bold text-zinc-950">Cola de Moderación</h3>
                 <p class="text-[11px] text-zinc-400">Filtrar y verificar llamadas médicas de urgencia.</p>
@@ -223,15 +243,15 @@ export function getDashboardTemplate(usuario) {
         <!-- ======================================================= -->
         <!-- VISTA DE HISTORIAL (ESTRUCTURA ORIGINAL CON SELECT INLINE) -->
         <!-- ======================================================= -->
-        <div id="view-historial" class="hidden bg-white rounded-lg p-6 md:p-8 border border-zinc-200 w-full flex flex-col justify-between min-h-[600px]">
+        <div id="view-historial" class="hidden bg-white rounded-lg p-4 sm:p-6 md:p-8 border border-zinc-200 w-full flex flex-col justify-between min-h-[600px]">
           
           <div>
             <!-- Cabecera de la Sección -->
             <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 pb-4 border-b border-zinc-100">
               <div>
                 <span class="text-[9px] uppercase font-mono tracking-widest text-zinc-400 font-bold leading-none">HISTORIAL</span>
-                <h2 class="text-xl font-bold text-zinc-900 tracking-tight mt-1">Historial de Reportes</h2>
-                <p class="text-xs text-zinc-555 mt-0.5">Listado de incidentes viales, colisiones y emergencias prehospitalarias.</p>
+                <h2 class="text-lg sm:text-xl font-bold text-zinc-900 tracking-tight mt-1">Historial de Reportes</h2>
+                <p class="text-xs text-zinc-550 mt-0.5">Listado de incidentes viales, colisiones y emergencias prehospitalarias.</p>
               </div>
 
               <!-- Controles de Filtros Dinámicos colocados arriba -->
@@ -273,7 +293,7 @@ export function getDashboardTemplate(usuario) {
           </div>
 
           <!-- Conteo de la Tabla en el Footer -->
-          <div class="text-[9px] text-zinc-400 font-mono pt-4 mt-6 border-t border-zinc-150 flex justify-between items-center">
+          <div class="text-[9px] text-zinc-400 font-mono pt-4 mt-6 border-t border-zinc-150 flex flex-wrap justify-between items-center gap-2">
             <span>Terminal Central de Despacho de Ambulancias</span>
             <span id="hist-contador-total" class="font-bold text-zinc-800">-- Incidentes</span>
           </div>
@@ -285,11 +305,11 @@ export function getDashboardTemplate(usuario) {
         <!-- ======================================================= -->
         <div id="view-mapa" class="hidden grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch w-full">
           
-          <div class="xl:col-span-8 bg-white rounded-lg p-5 border border-zinc-200 flex flex-col justify-between h-[650px] relative">
+          <div class="xl:col-span-8 bg-white rounded-lg p-5 border border-zinc-200 flex flex-col justify-between h-[400px] sm:h-[500px] xl:h-[650px] relative">
             
             <!-- Buscador de Direcciones Nominatim (Estilo Luigi/Luis) -->
-            <div class="absolute top-8 left-8 right-8 sm:right-auto z-20 pointer-events-none">
-              <div class="relative w-full sm:w-72 md:w-96 pointer-events-auto shadow-md">
+            <div class="absolute top-6 sm:top-8 left-6 sm:left-8 right-6 sm:right-8 xl:right-auto z-20 pointer-events-none">
+              <div class="relative w-full xl:w-96 pointer-events-auto shadow-md">
                 <input id="map-search-input" type="text" placeholder="Buscar dirección o cuadrante..." class="w-full pl-9 pr-4 py-2 border border-zinc-200 bg-white text-zinc-800 rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-zinc-400">
                 <svg class="h-3.5 w-3.5 text-zinc-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -305,7 +325,7 @@ export function getDashboardTemplate(usuario) {
           </div>
 
           <!-- COLUMNA DE ALERTAS RECIENTES -->
-          <div class="xl:col-span-4 bg-white rounded-lg p-6 border border-zinc-200 flex flex-col justify-between h-[650px]">
+          <div class="xl:col-span-4 bg-white rounded-lg p-6 border border-zinc-200 flex flex-col justify-between h-[400px] sm:h-[450px] xl:h-[650px]">
             
             <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
               <div>
@@ -372,3 +392,48 @@ export function getDashboardTemplate(usuario) {
     </div>
   `;
 }
+
+
+export function initSidebarResponsive() {
+  if (document.__sidebarResponsiveInit) return;
+  document.__sidebarResponsiveInit = true;
+
+  const abrirMenu = () => {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (!sidebar || !overlay) {
+      console.warn('[sidebar] No se encontró #sidebar u #sidebar-overlay en el DOM.');
+      return;
+    }
+    sidebar.classList.remove('-translate-x-full');
+    overlay.classList.remove('hidden');
+  };
+
+  const cerrarMenu = () => {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (!sidebar || !overlay) return;
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+  };
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#btn-abrir-sidebar')) {
+      abrirMenu();
+      return;
+    }
+    if (e.target.closest('#btn-cerrar-sidebar')) {
+      cerrarMenu();
+      return;
+    }
+    if (e.target.id === 'sidebar-overlay') {
+      cerrarMenu();
+      return;
+    }
+    if (e.target.closest('.nav-item') && window.innerWidth < 768) {
+      cerrarMenu();
+    }
+  });
+}
+
+initSidebarResponsive();
