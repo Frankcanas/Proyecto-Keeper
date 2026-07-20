@@ -1,3 +1,4 @@
+import json
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from fastapi import HTTPException
@@ -17,7 +18,21 @@ class ReporteController:
                             r.fecha_reporte, r.hora_reporte, r.created_at,
                             u.id_usuario, u.nombres AS usuario_nombre,
                             c.id_categoria, c.nombre AS categoria_nombre,
-                            e.id_estado, e.nombre_estado
+                            e.id_estado, e.nombre_estado,
+                            COALESCE(
+                                (
+                                    SELECT json_agg(
+                                        json_build_object(
+                                            'id_evidencia', ev.id_evidencia,
+                                            'url', ev.url_archivo,
+                                            'tipo', ev.tipo_archivo
+                                        )
+                                    )
+                                    FROM evidencia ev
+                                    WHERE ev.id_reporte = r.id_reporte AND ev.status = TRUE
+                                ),
+                                '[]'::json
+                            ) AS evidencias
                     FROM reporte r
                     JOIN usuario u ON r.id_usuario = u.id_usuario
                     JOIN categoria c ON r.id_categoria = c.id_categoria
@@ -26,6 +41,9 @@ class ReporteController:
                     ORDER BY r.fecha_reporte DESC, r.hora_reporte DESC
                 ''')
                 reportes = cur.fetchall()
+                for r in reportes:
+                    if isinstance(r.get('evidencias'), str):
+                        r['evidencias'] = json.loads(r['evidencias'])
                 return reportes
         except psycopg2.Error as e:
             raise HTTPException(status_code=500, detail=f"Error en la BD: {str(e)}")

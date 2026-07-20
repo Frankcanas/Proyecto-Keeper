@@ -1,3 +1,4 @@
+import { getMap } from "../controllers/mapManager.controller.js";
 import { renderSidebar } from "./sidebar.js";
 import { getAllReports } from "../services/endpoints/reports.js";
 import { createZone, getAllZones } from "../services/endpoints/zones.js";
@@ -762,10 +763,14 @@ function renderAllReportesTable(reportes) {
             reporte.evidencias?.length > 0
             ?
             `
-            <img
-                src="${reporte.evidencias[0].url}"
-                class="w-full h-44 object-cover"
-            >
+            <div class="flex overflow-x-auto w-full h-44 snap-x">
+                ${reporte.evidencias.map(ev => `
+                    <img
+                        src="http://127.0.0.1:8000${ev.url}"
+                        class="w-full h-44 object-cover flex-shrink-0 snap-center"
+                    >
+                `).join('')}
+            </div>
             `
             :
             `
@@ -939,7 +944,15 @@ const buttons = [
                         icon.classList.remove("text-zinc-500");
                         icon.classList.add("text-zinc-400");
                     }
+                    
                     item.tab.classList.remove("hidden");
+                    if (item.tab.id === "homepage-content-inicio") {
+                        setTimeout(() => {
+                            const map = getMap();
+                            if(map) map.resize();
+                        }, 50);
+                    }
+
                 } else {
                     // Inactivo
                     item.btn.className =

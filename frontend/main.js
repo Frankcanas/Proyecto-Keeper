@@ -1,3 +1,4 @@
+import { authenticateLogout } from "./src/services/endpoints/auth.js";
     // Importamos los estilos globales de Tailwind
     import "./style.css";
     import Swal from "sweetalert2";
@@ -108,6 +109,7 @@ async function handleLoginSuccess(loginData) {
                     }).then(async (result) => {
                         if (result.isConfirmed) {
                             await cleanupMap();
+                            try { await authenticateLogout(); } catch (e) { console.error(e); }
                             sessionStorage.removeItem("usuarioLogueado");
                             navigateTo("/");
                         }
@@ -162,6 +164,7 @@ async function handleLoginSuccess(loginData) {
                     }).then(async (result) => {
                         if (result.isConfirmed) {
                             await cleanupMap();
+                            try { await authenticateLogout(); } catch (e) { console.error(e); }
                             sessionStorage.removeItem("usuarioLogueado");
                             navigateTo("/");
                         }
@@ -244,9 +247,10 @@ async function handleLoginSuccess(loginData) {
     }
 
     function sobreescribirBotonSalir() {
-        window.salirAlLogin = () => {
+        window.salirAlLogin = async () => {
             cleanupMap();
-            sessionStorage.removeItem("usuarioLogueado");
+            try { await authenticateLogout(); } catch (e) { console.error(e); }
+                            sessionStorage.removeItem("usuarioLogueado");
             navigateTo("/"); // Redirección limpia mediante SPA en lugar de un reload forzado
         };
 
