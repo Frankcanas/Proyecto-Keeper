@@ -28,7 +28,14 @@ export function renderReportesFeedTable() {
         </select>
       </td>
       <td class="py-4 font-medium ${report.accion !== '?' ? 'text-zinc-855 font-semibold' : 'text-zinc-400'}">${report.accion}</td>
-      <td class="py-4 text-right">
+      <td class="py-4 text-right flex justify-end gap-2">
+        <button data-id="${report.id}" class="btn-report-view inline-flex items-center gap-1 rounded border border-blue-200 hover:bg-blue-50 text-blue-600 px-2 py-1 text-[10px] font-bold transition-colors">
+          <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Ver
+        </button>
         <button data-id="${report.id}" class="btn-report-delete inline-flex items-center gap-1 rounded border border-red-200 hover:bg-red-50 text-red-600 px-2 py-1 text-[10px] font-bold transition-colors">
           <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -69,7 +76,14 @@ export function renderHistorialReportesTable() {
         </select>
       </td>
       <td class="py-4 font-medium ${report.accion !== '?' ? 'text-zinc-855 font-semibold' : 'text-zinc-400'}">${report.accion}</td>
-      <td class="py-4 text-right">
+      <td class="py-4 text-right flex justify-end gap-2">
+        <button data-id="${report.id}" class="btn-report-view inline-flex items-center gap-1 rounded border border-blue-200 hover:bg-blue-50 text-blue-600 px-2 py-1 text-[10px] font-bold transition-colors">
+          <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Ver
+        </button>
         <button data-id="${report.id}" class="btn-report-delete inline-flex items-center gap-1 rounded border border-red-200 hover:bg-red-50 text-red-600 px-2 py-1 text-[10px] font-bold transition-colors">
           <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -118,6 +132,41 @@ function attachReportListeners() {
         timer: 2000,
         timerProgressBar: true,
         customClass: { popup: 'rounded border border-zinc-200 bg-white font-sans text-xs' }
+      });
+    });
+  });
+
+
+  document.querySelectorAll('.btn-report-view').forEach(btn => {
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+
+    newBtn.addEventListener('click', () => {
+      const id = newBtn.dataset.id;
+      const report = feedState.listHistorialReportes.find(r => r.id === id) || feedState.listReportesFeed.find(r => r.id === id);
+      
+      if (!report || !report.evidencias || report.evidencias.length === 0) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Sin imágenes',
+          text: 'Este reporte no tiene evidencias adjuntas.'
+        });
+        return;
+      }
+
+      let imagesHtml = '<div class="flex overflow-x-auto gap-4 p-2 snap-x">';
+      report.evidencias.forEach(ev => {
+        imagesHtml += `<img src="http://127.0.0.1:8000${ev.url}" class="h-64 object-cover rounded shadow snap-center flex-shrink-0" alt="Evidencia">`;
+      });
+      imagesHtml += '</div>';
+
+      Swal.fire({
+        title: `Evidencias del Reporte ${id}`,
+        html: imagesHtml,
+        width: '600px',
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: { popup: 'rounded-xl border border-zinc-200 bg-white font-sans' }
       });
     });
   });

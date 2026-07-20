@@ -36,6 +36,7 @@ export async function initFeed() {
           id: `KP-${r.id_reporte || r.id}`,
           tipo: r.categoria_nombre || r.tipo || "General",
           descripcion: r.descripcion,
+          evidencias: r.evidencias || [],
           ubicacion: (r.titulo || r.ubicacion_geografica || "").replace(/.*? en /, '') || "Desconocida",
           fecha: new Date(r.fecha_hora_creacion || r.fecha_reporte || r.fecha || Date.now()).toLocaleString(),
           estado: r.nombre_estado || r.estado || "Pendiente",
